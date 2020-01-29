@@ -25,7 +25,7 @@ def eventsource(request):
         sock.listen(5)
         print('Server start, and wait for connected.')
         (csock, adr) = sock.accept()
-        print ("Client Info: ", csock, adr) 
+        print ("\n**********\nClient Info: ", csock, adr) 
         client = csock         
         while 1:            
             msg = client.recv(1024).decode('utf-8') # type(msg):str

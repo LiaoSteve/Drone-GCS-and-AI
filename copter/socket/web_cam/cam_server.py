@@ -8,7 +8,7 @@ import zlib
 
 # start cam_server.py first, and start cam_client last. 
 HOST = ''
-PORT = 9102
+PORT = 9998
 
 s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 print('Socket created')
@@ -38,11 +38,12 @@ try:
         frame_data = data[:msg_size]
         data = data[msg_size:]
 
-        frame=pickle.loads(frame_data, fix_imports=True, encoding="bytes")
+        frame=pickle.loads(frame_data, fix_imports=True, encoding="bytes")        
         frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
         cv2.imshow('ImageWindow',frame)
         cv2.waitKey(1)
 except Exception as e:
-    print('Exception: ',e)  
+    print('Exception: ',e) 
+    cv2.destroyAllWindows() 
 finally:
     pass

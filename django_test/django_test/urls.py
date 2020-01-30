@@ -15,8 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
-urlpatterns = [
+from django.http import StreamingHttpResponse
+from camera import VideoCamera, gen
+print('1. open django_test/url.py')
+urlpatterns = [    
     path('admin/', admin.site.urls),
-    path('', include('blog.urls')),
+    path('', include('blog.urls')),       
+    #local cam
+    #path('cam/', lambda r: StreamingHttpResponse(gen(VideoCamera(0)),content_type='multipart/x-mixed-replace; boundary=frame')),
+    #path('cam2/', lambda r: StreamingHttpResponse(gen(VideoCamera(1)),content_type='multipart/x-mixed-replace; boundary=frame')),
 ]

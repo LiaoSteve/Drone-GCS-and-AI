@@ -262,7 +262,7 @@ def detect_video(yolo, video_path, output_path=""):
 
     #-------------  Create mycam --------------------------
     #mycam = CAM('20191010.mov')
-    mycam = CAM(1)
+    mycam = CAM(0)
     #----------------------------------------------------
     mycam.start()
     time.sleep(2)

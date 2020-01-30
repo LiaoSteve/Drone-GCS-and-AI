@@ -1,6 +1,13 @@
 # -------------------------------- SERVER SENT EVENTS --------------------
 from datetime import datetime
 import time, json, sys
+import cv2
+import io
+import socket
+import struct
+import time
+import pickle
+import zlib
 # ------------------------------------- COPTER -----------------------
 import threading
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative
@@ -260,9 +267,11 @@ def detect_video(yolo, video_path, output_path=""):
             self.vid.release()   
             cv2.destroyAllWindows()
 
-    #-------------  Create mycam --------------------------
+    #------------------  Create mycam --------------------------
     #mycam = CAM('20191010.mov')
     mycam = CAM(0)
+    webcam_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    webcam_socket.connect(('140.121.130.133',9998))
     #----------------------------------------------------
     mycam.start()
     time.sleep(2)
@@ -283,6 +292,11 @@ def detect_video(yolo, video_path, output_path=""):
 
     while True:
         frame = mycam.getframe()  
+        result, webcam_frame = cv2.imencode('.jpg', frame)        
+        data = pickle.dumps(webcam_frame, 0)
+        size = len(data)                
+        webcam_socket.sendall(struct.pack(">L", size) + data)
+
         if frame is None:
             print('TRASH_NUM_final',TRASH_NUM)    
             print('CAP_NUM_final',CAP_NUM)
@@ -591,18 +605,18 @@ def COPTER_JOB():
         sys.exit(0)
 def main():
     global vehicle
-    t1 = threading.Thread(target=COPTER_JOB)
-    #t2 = threading.Thread(target=YOLO_JOB)
+    #t1 = threading.Thread(target=COPTER_JOB)
+    t2 = threading.Thread(target=YOLO_JOB)
     
-    t1.start()
-    #t2.start()    
+    #t1.start()
+    t2.start()    
 #-------------------------------------- MAIN -------------------------------------------
 if __name__ == '__main__':               
     HOME = vehicle.location.global_relative_frame
     print('HOME:',HOME)
     time.sleep(1)
     mark_vehicle_home(sock,HOME)
-    waypoints = read_json('./data/X_ground.json')
+    waypoints = read_json('data/X_ground.json')
     generate_checkpoint(sock,waypoints)          
     print("\n------------- States -----------------")
     get_attributes()    

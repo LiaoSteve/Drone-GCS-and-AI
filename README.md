@@ -23,7 +23,7 @@ model_data/
             voc_classes.txt
  ```
 
-- [x] You can download ***trained_weights_final_009.h5*** below, and add to ***model_data*** folder
+- [x] You should download ***trained_weights_final_009.h5*** below, and add to ***model_data*** folder
 ```bush
  https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
  ```

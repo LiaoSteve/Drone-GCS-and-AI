@@ -2,7 +2,7 @@ import cv2
 from django.shortcuts import render
 from django.http import HttpResponse
 
-import time
+import time, sys
 from django.http import StreamingHttpResponse
 from django.utils.timezone import now
 
@@ -11,7 +11,11 @@ class VideoCamera():
         # Using OpenCV to capture from device 0. If you have trouble capturing
         # from a webcam, comment the line below out and use a video file
         # instead.
-        self.video = cv2.VideoCapture(id)
+        try:
+            self.video = cv2.VideoCapture(id)
+        except Exception as e:
+            print(e)
+            sys.exit(0)
         # If you decide to use video.mp4, you must have this file in the folder
         # as the main.py.
         # self.video = cv2.VideoCapture('video.mp4')

@@ -359,8 +359,7 @@ def generate_checkpoint(sock,coordinates):
     i = 0
     while i < len(coordinates):        
         data['latitude'] = coordinates[i][1]
-        data['longitude'] = coordinates[i][0]
-        data['path_ok'] = 0
+        data['longitude'] = coordinates[i][0]       
         data['waypoint'] = i+1
         message = json.dumps(data)
         print(message)

@@ -28,7 +28,7 @@ def eventsource(request):
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind(('', 9999))
         sock.listen(5)
-        print('Map server start, and wait for connected.')
+        print('\n**********\nMap server start, and wait for connected.')
         (csock, adr) = sock.accept()
         print ("\n**********\nClient Info: ", csock, adr) 
         client = csock         
@@ -47,17 +47,15 @@ def eventsource(request):
                                
     return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
 
-def web_cam(request):    
-    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    print('\nCam socket created')
-    s.bind(('',9998))
-    print('Cam socket bind compete')
-    s.listen(5)
-    print('Cam socket now listening')
-    conn, addr = s.accept()
-    print ("\n**********\nClient Info: ", conn, addr)      
-    def images_stream(conn,addr):        
+def web_cam(request):            
+    def images_stream():
+        s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)    
+        s.bind(('',9998))    
+        s.listen(5)
+        print('\n**********\nCam server now listening ...')
+        conn, addr = s.accept()
+        print ("\n**********\nClient Info: ", conn, addr)        
         data = b""
         payload_size = struct.calcsize(">L")
         print("payload_size: {}".format(payload_size))
@@ -82,9 +80,11 @@ def web_cam(request):
                 yield (b'--frame\r\n'
                     b'Content-Type: image/jpeg\r\n\r\n' + (frame.tobytes()) + b'\r\n\r\n')
             except Exception as e:
-                print(e)
+                print("webcam server ...",e)
+                s.close()
+                break
                 
-    return StreamingHttpResponse(images_stream(conn,addr),
+    return StreamingHttpResponse(images_stream(),
                      content_type='multipart/x-mixed-replace; boundary=frame') 
 
 

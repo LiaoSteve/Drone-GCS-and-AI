@@ -34,5 +34,13 @@ def object_identify_init():
 
 def socket_connect_init():
     global sock
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect(('127.0.0.1',9999))
+    #while 1:
+    try:
+        print('trying to connect to MapServer ...')
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(2)
+        sock.connect(('140.121.130.133',9999))
+        print('Success connecting to Mapserver ')
+        #break
+    except Exception as e:                
+        print('mapserver',e)

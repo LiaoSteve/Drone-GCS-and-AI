@@ -52,7 +52,7 @@ class YOLO(object):
         "model_path": 'model_data/trained_weights_final_009.h5',        
         "anchors_path": 'model_data/yolo_anchors_009.txt',
         "classes_path": 'model_data/voc_classes.txt',
-        "score" : 0.1,
+        "score" : 0.25,
         "iou" : 0.45,
         "model_image_size" : (416, 416),
         "gpu_num" : 1,
@@ -210,8 +210,9 @@ class YOLO(object):
             data['timestamp'] = str(datetime.now())
             data['trash_num'] = str(trash_num)
             data['cap_num'] = str(cap_num)
-            message = json.dumps(data)
-            sock.sendall(message.encode('utf-8'))  
+            message = json.dumps(data)            
+            socket_send_to_MapServer(message)
+                        
 
         end = timer()
         print(end - start,"sec")
@@ -270,11 +271,16 @@ def detect_video(yolo, video_path, output_path=""):
     #------------------  Create mycam --------------------------
     #mycam = CAM('20191010.mov')
     mycam = CAM(0)
-    webcam_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    webcam_socket.connect(('140.121.130.133',9998))
+    encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 10]
+    try:
+        webcam_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        webcam_socket.settimeout(5)
+        webcam_socket.connect(('140.121.130.133',9998))
+    except:
+        print('Error to connect to webcam_server')
     #----------------------------------------------------
     mycam.start()
-    time.sleep(2)
+    time.sleep(1)
     video_FourCC    = mycam.video_FourCC
     #video_FourCC2    = mycam.video_FourCC2
     video_fps       = mycam.video_fps
@@ -292,11 +298,20 @@ def detect_video(yolo, video_path, output_path=""):
 
     while True:
         frame = mycam.getframe()  
-        result, webcam_frame = cv2.imencode('.jpg', frame)        
+        result, webcam_frame = cv2.imencode('.jpg', frame, encode_param)        
         data = pickle.dumps(webcam_frame, 0)
-        size = len(data)                
-        webcam_socket.sendall(struct.pack(">L", size) + data)
-
+        size = len(data)      
+        try:          
+            webcam_socket.send(struct.pack(">L", size)+  data)
+        except:
+            print('\n********\nwebcam connection error')
+            try:
+                print('try to connect to webcam_Server\n')
+                webcam_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                webcam_socket.settimeout(0.5)
+                webcam_socket.connect(('140.121.130.133',9998))
+            except:
+                print('cannot connect to webcam server\n******')
         if frame is None:
             print('TRASH_NUM_final',TRASH_NUM)    
             print('CAP_NUM_final',CAP_NUM)
@@ -325,7 +340,7 @@ def detect_video(yolo, video_path, output_path=""):
 
         cv2.putText(result, text=fps, org=(3, 15), fontFace = cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale=0.40, color=(0, 125, 50), thickness=1)
-        cv2.namedWindow("yolov3_Result", cv2.WINDOW_NORMAL)
+        #cv2.namedWindow("yolov3_Result", cv2.WINDOW_NORMAL)
         cv2.imshow("yolov3_Result", result)
 
         print('TRASH_NUM_final',TRASH_NUM)    
@@ -333,27 +348,42 @@ def detect_video(yolo, video_path, output_path=""):
         
         if isOutput:
             out.write(result)
-
+        time.sleep(0.5)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     yolo.close_session()
     print('TRASH_NUM_final',TRASH_NUM)    
     print('CAP_NUM_final',CAP_NUM)
-
+def socket_send_to_MapServer(message):
+    try:
+        global sock
+        sock.send(message.encode('utf-8'))
+    except:
+        print('\n*******\nSend data to MapServer error')
+        try:
+            print('Try connecting to MapServer ...')
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(0.1)
+            sock.connect(('140.121.130.133',9999))
+        except:
+            print('please open drone Map ...')
+            pass
+    
 def YOLO_JOB():
     global vehicle      
     detect_video(YOLO(image = False),"","")
 #    ------------------------------ KAFKA FUNCTION ------------------------------------------  
-def mark_vehicle_home(sock,HOME):
+def mark_vehicle_home(HOME):
     data = {}
     data['channel'] = '00004'
     data['latitude'] = HOME.lat
     data['longitude'] = HOME.lon
     message = json.dumps(data)
-    sock.sendall(message.encode('utf-8'))
-def generate_checkpoint(sock,coordinates): 
+    socket_send_to_MapServer(message)
+def generate_checkpoint(coordinates): 
     """mark the copter waypoints on the map"""
     #global vehicle   
+    global sock
     data = {}  
     data['channel'] = '00003'         
     i = 0
@@ -363,7 +393,8 @@ def generate_checkpoint(sock,coordinates):
         data['waypoint'] = i+1
         message = json.dumps(data)
         print(message)
-        sock.sendall(message.encode('utf-8'))        
+        socket_send_to_MapServer(message)
+        
         time.sleep(0.2)      
         i+=1    
 
@@ -392,9 +423,10 @@ def get_attributes():
     print ("Is Armable?: %s" % vehicle.is_armable)
     print ("System status: %s" % vehicle.system_status.state)  
 
-def send_drone_status_to_GCS(sock):
+def send_drone_status_to_GCS():
     global vehicle
     global Home
+    global sock
     location = vehicle.location.global_relative_frame
     velocity = vehicle.velocity
     attitude = vehicle.attitude
@@ -421,7 +453,8 @@ def send_drone_status_to_GCS(sock):
     data['gps_status']     = str(vehicle.gps_0)
     data['battery']        = str(vehicle.battery)
     message = json.dumps(data)    
-    sock.sendall(message.encode('utf-8'))         
+    socket_send_to_MapServer(message)
+    
 def arm_and_takeoff(aTargetAltitude):
     # Arms vehicle and fly to aTargetAltitude.
     print("Basic pre-arm checks")
@@ -445,21 +478,22 @@ def arm_and_takeoff(aTargetAltitude):
     # Wait until the vehicle reaches a safe height before processing the goto (otherwise the command 
     #  after Vehicle.simple_takeoff will execute immediately).
     while True:
-        send_drone_status_to_GCS(sock)  
-        cur_pos = send_current_mark(sock)      
+        send_drone_status_to_GCS()  
+        cur_pos = send_current_mark()      
         print(" Altitude: ", vehicle.location.global_relative_frame.alt)              
         if vehicle.location.global_relative_frame.alt>=aTargetAltitude*0.95: #Trigger just below target alt.
             print("Reached target altitude")
             break
         time.sleep(1)
-def send_current_mark(sock):
+def send_current_mark():
+    global sock
     data = {}
     cur_pos = vehicle.location.global_relative_frame    
     data['channel'] = '00002'
     data['latitude'] = cur_pos.lat
     data['longitude'] = cur_pos.lon
     message = json.dumps(data)
-    sock.sendall(message.encode('utf-8'))
+    socket_send_to_MapServer(message)   
     return cur_pos
 def condition_yaw(heading, relative=False):
     """
@@ -535,8 +569,8 @@ def goto(target, gotoFunction = vehicle.simple_goto):
     
     while vehicle.mode.name=="GUIDED": #Stop action if we are no longer in guided mode.
                 
-        cur_pos = send_current_mark(sock)
-        send_drone_status_to_GCS(sock)
+        cur_pos = send_current_mark()
+        send_drone_status_to_GCS()
         remainingDistance = haversine(cur_pos,target.lon,target.lat)
         
         vehicle.groundspeed = 1
@@ -568,9 +602,9 @@ def haversine(pos1,pos2_lon,pos2_lat):
     r = 6378137.0 #-- Radius of "spherical" earth in meter
     return c * r   
 def COPTER_JOB():   
-    global vehicle         
+    global vehicle    
     try:
-        arm_and_takeoff(aTargetAltitude=8)   
+        arm_and_takeoff(aTargetAltitude=8)        
         for i in range(len(waypoints)): 
             print("------------------------------------------------------")      
             print('Go to waypoints:',i+1)
@@ -589,8 +623,9 @@ def COPTER_JOB():
         print('CAP_NUM:',CAP_NUM)
         while(1):            
             #time.sleep(1)
-            cur_pos = send_current_mark(sock)
-            send_drone_status_to_GCS(sock)
+            cur_pos = send_current_mark()
+            send_drone_status_to_GCS()
+            print('===================== UAV alive ======================')
             time.sleep(1)
             
         print("Close vehicle object")
@@ -604,19 +639,20 @@ def COPTER_JOB():
         sys.exit(0)
 def main():
     global vehicle
-    #t1 = threading.Thread(target=COPTER_JOB)
+    t1 = threading.Thread(target=COPTER_JOB)
     t2 = threading.Thread(target=YOLO_JOB)
-    
-    #t1.start()
-    t2.start()    
+
+    t2.start()
+    t1.start()
+        
 #-------------------------------------- MAIN -------------------------------------------
 if __name__ == '__main__':               
     HOME = vehicle.location.global_relative_frame
     print('HOME:',HOME)
     time.sleep(1)
-    mark_vehicle_home(sock,HOME)
+    mark_vehicle_home(HOME)
     waypoints = read_json('data/X_ground.json')
-    generate_checkpoint(sock,waypoints)          
+    generate_checkpoint(waypoints)          
     print("\n------------- States -----------------")
     get_attributes()    
     main()

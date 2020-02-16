@@ -48,41 +48,52 @@ def eventsource(request):
     return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
 
 def web_cam(request):            
-    def images_stream():
-        s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)    
-        s.bind(('',9998))    
-        s.listen(5)
-        print('\n**********\nCam server now listening ...')
-        conn, addr = s.accept()
-        print ("\n**********\nClient Info: ", conn, addr)        
-        data = b""
-        payload_size = struct.calcsize(">L")
-        print("payload_size: {}".format(payload_size))
+    def images_stream():        
         while True:
-            try:
-                while len(data) < payload_size:
-                    print("Recv: {}".format(len(data)))
-                    data += conn.recv(4096)
-                print("Done Recv: {}".format(len(data)))
-                packed_msg_size = data[:payload_size]
-                data = data[payload_size:]
-                msg_size = struct.unpack(">L", packed_msg_size)[0]
-                print("msg_size: {}".format(msg_size))
+            s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)    
+            s.bind(('',9998))    
+            s.listen(5)
+            print('\n**********\nCam server now listening ...')
+            conn, addr = s.accept()
+            print ("\n**********\nClient Info: ", conn, addr)        
+            data = b""
+            payload_size = struct.calcsize(">L")
+            print("payload_size: {}".format(payload_size))
+            while True:
+                try:
+                    no_data_occur = 0
+                    while len(data) < payload_size:                        
+                        print("Recv: {}".format(len(data)))
+                        data += conn.recv(4096)
+                        # if no data, close socket and restart the new one.
+                        if len(data) == 0:  
+                            print('\nlen(data)==0')                   
+                            no_data_occur += 1
+                        if no_data_occur  >= 50:  
+                            print('\nwebcam client is disconnected ')                   
+                            s.close()     
+                            break     
+                    print("Done Recv: {}".format(len(data)))                    
+                                  
+                    packed_msg_size = data[:payload_size]
+                    data = data[payload_size:]
+                    msg_size = struct.unpack(">L", packed_msg_size)[0]
+                    print("msg_size: {}".format(msg_size))
 
-                while len(data) < msg_size:
-                    data += conn.recv(4096)
-                frame_data = data[:msg_size]
-                data = data[msg_size:]
-                frame = pickle.loads(frame_data, fix_imports=True, encoding="bytes")
-                frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
-                _, frame = cv2.imencode('.jpg', frame)                                
-                yield (b'--frame\r\n'
-                    b'Content-Type: image/jpeg\r\n\r\n' + (frame.tobytes()) + b'\r\n\r\n')
-            except Exception as e:
-                print("webcam server ...",e)
-                s.close()
-                break
+                    while len(data) < msg_size:
+                        data += conn.recv(4096)
+                    frame_data = data[:msg_size]
+                    data = data[msg_size:]
+                    frame = pickle.loads(frame_data, fix_imports=True, encoding="bytes")
+                    frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
+                    _, frame = cv2.imencode('.jpg', frame)                                
+                    yield (b'--frame\r\n'
+                        b'Content-Type: image/jpeg\r\n\r\n' + (frame.tobytes()) + b'\r\n\r\n')
+                except Exception as e:
+                    print("webcam server ...",e)
+                    s.close()
+                    break
                 
     return StreamingHttpResponse(images_stream(),
                      content_type='multipart/x-mixed-replace; boundary=frame') 

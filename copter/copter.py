@@ -260,24 +260,29 @@ def detect_video(yolo, video_path, output_path=""):
                 if self.status == False:
                     break
 
-                cv2.namedWindow("Real_Time_Camera", cv2.WINDOW_NORMAL)
-                cv2.imshow('Real_Time_Camera', self.Frame)
+                #cv2.namedWindow("Real_Time_Camera", cv2.WINDOW_NORMAL)
+                '''cv2.imshow('Real_Time_Camera', self.Frame)
                 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
+                    break'''
             self.vid.release()   
             cv2.destroyAllWindows()
 
     #------------------  Create mycam --------------------------
     #mycam = CAM('20191010.mov')
-    mycam = CAM(0)
+    while 1:
+        try :
+            mycam = CAM(0)
+        except Exception as e:
+            print('cam error',e)
+            time.sleep(1)
     encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 10]
     try:
         webcam_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         webcam_socket.settimeout(5)
         webcam_socket.connect(('140.121.130.133',9998))
     except:
-        print('Error to connect to webcam_server')
+        print('Error to connect to webcam_server\n maybe tou should open webcam page or webcam server')
     #----------------------------------------------------
     mycam.start()
     time.sleep(1)
@@ -308,17 +313,18 @@ def detect_video(yolo, video_path, output_path=""):
             try:
                 print('try to connect to webcam_Server\n')
                 webcam_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                webcam_socket.settimeout(0.5)
+                webcam_socket.settimeout(0.1)
                 webcam_socket.connect(('140.121.130.133',9998))
+                print('ok')
             except:
                 print('cannot connect to webcam server\n******')
         if frame is None:
             print('TRASH_NUM_final',TRASH_NUM)    
             print('CAP_NUM_final',CAP_NUM)
-            break 
-        image = Image.fromarray(frame)
+            break         
 
         """--------------  Detect_image  ------------"""
+        '''image = Image.fromarray(frame)
         image, trash_num, cap_num = yolo.detect_image(image)
 
         TRASH_NUM = TRASH_NUM + trash_num
@@ -340,7 +346,7 @@ def detect_video(yolo, video_path, output_path=""):
 
         cv2.putText(result, text=fps, org=(3, 15), fontFace = cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale=0.40, color=(0, 125, 50), thickness=1)
-        #cv2.namedWindow("yolov3_Result", cv2.WINDOW_NORMAL)
+        #cv2.namedWindow("yolov3_Result", cv2.WINDOW_AUTOSIZE)
         cv2.imshow("yolov3_Result", result)
 
         print('TRASH_NUM_final',TRASH_NUM)    
@@ -348,12 +354,12 @@ def detect_video(yolo, video_path, output_path=""):
         
         if isOutput:
             out.write(result)
-        time.sleep(0.5)
+        time.sleep(0.1)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     yolo.close_session()
     print('TRASH_NUM_final',TRASH_NUM)    
-    print('CAP_NUM_final',CAP_NUM)
+    print('CAP_NUM_final',CAP_NUM)'''
 def socket_send_to_MapServer(message):
     try:
         global sock
@@ -365,6 +371,9 @@ def socket_send_to_MapServer(message):
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(0.1)
             sock.connect(('140.121.130.133',9999))
+            mark_vehicle_home(HOME)
+            waypoints = read_json('data/X_ground.json')
+            generate_checkpoint(waypoints)   
         except:
             print('please open drone Map ...')
             pass
@@ -577,7 +586,7 @@ def goto(target, gotoFunction = vehicle.simple_goto):
         #--  error --
         torlerance = 0.08
         if remainingDistance<0.9:
-            torlerance = 0.8
+            torlerance = 1
         if remainingDistance<0.31:
             torlerance = 5
         torlerance_dist = remainingDistance * torlerance                                  

@@ -22,6 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),       
     #local cam
-    path('cam/', lambda r: StreamingHttpResponse(gen(VideoCamera(0)),content_type='multipart/x-mixed-replace; boundary=frame')),
+    #path('cam/', lambda r: StreamingHttpResponse(gen(VideoCamera(0)),content_type='multipart/x-mixed-replace; boundary=frame')),
     #path('cam2/', lambda r: StreamingHttpResponse(gen(VideoCamera(1)),content_type='multipart/x-mixed-replace; boundary=frame')),
 ]

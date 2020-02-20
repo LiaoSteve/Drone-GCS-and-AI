@@ -2,3 +2,6 @@ copter/model_data/trained_weights_final_009.h5
 copter/__pycache__
 django_test/.vscode/
 django_test/__pycache__/
+copter/yolo3/__pycache__/
+django_test/blog/__pycache__/
+django_test/django_test/__pycache__/

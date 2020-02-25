@@ -13,11 +13,14 @@ from math import cos,sin,radians
 import pprint
 
 cur_yaw = 0 # heading :+x axis
+z = -3
+
 # Fly given velocity vector for 5 seconds
 duration = 0.05
-speed = 1.0
+speed = 3.0
 delay = duration * speed
-#i can
+
+
 # using airsim.DrivetrainType.MaxDegreeOfFreedom means we can control the drone yaw independently
 # from the direction the drone is flying.  I've set values here that make the drone always point inwards
 # towards the inside of the box (which would be handy if you are building a 3d scan of an object in the real world).
@@ -32,29 +35,34 @@ def frd2ned_in_velocity(theta,v_front,v_right):
 class LidarTest:
     def __init__(self):
         # connect to the AirSim simulator
+        global z
         self.client = airsim.MultirotorClient()
         self.client.confirmConnection()
         self.client.enableApiControl(True)
         self.client.armDisarm(True)
-        self.client.takeoffAsync().join()
+        self.client.takeoffAsync().join()     
+        self.client.moveToZAsync(z, velocity=1).join()    
         home = self.client.getMultirotorState().kinematics_estimated.position
         print('home: ',home)
     def key(self,event):
         global cur_yaw
-        z  = self.client.getMultirotorState().kinematics_estimated.position.z_val
+        global z
+        #z  = self.client.getMultirotorState().kinematics_estimated.position.z_val
         if event.char == event.keysym: #-- standard keys                
-            if event.keysym == 's':
+            if event.keysym == 's':# stop
                 self.client.moveByVelocityZAsync(0,0,z,duration, airsim.DrivetrainType.MaxDegreeOfFreedom, airsim.YawMode(False, cur_yaw)).join()            
-            if event.keysym == 'u':
-                self.client.moveByVelocityZAsync(0,0,z-1,duration, airsim.DrivetrainType.MaxDegreeOfFreedom, airsim.YawMode(False, cur_yaw)).join()            
-            if event.keysym == 'd':
-                self.client.moveByVelocityZAsync(0,0,z+1,duration, airsim.DrivetrainType.MaxDegreeOfFreedom, airsim.YawMode(False, cur_yaw)).join()            
+            if event.keysym == 'u':# up
+                z = z - 1
+                self.client.moveByVelocityZAsync(0,0,z,duration, airsim.DrivetrainType.MaxDegreeOfFreedom, airsim.YawMode(False, cur_yaw)).join()            
+            if event.keysym == 'd':# done
+                z = z + 1
+                self.client.moveByVelocityZAsync(0,0,z,duration, airsim.DrivetrainType.MaxDegreeOfFreedom, airsim.YawMode(False, cur_yaw)).join()            
             if event.keysym == 'l':
-                self.client.landAsync().join()
+                self.client.landAsync()
             if event.keysym == 't':
                 print('take off') 
-                self.client.takeoffAsync().join()
-            # turn right or left
+                self.client.takeoffAsync()
+            # Yaw turn right or left
             if event.keysym == 'q':
                 cur_yaw = cur_yaw - 10
                 print('cur_yaw: ',cur_yaw)
@@ -66,6 +74,9 @@ class LidarTest:
             if event.keysym == 'p':
                 p = self.client.getMultirotorState().kinematics_estimated.position            
                 print("[x,y,z] = [{:.6f}, {:.6f}, {:.6f}]".format(p.x_val,p.y_val,p.z_val))
+            if event.keysym == 'k':
+                self.client.moveByVelocityAsync(vx=1, vy=0, vz=0, duration=1)
+
             # get data
             if event.keysym == 'v':
                 print(self.client.getVelocity())
@@ -73,12 +84,10 @@ class LidarTest:
                 print(self.client.getOrientation())
             if event.keysym == 'g':            
                 g = self.client.getMultirotorState().gps_location
-                print("[lat,lon,alt] = [{:.6f}, {:.6f}, {:.6f}]".format(g.latitude,g.longitude,g.altitude))
-            if event.keysym == 'r':
-                self.client.reset()
+                print("[lat,lon,alt] = [{:.6f}, {:.6f}, {:.6f}]".format(g.latitude,g.longitude,g.altitude))           
 
         else: #-- non standard keys
-            z  = self.client.getMultirotorState().kinematics_estimated.position.z_val
+            #z  = self.client.getMultirotorState().kinematics_estimated.position.z_val
             if event.keysym == 'Up':
                 vx = speed
                 vy = 0                                  
@@ -105,7 +114,6 @@ class LidarTest:
                 time.sleep(delay) 
 
     def execute(self):   
-
         while 1:
             lidarData = self.client.getLidarData()
             if (len(lidarData.point_cloud) < 3):
@@ -134,6 +142,7 @@ class LidarTest:
         self.client.reset()
         self.client.enableApiControl(False)
         print("Done!\n") 
+
 if __name__ == '__main__':
     try :
         # connect to client         

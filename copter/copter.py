@@ -272,7 +272,8 @@ def detect_video(yolo, video_path, output_path=""):
     #mycam = CAM('20191010.mov')
     while 1:
         try :
-            mycam = CAM(0)
+            mycam = CAM(-1)
+            break
         except Exception as e:
             print('cam error',e)
             time.sleep(1)
@@ -303,7 +304,7 @@ def detect_video(yolo, video_path, output_path=""):
 
     while True:
         frame = mycam.getframe()  
-        result, webcam_frame = cv2.imencode('.jpg', frame, encode_param)        
+        '''result, webcam_frame = cv2.imencode('.jpg', frame, encode_param)        
         data = pickle.dumps(webcam_frame, 0)
         size = len(data)      
         try:          
@@ -321,10 +322,10 @@ def detect_video(yolo, video_path, output_path=""):
         if frame is None:
             print('TRASH_NUM_final',TRASH_NUM)    
             print('CAP_NUM_final',CAP_NUM)
-            break         
+            break '''        
 
         """--------------  Detect_image  ------------"""
-        '''image = Image.fromarray(frame)
+        image = Image.fromarray(frame)
         image, trash_num, cap_num = yolo.detect_image(image)
 
         TRASH_NUM = TRASH_NUM + trash_num
@@ -349,17 +350,37 @@ def detect_video(yolo, video_path, output_path=""):
         #cv2.namedWindow("yolov3_Result", cv2.WINDOW_AUTOSIZE)
         cv2.imshow("yolov3_Result", result)
 
+        _, webcam_frame = cv2.imencode('.jpg', result, encode_param)        
+        data = pickle.dumps(webcam_frame, 0)
+        size = len(data)      
+        try:          
+            webcam_socket.send(struct.pack(">L", size)+  data)
+        except:
+            print('\n********\nwebcam connection error')
+            try:
+                print('try to connect to webcam_Server\n')
+                webcam_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                webcam_socket.settimeout(0.1)
+                webcam_socket.connect(('140.121.130.133',9998))
+                print('ok')
+            except:
+                print('cannot connect to webcam server\n******')
+        if frame is None:
+            print('TRASH_NUM_final',TRASH_NUM)    
+            print('CAP_NUM_final',CAP_NUM)
+            break         
         print('TRASH_NUM_final',TRASH_NUM)    
         print('CAP_NUM_final',CAP_NUM)
         
         if isOutput:
             out.write(result)
-        time.sleep(0.1)
+        
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     yolo.close_session()
     print('TRASH_NUM_final',TRASH_NUM)    
-    print('CAP_NUM_final',CAP_NUM)'''
+    print('CAP_NUM_final',CAP_NUM)
+    
 def socket_send_to_MapServer(message):
     try:
         global sock
@@ -596,7 +617,7 @@ def goto(target, gotoFunction = vehicle.simple_goto):
         if remainingDistance<=torlerance_dist: #Just below target, in case of undershoot.
             print("Reached target")
             break
-        time.sleep(1) 
+        time.sleep(0.2) 
 def haversine(pos1,pos2_lon,pos2_lat):
     """
     Get the distance between two positions (note that inputs are in decimal degree)

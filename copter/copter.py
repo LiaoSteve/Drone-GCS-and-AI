@@ -255,8 +255,7 @@ def detect_video(yolo, video_path, output_path=""):
         
         def queryframe(self):
             while (not self.isstop):
-                self.status, self.Frame = self.vid.read()
-                time.sleep(0.01)
+                self.status, self.Frame = self.vid.read()                
                 if self.status == False:
                     break
 
@@ -272,7 +271,7 @@ def detect_video(yolo, video_path, output_path=""):
     #mycam = CAM('20191010.mov')
     while 1:
         try :
-            mycam = CAM(-1)
+            mycam = CAM(0)
             break
         except Exception as e:
             print('cam error',e)
@@ -368,7 +367,8 @@ def detect_video(yolo, video_path, output_path=""):
         if frame is None:
             print('TRASH_NUM_final',TRASH_NUM)    
             print('CAP_NUM_final',CAP_NUM)
-            break         
+            print('frame is none')
+            pass
         print('TRASH_NUM_final',TRASH_NUM)    
         print('CAP_NUM_final',CAP_NUM)
         

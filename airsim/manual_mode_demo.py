@@ -6,20 +6,19 @@ import airsim
 import threading
 import cv2
 import time
-import sys
+import sys, os 
 import numpy as np 
 import tkinter as tk
-from math import cos,sin,radians
+from math import cos,sin,radians, degrees
 import pprint
 
 cur_yaw = 0 # heading :+x axis
-z = -3
+z = -4
 
 # Fly given velocity vector for 5 seconds
 duration = 0.05
 speed = 3.0
 delay = duration * speed
-
 
 # using airsim.DrivetrainType.MaxDegreeOfFreedom means we can control the drone yaw independently
 # from the direction the drone is flying.  I've set values here that make the drone always point inwards
@@ -44,6 +43,19 @@ class LidarTest:
         self.client.moveToZAsync(z, velocity=1).join()    
         home = self.client.getMultirotorState().kinematics_estimated.position
         print('home: ',home)
+
+    def get_position(self):
+        PosNow = self.client.getMultirotorState().kinematics_estimated.position
+        return list((PosNow.x_val, PosNow.y_val, PosNow.z_val,2))
+
+    def get_velocity(self):
+        v = self.client.getMultirotorState().kinematics_estimated.linear_velocity
+        return list((round(v.x_val,2),round(v.y_val,2),round(v.z_val,2)))
+
+    def get_attitude(self):
+        pitch, roll, yaw  = airsim.to_eularian_angles(self.client.simGetVehiclePose().orientation)
+        return list((degrees(pitch),degrees(roll),degrees(yaw)))
+
     def key(self,event):
         global cur_yaw
         global z
@@ -73,10 +85,23 @@ class LidarTest:
                 self.client.moveByVelocityZAsync(0,0,z,duration, airsim.DrivetrainType.MaxDegreeOfFreedom, airsim.YawMode(False, cur_yaw)).join()  
             if event.keysym == 'p':
                 p = self.client.getMultirotorState().kinematics_estimated.position            
-                print("[x,y,z] = [{:.6f}, {:.6f}, {:.6f}]".format(p.x_val,p.y_val,p.z_val))
-            if event.keysym == 'k':
-                self.client.moveByVelocityAsync(vx=1, vy=0, vz=0, duration=1)
-
+                print("[x,y,z] = [{:.6f}, {:.6f}, {:.6f}]".format(p.x_val,p.y_val,p.z_val))            
+            if event.keysym == 'y':                
+                _, _, yaw  = airsim.to_eularian_angles(self.client.simGetVehiclePose().orientation)
+                print(degrees(yaw))
+            if event.keysym == 'w':
+                path = "waypoints.txt"
+                if os.path.exists(path):
+                    f= open(path,"a+")
+                else:
+                    f= open(path,"w+")
+                try:    
+                    GPS = self.get_position()
+                    f.write(str(GPS[0])+' '+str(GPS[1])+' '+str(GPS[2])+' \n')
+                    f.close() 
+                except Exception as e:
+                    print(e)
+                    pass
             # get data
             if event.keysym == 'v':
                 print(self.client.getVelocity())

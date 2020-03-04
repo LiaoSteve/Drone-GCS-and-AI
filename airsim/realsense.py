@@ -6,6 +6,18 @@ import cv2, time, timeit, sys
 from manual_mode_demo import *
 from pynput.keyboard import Key, Controller
 
+def get_position():
+    PosNow = client.getMultirotorState().kinematics_estimated.position
+    return list((round(PosNow.x_val,2), round(PosNow.y_val,2), round(PosNow.z_val,2)))
+
+def get_velocity():
+    v = client.getMultirotorState().kinematics_estimated.linear_velocity
+    return list((round(v.x_val,2),round(v.y_val,2),round(v.z_val,2)))
+
+def get_attitude():
+    pitch, roll, yaw  = airsim.to_eularian_angles(client.simGetVehiclePose().orientation)
+    return list((degrees(pitch),degrees(roll),degrees(yaw)))
+    
 client = airsim.MultirotorClient()
 client.confirmConnection()
 client.enableApiControl(True)
@@ -55,7 +67,7 @@ def realsense():
             imgcolor = imgcolor.reshape(responses[1].height, responses[1].width, -1)    
             depth  = cv2.cvtColor(depth,cv2.COLOR_GRAY2RGB)
             
-            #depth = cv2.addWeighted(imgcolor, 0.15, depth, 0.85, 0)
+            depth = cv2.addWeighted(imgcolor, 0.6, depth, 0.4, 0)
 
             ROI_L = temp2[(center_L[1]-shift):(center_L[1]+shift),(center_L[0]-eq_w):(center_L[0]+eq_w)]
             ROI_R = temp2[(center_R[1]-shift):(center_R[1]+shift),(center_R[0]-eq_w):(center_R[0]+eq_w)]
@@ -88,7 +100,13 @@ def realsense():
                 cv2.circle(depth, (M_j+(center_M[0]-eq_w),M_i+(center_M[1]-shift)), 4, (255, 255, 0), -1)                 
             else:
                 cv2.putText(img=depth, text='safe', org=((center_M[0]-50), (center_M[1]+200)), fontFace=cv2.FONT_HERSHEY_COMPLEX, color=(255, 255, 0), fontScale=1, thickness=1) 
-                                
+
+            GPS = get_position()
+            V_global = get_velocity() 
+
+            cv2.putText(img=depth, text='Pos[x,y,z]: [{:.1f}, {:.1f}, {:.1f}]'.format(GPS[0],GPS[1],GPS[2]), org=(10, 18), fontFace=cv2.FONT_HERSHEY_DUPLEX, color=(0, 0, 0), fontScale=0.5, thickness=1) 
+            cv2.putText(img=depth, text='V_global[x,y,z]: [{:.1f}, {:.1f}, {:.1f}]'.format(V_global[0],V_global[1],V_global[2]), org=(10, 40), fontFace=cv2.FONT_HERSHEY_DUPLEX, color=(0, 0, 0), fontScale=0.5, thickness=1) 
+                        
             cv2.rectangle(depth, ((center_L[0]-eq_w), (center_L[1]-shift)), ((center_L[0]+eq_w), (center_L[1]+shift)), (0, 255, 255), 2)  
             cv2.rectangle(depth, ((center_R[0]-eq_w), (center_R[1]-shift)), ((center_R[0]+eq_w), (center_R[1]+shift)), (255, 0, 255), 2)
             cv2.rectangle(depth, ((center_M[0]-eq_w), (center_M[1]-shift)), ((center_M[0]+eq_w), (center_M[1]+shift)), (255, 255, 0), 2)    
@@ -96,7 +114,7 @@ def realsense():
             cv2.rectangle(imgcolor, (255,170), (385,300), (0,255,255), 2)
 
             cv2.imshow('depth',depth)
-            cv2.imshow("color", imgcolor)
+            #cv2.imshow("color", imgcolor)
             key = cv2.waitKey(1) & 0xFF
 
             if key == 27 or key == ord('q'):

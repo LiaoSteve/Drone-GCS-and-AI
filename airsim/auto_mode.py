@@ -125,7 +125,7 @@ def set_waypoints_from_txt(path):
 alt = -4
 cur_yaw = 0 # heading :+x axis
 duration = 0.01
-speed = 3
+speed = 2
 delay = 0.1
 
 # the index of waypoints list
@@ -161,14 +161,14 @@ print(client.getMultirotorState().kinematics_estimated.orientation)
 
      
 # Set waypoint
-wp = set_waypoints_from_txt('waypoints/neighborhood_waypoints.txt')
+#wp = set_waypoints_from_txt('waypoints/waypoints.txt')
 
 """ ==================  Read the waypoints from airsim object Wp_* =================="""
 
-""" Waypoints_name = client.simListSceneObjects("Wp_.*")
+Waypoints_name = client.simListSceneObjects("Wp_.*")
 print(">> Waypoint list: {ww:}".format(ww=Waypoints_name))
 wp = SetWaypoint(Waypoints_name)
- """
+
 # Set home 
 home = client.getMultirotorState().kinematics_estimated.position
 print('>> Home_(x, y, alt) -> ({xx}, {yy}, {zz})'.format(xx=home.x_val, yy=home.y_val, zz=home.z_val))
@@ -257,7 +257,7 @@ try:
             M_i = int(np.median(dx_M)) 
             M_j = int(np.median(dy_M))
 
-            if ROI_M[M_i,M_j] < 2:
+            if ROI_M[M_i,M_j] < 3:
                 backword()                                                                 
                 if M_j >= eq_w:
                     left(2)
@@ -278,14 +278,14 @@ try:
         V_global = get_velocity()  
 
         if dx_L.any() and not dx_R.any():
-            if L_j < eq_w/2:
-                if ROI_L[L_i,L_j] < 2:
+            if L_j > eq_w:
+                if ROI_L[L_i,L_j] < 4:
                     print('L_right')
                     right(1)
 
         if dx_R.any() and not dx_L.any():
-            if R_j < eq_w/2:
-                if ROI_L[R_i,R_j] < 2:
+            if R_j < eq_w:
+                if ROI_L[R_i,R_j] < 4:
                     print('R_left')
                     left(1)
 
@@ -313,12 +313,12 @@ try:
                     print('L_turn_right')
                     turn_right()
 
-                forward()                         
+                #forward()                         
                 Heading = yawDegree(GPS, wp[wp_i])      
 
-                turn_yaw(Heading)                        
-                """ client.moveToPositionAsync(wp[wp_i][0], wp[wp_i][1], alt, velocity=speed, yaw_mode=airsim.YawMode(False, Heading))
-                time.sleep(0.1)   """     
+                #turn_yaw(Heading)                        
+                client.moveToPositionAsync(wp[wp_i][0], wp[wp_i][1], alt, velocity=speed, yaw_mode=airsim.YawMode(False, Heading))
+                time.sleep(0.1)       
 
         dist_to_waypoint = round((round((GPS[0] - wp[wp_i][0]),3)**2 + round((GPS[1] - wp[wp_i][1]),3)**2),3)**0.5
         # Check if reach the waypoint(x,y)
@@ -361,4 +361,3 @@ except Exception as e:
 finally:
     cv2.destroyAllWindows()
     client.reset()
-

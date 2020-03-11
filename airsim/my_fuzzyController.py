@@ -12,8 +12,8 @@ class FuzzyControl(object):
     def __init__(self):
         # Input range
         self.rules = []
-        self.x_universe  = np.arange(-320, 320, 1)    # in pixel  640*480 image
-        self.y_universe  = np.arange(-240, 240, 1)    # in pixel
+        self.x_universe  = np.arange(-320, 320, 1)    # column 640 in pixel  
+        self.y_universe  = np.arange(-240, 240, 1)    # row 480 in pixel  
         self.distance_universe  = np.arange(0, 1500, 1)      # distance in cm
 
         # Output range
@@ -36,12 +36,12 @@ class FuzzyControl(object):
     def Membership(self):
         # Membership function of inputs
         self.x_input['right'] = fuzz.zmf(self.x_input.universe, -150, 0)
-        self.x_input['mid']   = fuzz.trimf(self.x_input.universe, (-45, 0, 45))
+        self.x_input['mid']   = fuzz.trimf(self.x_input.universe, (-20, 0, 20))
         self.x_input['left']  = fuzz.smf(self.x_input.universe, 0, 150)
 
         self.y_input['bottom'] = fuzz.zmf(self.y_input.universe, -240, 0)
         self.y_input['mid']    = fuzz.trapmf(self.y_input.universe, [-100, -50, 50, 100])
-        self.y_input['top']    = fuzz.smf(self.y_input.universe, 0, 240)
+        self.y_input['top']    = fuzz.smf(self.y_input.universe, 0, 240)        
 
         self.distance_input['far']  = fuzz.trapmf(self.distance_input.universe, [380, 900, 1500, 1500])        
         self.distance_input['near']  = fuzz.trapmf(self.distance_input.universe, [0, 0, 200, 750])
@@ -50,9 +50,9 @@ class FuzzyControl(object):
         self.vx['fast'] = fuzz.pimf(self.vx.universe, -0.3, 1.2, 3, 3)
         self.vx['slow'] = fuzz.zmf(self.vx.universe, -1.5, 1.0)
 
-        self.vy['left']  = fuzz.zmf(self.vy.universe, -1, -0.4)
-        self.vy['mid']   = fuzz.trimf(self.vy.universe, (-0.5, 0, 0.5))
-        self.vy['right'] = fuzz.smf(self.vy.universe, 0.4, 1)
+        self.vy['left']  = fuzz.zmf(self.vy.universe, -1, 0)
+        self.vy['mid']   = fuzz.trimf(self.vy.universe, (-0.65, 0, 0.65))
+        self.vy['right'] = fuzz.smf(self.vy.universe, 0, 1)
 
         self.vz['top']    = fuzz.zmf(self.vz.universe, -0.2, -0.15)
         self.vz['mid']    = fuzz.trapmf(self.vz.universe, [-0.15, -0.05, 0.05, 0.1])
@@ -97,6 +97,7 @@ class FuzzyControl(object):
         self.rule18 = ctrl.Rule(self.x_input['right'] & self.y_input['bottom'] & self.distance_input['far'] , consequent=(self.vy['left'], self.vz['mid'] , self.vx['fast'], self.turn_yaw['turn_mid']))
         
         return self.rule1, self.rule2, self.rule3, self.rule4, self.rule5, self.rule6, self.rule7, self.rule8, self.rule9, self.rule10, self.rule11, self.rule12, self.rule13, self.rule14, self.rule15, self.rule16, self.rule17, self.rule18
+    
     def pre_fzprocess(self):
         self.rules     = self.FuzzyRule()
         self.fzcontrol = ctrl.ControlSystem(self.rules)

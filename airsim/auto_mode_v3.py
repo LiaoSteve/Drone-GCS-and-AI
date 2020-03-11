@@ -69,9 +69,9 @@ def turn_up():
     print('turn_up')
     client.moveByVelocityZAsync(0,0,alt,duration, airsim.DrivetrainType.MaxDegreeOfFreedom, airsim.YawMode(False, attitude[2])).join()  
 
-def turn_yaw(heading):
+def Turn_Yaw(heading):
     #print('turn_yaw')
-    client.moveByVelocityZAsync(0,0,alt,duration, airsim.DrivetrainType.MaxDegreeOfFreedom, airsim.YawMode(False, heading))#.join()  
+    client.moveByVelocityZAsync(0,0,alt,1, airsim.DrivetrainType.MaxDegreeOfFreedom, airsim.YawMode(False, heading)).join()  
 
 """----------------------------------- OTHER FUNCTION -------------------------------------------"""
 def frd2ned_in_velocity(theta,v_front,v_right):       
@@ -126,7 +126,7 @@ def set_waypoints_from_txt(path):
 alt = -4
 cur_yaw = 0 # heading :+x axis
 duration = 0.01
-speed = 2
+speed = 5
 delay = 0.1
 
 # the index of waypoints list
@@ -186,7 +186,7 @@ print('pitch: {}, roll: {}, yaw: {}'.format(att[0],att[1],att[2]))
 
 GPS = get_position()
 Heading = yawDegree(GPS, wp[wp_i]) 
-turn_yaw(Heading)
+Turn_Yaw(Heading)
 
 try:
     while wp_i < len(wp):
@@ -233,35 +233,44 @@ try:
         
         if dx_M.any():
             M_i = int(np.median(dx_M)) 
-            M_j = int(np.median(dy_M))             
+            M_j = int(np.median(dy_M))
 
-            vx, vy, vz, turn_yaw, cost_t = fz.fzprocess(delta_x=M_i, delta_y=M_j, distance=ROI_M[M_i,M_j])
-            attitude = get_attitude()            
-            V = frd2ned_in_velocity(theta=-attitude[2]+turn_yaw, v_front=vx, v_right=vy) 
-            client.moveByVelocityAsync(vx=V[0], vy=V[1], vz=vz, duration=1)
-            cv2.putText(img=depth, text='{:.2f}m'.format(ROI_M[M_i,M_j]), org=((center_M[0]-50), (center_L[1]+200)), fontFace=cv2.QT_FONT_BLACK, color=(255, 255, 0), fontScale=1, thickness=1)                 
+            x = ((center_M[0]-eq_w) + (center_M[0] + eq_w))//2 - ((center_M[0]-eq_w) + M_i)
+            y = ((center_M[1]-shift) + (center_M[1]  +shift))//2 - ((center_M[1]-shift) + M_j)
+            z = ROI_M[M_i,M_j]
+
+            print('------------------------------------------------------------------------------------')             
+            print(">> Recieve data: x= {}, y= {}, Dist= {:.2f} cm".format(x, y, z))
+            vx, vy, vz, turn_yaw, cost_t = fz.fzprocess(delta_x = x, delta_y = y, distance = z)
+            print(">> Defuzzy data: vx= {:.2f}, vy= {:.2f}, vz= {:.2f}, turn_yaw= {:.2f}".format(vx, vy, vz, turn_yaw))
+            attitude = get_attitude()                    
+            V = frd2ned_in_velocity(theta=-attitude[2], v_front=vx, v_right=vy) 
+            client.moveByVelocityAsync(vx=V[0], vy=V[1], vz=vz, duration=5)#, drivetrain=airsim.DrivetrainType.MaxDegreeOfFreedom, yaw_mode=airsim.YawMode(False, attitude[2]+turn_yaw))
+            
+            cv2.putText(img=depth, text='{:.2f} cm'.format(ROI_M[M_i,M_j]), org=((center_M[0]-50), (center_L[1]+200)), fontFace=cv2.QT_FONT_BLACK, color=(255, 255, 0), fontScale=1, thickness=1)                 
             cv2.circle(depth, (M_j+(center_M[0]-eq_w),M_i+(center_M[1]-shift)), 4, (255, 255, 0), -1)                 
         else:   
             Heading = yawDegree(GPS, wp[wp_i])                          
             cv2.putText(img=depth, text='safe', org=((center_M[0]-50), (center_M[1]+200)), fontFace=cv2.FONT_HERSHEY_COMPLEX, color=(255, 255, 0), fontScale=1, thickness=1) 
-            client.moveToPositionAsync(wp[wp_i][0], wp[wp_i][1], alt, velocity=speed, yaw_mode=airsim.YawMode(False, Heading))                       
+            client.moveToPositionAsync(wp[wp_i][0], wp[wp_i][1], wp[wp_i][2], velocity=speed, yaw_mode=airsim.YawMode(False, Heading))                       
 
         dist_to_waypoint = round((round((GPS[0] - wp[wp_i][0]),3)**2 + round((GPS[1] - wp[wp_i][1]),3)**2),3)**0.5
         # Check if reach the waypoint(x,y)
-        if dist_to_waypoint <= 1.5:             
+        if dist_to_waypoint <= 1:             
             stop()
             print(">> Arrived at wp{Nwp:}({x:}, {y:}, {z:})!".format(Nwp=wp_i+1, x=GPS[0], y=GPS[1], z=GPS[2]))
             if wp_i >= len(wp) -1:
                 print('\n ==== Mission Complete ! ====')  
-                turn_yaw(0)              
+                Turn_Yaw(0) 
+
                 print(">> LAND")
-                client.landAsync().join()
+                client.landAsync().join()                
                 client.armDisarm(False)
                 cv2.destroyAllWindows()
                 break
-            wp_i += 1            
-            Heading = yawDegree(GPS, wp[wp_i]) 
-            turn_yaw(Heading)        
+            wp_i += 1    
+            Heading = yawDegree(GPS, wp[wp_i])           
+            Turn_Yaw(Heading)
 
         cv2.putText(img=depth, text='Pos[x,y,z]: [{:.1f}, {:.1f}, {:.1f}]'.format(GPS[0],GPS[1],GPS[2]), org=(10, 18), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(0, 0, 0), fontScale=0.5, thickness=1) 
         cv2.putText(img=depth, text='V_global[x,y,z]: [{:.1f}, {:.1f}, {:.1f}]'.format(V_global[0],V_global[1],V_global[2]), org=(10, 40), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(0, 0, 0), fontScale=0.5, thickness=1) 

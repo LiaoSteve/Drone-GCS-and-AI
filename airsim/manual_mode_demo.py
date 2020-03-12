@@ -25,7 +25,7 @@ delay = duration * speed
 # towards the inside of the box (which would be handy if you are building a 3d scan of an object in the real world).
 def frd2ned_in_velocity(theta,v_front,v_right):       
     v_frd = np.array([v_front,v_right]).reshape(2,1)
-    rotation_matrix = np.array([cos(radians(theta)),sin(radians(theta)),-sin(radians(theta)),cos(radians(theta))]).reshape(2,2)
+    rotation_matrix = np.array([cos(radians(theta)),-sin(radians(theta)),sin(radians(theta)),cos(radians(theta))]).reshape(2,2)
     v_ned = np.dot(rotation_matrix,v_frd).reshape(-1,)
     print('------------------------------------------')
     print('v_ned: ',v_ned)
@@ -116,25 +116,25 @@ class LidarTest:
             if event.keysym == 'Up':
                 vx = speed
                 vy = 0                                  
-                V = frd2ned_in_velocity(-cur_yaw,vx,vy) 
+                V = frd2ned_in_velocity(cur_yaw,vx,vy) 
                 self.client.moveByVelocityZAsync(V[0],V[1],z,duration, airsim.DrivetrainType.MaxDegreeOfFreedom, airsim.YawMode(False, cur_yaw)).join()
                 time.sleep(delay)
             elif event.keysym == 'Down':
                 vx = -speed
                 vy = 0                      
-                V = frd2ned_in_velocity(-cur_yaw,vx,vy) 
+                V = frd2ned_in_velocity(cur_yaw,vx,vy) 
                 self.client.moveByVelocityZAsync(V[0],V[1],z,duration, airsim.DrivetrainType.MaxDegreeOfFreedom, airsim.YawMode(False, cur_yaw)).join()
                 time.sleep(delay)
             elif event.keysym == 'Left':
                 vx = 0
                 vy = -speed            
-                V = frd2ned_in_velocity(-cur_yaw,vx,vy) 
+                V = frd2ned_in_velocity(cur_yaw,vx,vy) 
                 self.client.moveByVelocityZAsync(V[0],V[1],z,duration, airsim.DrivetrainType.MaxDegreeOfFreedom, airsim.YawMode(False, cur_yaw)).join()
                 time.sleep(delay)
             elif event.keysym == 'Right':
                 vx = 0
                 vy = speed            
-                V = frd2ned_in_velocity(-cur_yaw,vx,vy) 
+                V = frd2ned_in_velocity(cur_yaw,vx,vy) 
                 self.client.moveByVelocityZAsync(V[0],V[1],z,duration, airsim.DrivetrainType.MaxDegreeOfFreedom, airsim.YawMode(False, cur_yaw)).join()
                 time.sleep(delay) 
 

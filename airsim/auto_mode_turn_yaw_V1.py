@@ -4,9 +4,15 @@ import math
 from math import cos,sin,radians,degrees
 import os
 import pprint
-import cv2, time, timeit, sys
+import cv2, time, timeit, threading, sys
 import random
 import my_fuzzyController
+
+def adjYaw():
+    global tag_time
+    while True:
+        tag_time += 1
+        time.sleep(1)
 
 """--------------------------- GET DRONE INFO ----------------------------------"""
 def get_position():
@@ -71,12 +77,12 @@ def turn_up():
 
 def Turn_Yaw(heading):
     #print('turn_yaw')
-    client.moveByVelocityZAsync(0,0,alt,1, airsim.DrivetrainType.MaxDegreeOfFreedom, airsim.YawMode(False, heading)).join()  
-
+    client.moveByVelocityZAsync(0,0,alt,3, airsim.DrivetrainType.MaxDegreeOfFreedom, airsim.YawMode(False, heading)).join()  
+    
 """----------------------------------- OTHER FUNCTION -------------------------------------------"""
 def frd2ned_in_velocity(theta,v_front,v_right):       
     v_frd = np.array([v_front,v_right]).reshape(2,1)
-    rotation_matrix = np.array([cos(radians(theta)),sin(radians(theta)),-sin(radians(theta)),cos(radians(theta))]).reshape(2,2)
+    rotation_matrix = np.array([cos(radians(theta)),-sin(radians(theta)),sin(radians(theta)),cos(radians(theta))]).reshape(2,2)
     v_ned = np.dot(rotation_matrix,v_frd).reshape(-1,)
     #print('------------------------------------------')
     #print('v_ned: ',v_ned)
@@ -126,8 +132,12 @@ def set_waypoints_from_txt(path):
 alt = -4
 cur_yaw = 0 # heading :+x axis
 duration = 0.01
-speed = 5
+speed = 3
 delay = 0.1
+tag_time = 0
+
+th2 = threading.Thread(target=adjYaw)
+th2.setDaemon(True)
 
 # the index of waypoints list
 wp_i = 0
@@ -182,12 +192,12 @@ client.takeoffAsync()
 print('take off to alt=',alt)
 client.moveToZAsync(alt, velocity=1).join()
 att = get_attitude()
-print('pitch: {}, roll: {}, yaw: {}'.format(att[0],att[1],att[2]))
+print('pitch: {} deg, roll: {} deg, yaw: {} deg'.format(att[0],att[1],att[2]))
 
 GPS = get_position()
 Heading = yawDegree(GPS, wp[wp_i]) 
 Turn_Yaw(Heading)
-
+th2.start()
 try:
     while wp_i < len(wp):
         #t = timeit.default_timer()
@@ -235,21 +245,32 @@ try:
             M_i = int(np.median(dx_M)) 
             M_j = int(np.median(dy_M))
 
-            x = ((center_M[0]-eq_w) + (center_M[0] + eq_w))//2 - ((center_M[0]-eq_w) + M_j)
-            y = ((center_M[1]-shift) + (center_M[1]  +shift))//2 - ((center_M[1]-shift) + M_i)
+            x = ((center_M[0]-eq_w) + (center_M[0] + eq_w))//2 - ((center_M[0]-eq_w) + M_i)
+            y = ((center_M[1]-shift) + (center_M[1]  +shift))//2 - ((center_M[1]-shift) + M_j)
             z = ROI_M[M_i,M_j]
 
             print('------------------------------------------------------------------------------------')             
             print(">> Recieve data: x= {}, y= {}, Dist= {:.2f} cm".format(x, y, z))
             vx, vy, vz, turn_yaw, cost_t = fz.fzprocess(delta_x = x, delta_y = y, distance = z)
             print(">> Defuzzy data: vx= {:.2f}, vy= {:.2f}, vz= {:.2f}, turn_yaw= {:.2f}".format(vx, vy, vz, turn_yaw))
-            attitude = get_attitude()                    
-            V = frd2ned_in_velocity(theta=-attitude[2], v_front=vx, v_right=vy) 
-            client.moveByVelocityAsync(vx=V[0], vy=V[1], vz=vz, duration=5)#, drivetrain=airsim.DrivetrainType.MaxDegreeOfFreedom, yaw_mode=airsim.YawMode(False, attitude[2]+turn_yaw))
             
+            attitude = get_attitude()                     
+            client.moveByVelocityAsync(vx=0, vy=0, vz=0, duration=0.5, drivetrain=airsim.DrivetrainType.MaxDegreeOfFreedom, yaw_mode=airsim.YawMode(False, attitude[2]+turn_yaw))
+            if tag_time < 3:  
+                GPS_prime = frd2ned_in_velocity(theta=turn_yaw, v_front=GPS[0], v_right=GPS[1])
+                GPS = get_position()
+                Heading = yawDegree(GPS,GPS_prime)
+            
+                client.moveToPositionAsync(GPS_prime[0], GPS_prime[1], GPS[2], velocity=speed, yaw_mode=airsim.YawMode(False, Heading))
+            
+            #attitude = get_attitude()
+            #V = frd2ned_in_velocity(theta=-attitude[2], v_front=1, v_right=0)  
+                      
             cv2.putText(img=depth, text='{:.2f} cm'.format(ROI_M[M_i,M_j]), org=((center_M[0]-50), (center_L[1]+200)), fontFace=cv2.QT_FONT_BLACK, color=(255, 255, 0), fontScale=1, thickness=1)                 
             cv2.circle(depth, (M_j+(center_M[0]-eq_w),M_i+(center_M[1]-shift)), 4, (255, 255, 0), -1)                 
-        else:   
+        else:          
+            tag_time = 0     
+            GPS = get_position()
             Heading = yawDegree(GPS, wp[wp_i])                          
             cv2.putText(img=depth, text='safe', org=((center_M[0]-50), (center_M[1]+200)), fontFace=cv2.FONT_HERSHEY_COMPLEX, color=(255, 255, 0), fontScale=1, thickness=1) 
             client.moveToPositionAsync(wp[wp_i][0], wp[wp_i][1], wp[wp_i][2], velocity=speed, yaw_mode=airsim.YawMode(False, Heading))                       

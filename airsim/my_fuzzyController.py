@@ -82,12 +82,12 @@ class FuzzyControl(object):
         self.rule5  = ctrl.Rule(self.x_input['left'] & self.y_input['bottom'] & self.distance_input['near'] , consequent=(self.vy['right'], self.vz['top'], self.vx['slow'], self.turn_yaw['turn_right']))
         self.rule6  = ctrl.Rule(self.x_input['left'] & self.y_input['bottom'] & self.distance_input['far']  , consequent=(self.vy['right'], self.vz['mid'], self.vx['fast'], self.turn_yaw['turn_mid']))
 
-        self.rule7  = ctrl.Rule(self.x_input['mid'] & self.y_input['top'] & self.distance_input['near']     , consequent=(self.vy['mid'], self.vz['bottom'], self.vx['slow'], self.turn_yaw['turn_mid']))
-        self.rule8  = ctrl.Rule(self.x_input['mid'] & self.y_input['top'] & self.distance_input['far']      , consequent=(self.vy['mid'], self.vz['mid'], self.vx['fast'], self.turn_yaw['turn_mid']))
-        self.rule9  = ctrl.Rule(self.x_input['mid'] & self.y_input['mid'] & self.distance_input['near']     , consequent=(self.vy['mid'], self.vz['top'], self.vx['slow'], self.turn_yaw['turn_mid']))
-        self.rule10 = ctrl.Rule(self.x_input['mid'] & self.y_input['mid'] & self.distance_input['far']      , consequent=(self.vy['right'], self.vz['mid'], self.vx['fast'], self.turn_yaw['turn_mid']))
-        self.rule11 = ctrl.Rule(self.x_input['mid'] & self.y_input['bottom'] & self.distance_input['near']  , consequent=(self.vy['mid'], self.vz['top'], self.vx['slow'], self.turn_yaw['turn_mid']))
-        self.rule12 = ctrl.Rule(self.x_input['mid'] & self.y_input['bottom'] & self.distance_input['far']   , consequent=(self.vy['mid'], self.vz['mid'], self.vx['fast'], self.turn_yaw['turn_mid']))
+        self.rule7  = ctrl.Rule(self.x_input['mid'] & self.y_input['top'] & self.distance_input['near']     , consequent=(self.vy['mid'], self.vz['bottom'], self.vx['slow'], self.turn_yaw['turn_left']))
+        self.rule8  = ctrl.Rule(self.x_input['mid'] & self.y_input['top'] & self.distance_input['far']      , consequent=(self.vy['mid'], self.vz['mid'], self.vx['fast'], self.turn_yaw['turn_left']))
+        self.rule9  = ctrl.Rule(self.x_input['mid'] & self.y_input['mid'] & self.distance_input['near']     , consequent=(self.vy['mid'], self.vz['top'], self.vx['slow'], self.turn_yaw['turn_left']))
+        self.rule10 = ctrl.Rule(self.x_input['mid'] & self.y_input['mid'] & self.distance_input['far']      , consequent=(self.vy['right'], self.vz['mid'], self.vx['fast'], self.turn_yaw['turn_left']))
+        self.rule11 = ctrl.Rule(self.x_input['mid'] & self.y_input['bottom'] & self.distance_input['near']  , consequent=(self.vy['mid'], self.vz['top'], self.vx['slow'], self.turn_yaw['turn_right']))
+        self.rule12 = ctrl.Rule(self.x_input['mid'] & self.y_input['bottom'] & self.distance_input['far']   , consequent=(self.vy['mid'], self.vz['mid'], self.vx['fast'], self.turn_yaw['turn_right']))
 
         self.rule13 = ctrl.Rule(self.x_input['right'] & self.y_input['top'] & self.distance_input['near']   , consequent=(self.vy['left'], self.vz['bottom'] , self.vx['slow'], self.turn_yaw['turn_left']))
         self.rule14 = ctrl.Rule(self.x_input['right'] & self.y_input['top'] & self.distance_input['far']    , consequent=(self.vy['left'], self.vz['mid'] , self.vx['fast'], self.turn_yaw['turn_mid']))

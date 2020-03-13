@@ -54,7 +54,7 @@ class FuzzyControl(object):
             self.z_input['far']  = fuzz.trapmf(self.z_input.universe, [380, 900, 1500, 1500])            
             self.z_input['near']  = fuzz.trapmf(self.z_input.universe, [0, 0, 200, 750])
         else:
-            self.z_input['far']  = fuzz.trapmf(self.z_input.universe, [200, 280, 300, 500])            
+            self.z_input['far']  = fuzz.trapmf(self.z_input.universe, [0, 0, 0, 0])            
             self.z_input['near']  = fuzz.trapmf(self.z_input.universe, [0, 0, 100, 300])
 
         # Membership function of outputs. 

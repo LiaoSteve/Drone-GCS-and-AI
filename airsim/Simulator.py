@@ -44,7 +44,7 @@ def ROI_process(distance_map):
 # Get position
 def GetPos():
     PosNow = client.getMultirotorState().kinematics_estimated.position
-    return [round(PosNow.x_val,1), round(PosNow.y_val,1), round(PosNow.z_val,1)] 
+    return [round(PosNow.x_val,4), round(PosNow.y_val,4), round(PosNow.z_val,4)] 
 
 def get_velocity():
     v = client.getMultirotorState().kinematics_estimated.linear_velocity
@@ -184,13 +184,19 @@ while wp_i < (num_wp):
         dist_to_waypoint = round((round((GPS[0] - wp[wp_i][0]),3)**2 + round((GPS[1] - wp[wp_i][1]),3)**2),3)**0.5
         V_global = get_velocity()
 
-        cv2.putText(img=imgcolor, text='Pos[x,y,z]: [{:.1f}, {:.1f}, {:.1f}]'.format(GPS[0],GPS[1],GPS[2]), org=(10, 18), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(0, 0, 0), fontScale=0.5, thickness=1) 
-        cv2.putText(img=imgcolor, text='V_global[x,y,z]: [{:.1f}, {:.1f}, {:.1f}]'.format(V_global[0],V_global[1],V_global[2]), org=(10, 40), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(0, 0, 0), fontScale=0.5, thickness=1) 
-        cv2.putText(img=imgcolor, text='way_point: {}/{}, dist2waypoint: {:.2f} m, state: {}'.format(wp_i+1, len(wp), dist_to_waypoint, now_state_dist_to_waypoint), org=(10, 60), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(0, 0, 0), fontScale=0.5, thickness=1)
+        cv2.putText(img=imgcolor, text='Pos[x,y,z]: [{:.1f}, {:.1f}, {:.1f}]'.format(GPS[0],GPS[1],GPS[2]), org=(10, 18), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(0, 0, 0), fontScale=0.5, thickness=4) 
+        cv2.putText(img=imgcolor, text='V_global[x,y,z]: [{:.1f}, {:.1f}, {:.1f}]'.format(V_global[0],V_global[1],V_global[2]), org=(10, 40), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(0, 0, 0), fontScale=0.5, thickness=4) 
+        cv2.putText(img=imgcolor, text='way_point: {}/{}, dist2waypoint: {:.2f} m, state: {}'.format(wp_i+1, len(wp), dist_to_waypoint, now_state_dist_to_waypoint), org=(10, 60), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(0, 0, 0), fontScale=0.5, thickness=4)
         
-        if dist_to_waypoint < 3:
+        cv2.putText(img=imgcolor, text='Pos[x,y,z]: [{:.1f}, {:.1f}, {:.1f}]'.format(GPS[0],GPS[1],GPS[2]), org=(10, 18), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(255, 255, 255), fontScale=0.5, thickness=1) 
+        cv2.putText(img=imgcolor, text='V_global[x,y,z]: [{:.1f}, {:.1f}, {:.1f}]'.format(V_global[0],V_global[1],V_global[2]), org=(10, 40), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(255, 255, 255), fontScale=0.5, thickness=1) 
+        cv2.putText(img=imgcolor, text='way_point: {}/{}, dist2waypoint: {:.2f} m, state: {}'.format(wp_i+1, len(wp), dist_to_waypoint, now_state_dist_to_waypoint), org=(10, 60), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(255, 255, 255), fontScale=0.5, thickness=1)
+        
+        if dist_to_waypoint < 5:
+            velocity = 1
             now_state_dist_to_waypoint = 'near_to_waypoint'                    
         else:            
+            velocity = 2
             now_state_dist_to_waypoint = 'far_to_waypoint'
 
         if now_state_dist_to_waypoint is not prev_state_dist_to_waypoint:    
@@ -215,9 +221,9 @@ while wp_i < (num_wp):
         # Fuzzy Control
         V_Hor, V_Ver, V_For, cost_time = fz.fzprocess(delta_x=Horizontal_value, delta_y=Vertical_value, distance=Forward_value)        
         if now_state_dist_to_waypoint is 'near_to_waypoint':
-            V_Hor /= 2
-            V_Ver /= 2
-            V_For /= 2
+            V_Hor /= 5
+            V_Ver /= 5
+            V_For /= 5
         # Round
         V_Hor = round(V_Hor,2)
         V_Ver = round(V_Ver,2)
@@ -240,7 +246,7 @@ while wp_i < (num_wp):
         # Show info. in frame
         cv2.putText(imgcolor, 'CLEAR', (300, 200), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
         cv2.putText(imgcolor, str_tag, (300, 220), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-        if tag_time<5:
+        if tag_time<7:
             client.moveToPositionAsync(wp[wp_i][0], wp[wp_i][1], GPS[2], velocity=velocity, yaw_mode=airsim.YawMode(False, Heading))
         else:
             client.moveToPositionAsync(wp[wp_i][0], wp[wp_i][1], wp[wp_i][2], velocity=velocity, yaw_mode=airsim.YawMode(False, Heading))

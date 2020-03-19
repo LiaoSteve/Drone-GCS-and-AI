@@ -269,117 +269,122 @@ def detect_video(yolo, video_path, output_path=""):
 
     #------------------  Create mycam --------------------------
     #mycam = CAM('20191010.mov')
-    while 1:
-        try :
-            mycam = CAM(0)
-            break
-        except Exception as e:
-            print('cam error',e)
-            time.sleep(1)
-    encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 10]
     try:
-        webcam_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        webcam_socket.settimeout(5)
-        webcam_socket.connect(('140.121.130.133',9998))
-    except:
-        print('Error to connect to webcam_server\n maybe tou should open webcam page or webcam server')
-    #----------------------------------------------------
-    mycam.start()
-    time.sleep(1)
-    video_FourCC    = mycam.video_FourCC
-    #video_FourCC2    = mycam.video_FourCC2
-    video_fps       = mycam.video_fps
-    video_size      = mycam.video_size
-    isOutput = True if output_path != "" else False
-
-    if isOutput:
-        print("!!! TYPE:", type(output_path), type(video_FourCC), type(video_fps), type(video_size))
-        out = cv2.VideoWriter(output_path, video_FourCC, video_fps, video_size)
-
-    accum_time = 0
-    curr_fps = 0
-    fps = "FPS: ??"
-    prev_time = timer()
-
-    while True:
-        frame = mycam.getframe()  
-        '''result, webcam_frame = cv2.imencode('.jpg', frame, encode_param)        
-        data = pickle.dumps(webcam_frame, 0)
-        size = len(data)      
-        try:          
-            webcam_socket.send(struct.pack(">L", size)+  data)
+        while 1:
+            try :
+                mycam = CAM(0)
+                break
+            except Exception as e:
+                print('cam error',e)
+                time.sleep(1)
+        encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 10]
+        try:
+            webcam_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            webcam_socket.settimeout(5)
+            webcam_socket.connect(('140.121.130.133',9998))
         except:
-            print('\n********\nwebcam connection error')
-            try:
-                print('try to connect to webcam_Server\n')
-                webcam_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                webcam_socket.settimeout(0.1)
-                webcam_socket.connect(('140.121.130.133',9998))
-                print('ok')
+            print('Error to connect to webcam_server\n maybe tou should open webcam page or webcam server')
+        #----------------------------------------------------
+        mycam.start()
+        time.sleep(1)
+        video_FourCC    = mycam.video_FourCC
+        #video_FourCC2    = mycam.video_FourCC2
+        video_fps       = mycam.video_fps
+        video_size      = mycam.video_size
+        isOutput = True if output_path != "" else False
+
+        if isOutput:
+            print("!!! TYPE:", type(output_path), type(video_FourCC), type(video_fps), type(video_size))
+            out = cv2.VideoWriter(output_path, video_FourCC, video_fps, video_size)
+
+        accum_time = 0
+        curr_fps = 0
+        fps = "FPS: ??"
+        prev_time = timer()
+
+        while True:
+            frame = mycam.getframe()  
+            '''result, webcam_frame = cv2.imencode('.jpg', frame, encode_param)        
+            data = pickle.dumps(webcam_frame, 0)
+            size = len(data)      
+            try:          
+                webcam_socket.send(struct.pack(">L", size)+  data)
             except:
-                print('cannot connect to webcam server\n******')
-        if frame is None:
+                print('\n********\nwebcam connection error')
+                try:
+                    print('try to connect to webcam_Server\n')
+                    webcam_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    webcam_socket.settimeout(0.1)
+                    webcam_socket.connect(('140.121.130.133',9998))
+                    print('ok')
+                except:
+                    print('cannot connect to webcam server\n******')
+            if frame is None:
+                print('TRASH_NUM_final',TRASH_NUM)    
+                print('CAP_NUM_final',CAP_NUM)
+                break '''        
+
+            """--------------  Detect_image  ------------"""
+            image = Image.fromarray(frame)
+            image, trash_num, cap_num = yolo.detect_image(image)
+
+            TRASH_NUM = TRASH_NUM + trash_num
+            
+            CAP_NUM = CAP_NUM + cap_num
+            """------------------------------------------"""
+
+            result = np.asarray(image)
+            curr_time = timer()
+            exec_time = curr_time - prev_time
+            prev_time = curr_time
+            accum_time = accum_time + exec_time
+            curr_fps = curr_fps + 1
+
+            if accum_time > 1:
+                accum_time = accum_time - 1
+                fps = "FPS: " + str(curr_fps)
+                curr_fps = 0
+
+            cv2.putText(result, text=fps, org=(3, 15), fontFace = cv2.FONT_HERSHEY_SIMPLEX,
+                        fontScale=0.40, color=(0, 125, 50), thickness=1)
+            #cv2.namedWindow("yolov3_Result", cv2.WINDOW_AUTOSIZE)
+            cv2.imshow("yolov3_Result", result)
+
+            _, webcam_frame = cv2.imencode('.jpg', result, encode_param)        
+            data = pickle.dumps(webcam_frame, 0)
+            size = len(data)      
+            try:          
+                webcam_socket.send(struct.pack(">L", size)+  data)
+            except:
+                print('\n********\nwebcam connection error')
+                try:
+                    print('try to connect to webcam_Server\n')
+                    webcam_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    webcam_socket.settimeout(0.1)
+                    webcam_socket.connect(('140.121.130.133',9998))
+                    print('ok')
+                except:
+                    print('cannot connect to webcam server\n******')
+            if frame is None:
+                print('TRASH_NUM_final',TRASH_NUM)    
+                print('CAP_NUM_final',CAP_NUM)
+                print('frame is none')
+                pass
             print('TRASH_NUM_final',TRASH_NUM)    
             print('CAP_NUM_final',CAP_NUM)
-            break '''        
-
-        """--------------  Detect_image  ------------"""
-        image = Image.fromarray(frame)
-        image, trash_num, cap_num = yolo.detect_image(image)
-
-        TRASH_NUM = TRASH_NUM + trash_num
-        
-        CAP_NUM = CAP_NUM + cap_num
-        """------------------------------------------"""
-
-        result = np.asarray(image)
-        curr_time = timer()
-        exec_time = curr_time - prev_time
-        prev_time = curr_time
-        accum_time = accum_time + exec_time
-        curr_fps = curr_fps + 1
-
-        if accum_time > 1:
-            accum_time = accum_time - 1
-            fps = "FPS: " + str(curr_fps)
-            curr_fps = 0
-
-        cv2.putText(result, text=fps, org=(3, 15), fontFace = cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=0.40, color=(0, 125, 50), thickness=1)
-        #cv2.namedWindow("yolov3_Result", cv2.WINDOW_AUTOSIZE)
-        cv2.imshow("yolov3_Result", result)
-
-        _, webcam_frame = cv2.imencode('.jpg', result, encode_param)        
-        data = pickle.dumps(webcam_frame, 0)
-        size = len(data)      
-        try:          
-            webcam_socket.send(struct.pack(">L", size)+  data)
-        except:
-            print('\n********\nwebcam connection error')
-            try:
-                print('try to connect to webcam_Server\n')
-                webcam_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                webcam_socket.settimeout(0.1)
-                webcam_socket.connect(('140.121.130.133',9998))
-                print('ok')
-            except:
-                print('cannot connect to webcam server\n******')
-        if frame is None:
-            print('TRASH_NUM_final',TRASH_NUM)    
-            print('CAP_NUM_final',CAP_NUM)
-            print('frame is none')
-            pass
+            
+            if isOutput:
+                out.write(result)
+            
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+        yolo.close_session()
+        mycam.stop()
         print('TRASH_NUM_final',TRASH_NUM)    
         print('CAP_NUM_final',CAP_NUM)
-        
-        if isOutput:
-            out.write(result)
-        
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-    yolo.close_session()
-    print('TRASH_NUM_final',TRASH_NUM)    
-    print('CAP_NUM_final',CAP_NUM)
+    except KeyboardInterrupt:
+        yolo.close_session()
+        mycam.stop()
     
 def socket_send_to_MapServer(message):
     try:
@@ -664,9 +669,15 @@ def COPTER_JOB():
         print("exception:",e)
         vehicle.close() 
         print(e)     
+    except KeyboardInterrupt:
+        print('\n\nKeyboardInterrupt')
+        print('vehicle.close() and sys.exit()')
+        vehicle.close()
+        sys.exit()
     finally :
+        print('vehicle.close() and sys.exit()')
         vehicle.close() 
-        sys.exit(0)
+        sys.exit()
 def main():
     global vehicle
     t1 = threading.Thread(target=COPTER_JOB)

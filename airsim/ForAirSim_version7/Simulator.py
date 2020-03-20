@@ -96,7 +96,7 @@ def set_waypoints_from_txt(path):
 # Parameters Initialize
 alt      = -3   # Define the flight alt.
 wp_i     = 0
-velocity = 2    # m/s
+velocity = 5    # m/s
 tag_time = 0
 th2 = threading.Thread(target=adjH)
 th2.setDaemon(True)
@@ -120,9 +120,11 @@ home = client.getMultirotorState().kinematics_estimated.position
 print('>> Home_(x, y, z) -> ({xx}, {yy}, {zz})'.format(xx=home.x_val, yy=home.y_val, zz=home.z_val))
 
 # Set waypoint
-Waypoints_name = client.simListSceneObjects("Wp_.*")
+""" Waypoints_name = client.simListSceneObjects("Wp_.*")
 print(">> Waypoint list: {ww:}".format(ww=Waypoints_name))
-wp = SetWaypoint(Waypoints_name)
+wp = SetWaypoint(Waypoints_name) """
+
+wp = set_waypoints_from_txt('../waypoints/africa_waypoints.txt')
 
 # Add home into wp-list for RTL.
 print (">> Add Home into wp-list for RTL ...")
@@ -167,8 +169,9 @@ while wp_i < (num_wp):
         # For color
         color    = responses[1]
         imgcolor = np.fromstring(color.image_data_uint8, dtype=np.uint8)
-        imgcolor = imgcolor.reshape(responses[1].height, responses[1].width, 3)    
-        
+        imgcolor = imgcolor.reshape(responses[1].height, responses[1].width, -1)    
+        if imgcolor.shape[2] == 4:            
+            imgcolor = cv2.cvtColor(imgcolor,cv2.COLOR_RGBA2BGR)        
         # Show information
         txt = str(temp2[240,320])
         #cv2.circle(depth, (320,240), 5, (0,0,255), -1)
@@ -266,7 +269,7 @@ while wp_i < (num_wp):
     GPS = GetPos()
     # Check if reach the waypoint(x,y)
     #if (abs(GPS[0] - wp[wp_i][0]) <= 0.15) and (abs(GPS[1] - wp[wp_i][1]) <= 0.15):
-    if math.sqrt(abs(GPS[0] - wp[wp_i][0])**2 + abs(GPS[1] - wp[wp_i][1])**2) <= 0.3:
+    if math.sqrt(abs(GPS[0] - wp[wp_i][0])**2 + abs(GPS[1] - wp[wp_i][1])**2) <= 2:
         SEND = True
         gps_temp = GetPos()
         client.moveByVelocityAsync(vx=0, vy=0, vz=0, duration=1).join()

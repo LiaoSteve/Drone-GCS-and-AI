@@ -14,10 +14,10 @@ import FuzzyControlA, FuzzyControlB
 from math import degrees
 
 def adjH():
-    global tag_time
-    while True:
+    global tag_time           
+    while True:     
         tag_time += 1
-        time.sleep(1)
+        time.sleep(1)        
 
 
 def LocalFrameV(vx, vy, ahead):
@@ -46,6 +46,7 @@ def ROI_process(distance_map):
 def GetPos():
     PosNow = client.getMultirotorState().kinematics_estimated.position
     return [round(PosNow.x_val,4), round(PosNow.y_val,4), round(PosNow.z_val,4)] 
+
 def get_velocity():
     v = client.getMultirotorState().kinematics_estimated.linear_velocity
     return list((round(v.x_val,2),round(v.y_val,2),round(v.z_val,2)))
@@ -91,17 +92,16 @@ def set_waypoints_from_txt(path):
         return wp
     except Exception as e:
         print(e)
-        sys.exit()
+        sys.exit()     
 
 # Parameters Initialize
 alt      = -3   # Define the flight alt.
 wp_i     = 0
-velocity = 5    # m/s
+velocity = 2    # m/s
 tag_time = 0
 th2 = threading.Thread(target=adjH)
 th2.setDaemon(True)
-
-
+path = 'record_position/A.txt' #record position
 # Fuzzy system
 fzA = FuzzyControlA.FuzzyControl()
 fzB = FuzzyControlB.FuzzyControl()
@@ -120,15 +120,15 @@ home = client.getMultirotorState().kinematics_estimated.position
 print('>> Home_(x, y, z) -> ({xx}, {yy}, {zz})'.format(xx=home.x_val, yy=home.y_val, zz=home.z_val))
 
 # Set waypoint
-""" Waypoints_name = client.simListSceneObjects("Wp_.*")
+Waypoints_name = client.simListSceneObjects("Wp_.*")
 print(">> Waypoint list: {ww:}".format(ww=Waypoints_name))
-wp = SetWaypoint(Waypoints_name) """
+wp = SetWaypoint(Waypoints_name)
 
-wp = set_waypoints_from_txt('../waypoints/africa_waypoints.txt')
+#wp = set_waypoints_from_txt('../waypoints/africa_waypoints.txt')
 
 # Add home into wp-list for RTL.
-print (">> Add Home into wp-list for RTL ...")
-wp.append([home.x_val, home.y_val, alt])
+""" print (">> Add Home into wp-list for RTL ...")
+wp.append([home.x_val, home.y_val, alt]) """
 num_wp = len(wp)
 print(">> {n:} Waypoints: [x, y, z]".format(n=num_wp))
 for i in range(len(wp)):
@@ -137,8 +137,24 @@ for i in range(len(wp)):
 # Takeoff
 print("\n ==== Takeoff ====")
 client.takeoffAsync()
-print(">> Adjust altitude to {hight:}(m)".format(hight=abs(alt)))
-client.moveToZAsync(-3, velocity=1).join()
+client.moveToZAsync(-3, velocity=1)
+while 1:
+    GPS = GetPos()  
+    if abs(GPS[2])> 3*0.95:        
+        break    
+    if os.path.exists(path):
+        f= open(path,"a+")
+    else:
+        f= open(path,"w+")                    
+    try:            
+        f.write(str(GPS[0])+' '+str(GPS[1])+' '+str(GPS[2])+' \n')    
+        f.close()  
+        time.sleep(0.5)   
+    except Exception as e:
+        print('error: ',e)        
+        pass
+#print(">> Adjust altitude to {hight:}(m)".format(hight=abs(alt)))
+#client.moveToZAsync(-3, velocity=1).join()
 print(">> Arrived at alt: {hight:}(m)".format(hight=abs(alt)))
 print("\n ==== Start Mission =====")
 print(">> Velocity:{v:}".format(v=velocity))
@@ -152,8 +168,20 @@ while wp_i < (num_wp):
     if not responses:
         client.moveByVelocityAsync(vx=0, vy=0, vz=0, duration=1).join()
         print("** Wait for data. **")
-        continue
-    
+        continue    
+    if os.path.exists(path):
+        f= open(path,"a+")
+    else:
+        f= open(path,"w+")                    
+    try:    
+        GPS = GetPos()
+        f.write(str(GPS[0])+' '+str(GPS[1])+' '+str(GPS[2])+' \n')    
+        f.close()     
+    except Exception as e:
+        print('error: ',e)
+        print(tag_time)
+        pass
+
     # For depth
     try:
         response = responses[0]
@@ -227,28 +255,28 @@ while wp_i < (num_wp):
         cv2.line(imgcolor, (310-15*6, 95), (310 + 15*6, 95), (0, 0, 0), 4)
         
         
-        cv2.putText(imgcolor, 'Yb', (300, 120), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 4)                
-        cv2.line(imgcolor, (310-15*6, 135), (310 + 15*6, 135), (0, 0, 0), 4)
+        cv2.putText(imgcolor, 'Yb', (300, 110), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 4)                
+        cv2.line(imgcolor, (310-15*6, 125), (310 + 15*6, 125), (0, 0, 0), 4)
         
         
-        cv2.putText(imgcolor, 'Zb', (300, 150), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 4)                
-        cv2.line(imgcolor, (310-15*6, 165), (310 + 15*6, 165), (0, 0, 0), 4)
+        cv2.putText(imgcolor, 'Zb', (300, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 4)                
+        cv2.line(imgcolor, (310-15*6, 155), (310 + 15*6, 155), (0, 0, 0), 4)
         
         #-----------------------------------------------------------------------------------------------------------------
         cv2.putText(imgcolor, 'Xb', (300, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
-        cv2.line(imgcolor, (310, 100), (310 + 30*int(V_For), 100), (0, 255, 0), 2)
-        cv2.putText(imgcolor, str(round(V_For,2)), (310 + 30*int(V_For), 100), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 4)
-        cv2.putText(imgcolor, str(round(V_For,2)), (310 + 30*int(V_For), 100), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
+        cv2.line(imgcolor, (310, 95), (310 + 30*int(V_For), 95), (0, 255, 0), 2)
+        cv2.putText(imgcolor, str(round(V_For,2)), (310 + 35*int(V_For), 95), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 4)
+        cv2.putText(imgcolor, str(round(V_For,2)), (310 + 35*int(V_For), 95), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
         
-        cv2.putText(imgcolor, 'Yb', (300, 120), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
-        cv2.line(imgcolor, (310, 135), (310 + 30*int(V_Hor), 135), (0, 255, 0), 2)
-        cv2.putText(imgcolor, str(round(V_Hor,2)), (310 + 30*int(V_Hor), 135), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 4)
-        cv2.putText(imgcolor, str(round(V_Hor,2)), (310 + 30*int(V_Hor), 135), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
+        cv2.putText(imgcolor, 'Yb', (300, 110), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
+        cv2.line(imgcolor, (310, 125), (310 + 30*int(V_Hor), 125), (0, 255, 0), 2)
+        cv2.putText(imgcolor, str(round(V_Hor,2)), (310 + 35*int(V_Hor), 125), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 4)
+        cv2.putText(imgcolor, str(round(V_Hor,2)), (310 + 35*int(V_Hor), 125), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
         
-        cv2.putText(imgcolor, 'Zb', (300, 150), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
-        cv2.line(imgcolor, (310, 165), (310 + 30*int(V_Ver), 165), (0, 255, 0), 2)
-        cv2.putText(imgcolor, str(round(V_Ver,2)), (310 + 30*int(V_Ver), 165), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 4)
-        cv2.putText(imgcolor, str(round(V_Ver,2)), (310 + 30*int(V_Ver), 165), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
+        cv2.putText(imgcolor, 'Zb', (300, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
+        cv2.line(imgcolor, (310, 155), (310 + 30*int(V_Ver), 155), (0, 255, 0), 2)
+        cv2.putText(imgcolor, str(round(V_Ver,2)), (310 + 35*int(V_Ver), 155), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 4)
+        cv2.putText(imgcolor, str(round(V_Ver,2)), (310 + 35*int(V_Ver), 155), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
         
         # Show info. in depth frame
         cv2.putText(depth, txt1, (257+m_j, 168+m_i), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0,255), 2)
@@ -274,37 +302,41 @@ while wp_i < (num_wp):
         gps_temp = GetPos()
         client.moveByVelocityAsync(vx=0, vy=0, vz=0, duration=1).join()
         print(">> Arrived at wp{Nwp:}({x:}, {y:}, {z:})!".format(Nwp=wp_i+1, x=gps_temp[0], y=gps_temp[1], z=gps_temp[2]))
-        wp_i += 1
-        
+        wp_i += 1        
     # Frame show 
     cv2.imshow("Cam", depth)
-    cv2.imshow("COLOR", imgcolor)
-    '''
-    # Check if Mission Complete
-    if wp_i > (num_wp - 1):
-        cv2.destroyAllWindows()
-        print(">> Arrived at HOME")
-        break
-    '''
+    cv2.imshow("COLOR", imgcolor)  
     key = cv2.waitKey(1) & 0xFF
     if key == 27 or key == ord('q'):
         cv2.destroyAllWindows()
         break
-
-# Hover
 print('\n ==== Mission Complete ! ====')
-time.sleep(1)
 print(">> LAND")
 cv2.destroyAllWindows()
-client.landAsync().join()
+#client.landAsync().join()
+client.landAsync()
+while 1:
+    GPS = GetPos()  
+    if abs(GPS[2]) < 1*0.1:        
+        break    
+    if os.path.exists(path):
+        f= open(path,"a+")
+    else:
+        f= open(path,"w+")                    
+    try:            
+        f.write(str(GPS[0])+' '+str(GPS[1])+' '+str(GPS[2])+' \n')    
+        f.close()  
+        time.sleep(0.5)   
+    except Exception as e:
+        print('error: ',e)        
+        pass
 client.armDisarm(False)
-
 # Reset
 """ print("\n ==== Reset Vehicle ====")
 for sec in reversed(range(1,6)):
     print(">> {s:} second left.".format(s=sec))
-    time.sleep(1)
-client.reset() """
+    time.sleep(1) """
+client.reset()
 
 # that's enough fun for now. let's quit cleanly
 client.enableApiControl(False)

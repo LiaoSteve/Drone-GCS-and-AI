@@ -7,7 +7,7 @@
 
 import airsim
 import numpy as np
-import os
+import os, timeit
 import pprint
 import cv2, time, sys, threading, math
 import FuzzyControlA, FuzzyControlB
@@ -101,13 +101,18 @@ velocity = 2    # m/s
 tag_time = 0
 th2 = threading.Thread(target=adjH)
 th2.setDaemon(True)
-path = 'record_position/A.txt' #record position
+
+path = 'record_position/' #record position
+os.makedirs(path, exist_ok=True)
+path_name = 'A.txt'
+object_name = 'object_'+path_name
+
 # Fuzzy system
 fzA = FuzzyControlA.FuzzyControl()
 fzB = FuzzyControlB.FuzzyControl()
 fzA.pre_fzprocess()
 fzB.pre_fzprocess()
-cuttrnt_fuzzy_name = 'A'
+current_fuzzy_name = 'A'
 # Connect to the AirSim simulator
 client = airsim.MultirotorClient()
 client.confirmConnection()
@@ -124,6 +129,19 @@ Waypoints_name = client.simListSceneObjects("Wp_.*")
 print(">> Waypoint list: {ww:}".format(ww=Waypoints_name))
 wp = SetWaypoint(Waypoints_name)
 
+# record object to txt
+_object_name =  client.simListSceneObjects("object_.*")
+print(">> _object  list: {ww:}".format(ww=_object_name))
+ob = SetWaypoint(_object_name)                             
+try:            
+    f= open(path+object_name,"w")    
+    f.write(str(ob.__len__())+ '\n')    
+    for i in range(ob.__len__()):
+        f.write(str(ob[i][0])+' '+str(ob[i][1])+' '+str(ob[i][2])+' \n')    
+    f.close()         
+except Exception as e:
+    print('error: ',e)        
+    pass
 #wp = set_waypoints_from_txt('../waypoints/africa_waypoints.txt')
 
 # Add home into wp-list for RTL.
@@ -142,10 +160,10 @@ while 1:
     GPS = GetPos()  
     if abs(GPS[2])> 3*0.95:        
         break    
-    if os.path.exists(path):
-        f= open(path,"a+")
+    if os.path.exists(path+path_name):
+        f= open(path+path_name,"a+")
     else:
-        f= open(path,"w+")                    
+        f= open(path+path_name,"w+")                    
     try:            
         f.write(str(GPS[0])+' '+str(GPS[1])+' '+str(GPS[2])+' \n')    
         f.close()  
@@ -162,25 +180,28 @@ print(">> Velocity:{v:}".format(v=velocity))
 SEND = True
 # Main
 th2.start()
+timer =  timeit.default_timer()
 while wp_i < (num_wp):   
     responses = client.simGetImages([airsim.ImageRequest("0", airsim.ImageType.DepthPlanner, pixels_as_float=True, compress=False),
                                     airsim.ImageRequest("1", airsim.ImageType.Scene, False, False)])
     if not responses:
         client.moveByVelocityAsync(vx=0, vy=0, vz=0, duration=1).join()
         print("** Wait for data. **")
-        continue    
-    if os.path.exists(path):
-        f= open(path,"a+")
-    else:
-        f= open(path,"w+")                    
-    try:    
-        GPS = GetPos()
-        f.write(str(GPS[0])+' '+str(GPS[1])+' '+str(GPS[2])+' \n')    
-        f.close()     
-    except Exception as e:
-        print('error: ',e)
-        print(tag_time)
-        pass
+        continue  
+    if timeit.default_timer()-timer > 0.7:
+        if os.path.exists(path+path_name):
+            f= open(path+path_name,"a+")
+        else:
+            f= open(path+path_name,"w+")                    
+        try:    
+            GPS = GetPos()
+            f.write(str(GPS[0])+' '+str(GPS[1])+' '+str(GPS[2])+' \n')    
+            f.close()     
+            timer = timeit.default_timer()
+        except Exception as e:
+            print('error: ',e)
+            print(tag_time)
+            pass
 
     # For depth
     try:
@@ -217,11 +238,11 @@ while wp_i < (num_wp):
 
     cv2.putText(img=imgcolor, text='Pos [x,y,z]: [{:.1f}, {:.1f}, {:.1f}]'.format(GPS[0],GPS[1],GPS[2]), org=(10, 18), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(0, 0, 0), fontScale=0.4, thickness=5) 
     cv2.putText(img=imgcolor, text='V_global [x,y,z]: [{:.1f}, {:.1f}, {:.1f}]'.format(V_global[0],V_global[1],V_global[2]), org=(10, 40), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(0, 0, 0), fontScale=0.4, thickness=5) 
-    cv2.putText(img=imgcolor, text='way_point: {}/{}, dist: {:.2f} m, Fuzzy_name: {}'.format(wp_i+1, len(wp), dist_to_waypoint, cuttrnt_fuzzy_name), org=(10, 60), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(0, 0, 0), fontScale=0.4, thickness=5)
+    cv2.putText(img=imgcolor, text='way_point: {}/{}, dist: {:.2f} m, Fuzzy_system: {}'.format(wp_i+1, len(wp), dist_to_waypoint, current_fuzzy_name), org=(10, 60), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(0, 0, 0), fontScale=0.4, thickness=5)
     
     cv2.putText(img=imgcolor, text='Pos [x,y,z]: [{:.1f}, {:.1f}, {:.1f}]'.format(GPS[0],GPS[1],GPS[2]), org=(10, 18), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(255, 255, 255), fontScale=0.4, thickness=1) 
     cv2.putText(img=imgcolor, text='V_global [x,y,z]: [{:.1f}, {:.1f}, {:.1f}]'.format(V_global[0],V_global[1],V_global[2]), org=(10, 40), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(255, 255, 255), fontScale=0.4, thickness=1) 
-    cv2.putText(img=imgcolor, text='way_point: {}/{}, dist: {:.2f} m, Fuzzy_name: {}'.format(wp_i+1, len(wp), dist_to_waypoint, cuttrnt_fuzzy_name), org=(10, 60), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(255, 255, 255), fontScale=0.4, thickness=1)
+    cv2.putText(img=imgcolor, text='way_point: {}/{}, dist: {:.2f} m, Fuzzy_system: {}'.format(wp_i+1, len(wp), dist_to_waypoint, current_fuzzy_name), org=(10, 60), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(255, 255, 255), fontScale=0.4, thickness=1)
     
    
     # Movement decision
@@ -232,10 +253,10 @@ while wp_i < (num_wp):
         #print(">> Recieve data: X= {VH:}, Y= {VV:}, Dist= {VF:}".format(VH=Horizontal_value, VV=Vertical_value, VF=Forward_value))        
         # Fuzzy Control        
         if ( dist_to_waypoint <= 5):
-            cuttrnt_fuzzy_name = 'B'
+            current_fuzzy_name = 'B'
             V_Hor, V_Ver, V_For, cost_time = fzB.fzprocess(delta_x=Horizontal_value, delta_y=Vertical_value, distance=Forward_value)
         else:
-            cuttrnt_fuzzy_name = 'A'
+            current_fuzzy_name = 'A'
             V_Hor, V_Ver, V_For, cost_time = fzA.fzprocess(delta_x=Horizontal_value, delta_y=Vertical_value, distance=Forward_value)
         # Round
         V_Hor = round(V_Hor,2)
@@ -319,14 +340,14 @@ while 1:
     GPS = GetPos()  
     if abs(GPS[2]) < 1*0.1:        
         break    
-    if os.path.exists(path):
-        f= open(path,"a+")
+    if os.path.exists(path+path_name):
+        f= open(path+path_name,"a+")
     else:
-        f= open(path,"w+")                    
+        f= open(path+path_name,"w+")                    
     try:            
         f.write(str(GPS[0])+' '+str(GPS[1])+' '+str(GPS[2])+' \n')    
         f.close()  
-        time.sleep(0.5)   
+        time.sleep(0.7)   
     except Exception as e:
         print('error: ',e)        
         pass

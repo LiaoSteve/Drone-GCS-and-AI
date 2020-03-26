@@ -1,5 +1,5 @@
 # Topic  : Apply Fuzzy control system on Aircraft in AirSim.
-# Author : Tzung-Hsien Huang 
+# Author : Tzung-Hsien Huang , LiaoSteve
 # Update : 2019/01/08
 # >> Add "SEND" to prevent sending repeat cmd to the drone.
 # >> Add Threading to move forward with current alt, and move to the wp's alt after 5sec.
@@ -62,17 +62,21 @@ def yawDegree(now, goal):
     theta = np.rad2deg(np.arctan2(delta_y,delta_x))
     return round(theta,4)
 
-def SetWaypoint(All_points_name):
-    wp = []
-    for Obj_Name in All_points_name:
-        Waypoint = client.simGetObjectPose(Obj_Name).position
+def SetWaypoint(All_points_name,key):
+    temp_wp = []
+    wp = []    
+    for num in All_points_name:
+        temp_wp.append(int(num.split('_')[1]))
+    temp_wp.sort()
+    for Obj_Name in temp_wp:
+        Waypoint = client.simGetObjectPose(key+str(Obj_Name)).position
         # Check 
         if not (math.isnan(Waypoint.x_val) and math.isnan(Waypoint.y_val)):
-            print(">> {wp_name:} Check: OK!".format(wp_name=Obj_Name))
+            print(">> {wp_name:} Check: OK!".format(wp_name=key+str(Obj_Name)))
         else:
-            print(">> {wp_name:} Nan detected, re-access.".format(wp_name=Obj_Name))
+            print(">> {wp_name:} Nan detected, re-access.".format(wp_name=key+str(Obj_Name)))
             while (math.isnan(Waypoint.x_val) or math.isnan(Waypoint.y_val)):
-                Waypoint = client.simGetObjectPose(Obj_Name).position                        
+                Waypoint = client.simGetObjectPose(key+str(Obj_Name)).position                        
         wp.append([Waypoint.x_val, Waypoint.y_val, alt])
     return wp
 
@@ -104,7 +108,7 @@ th2.setDaemon(True)
 
 path = 'record_position/' #record position
 os.makedirs(path, exist_ok=True)
-path_name = 'A.txt'
+path_name = 'B.txt'
 object_name = 'object_'+path_name
 
 # Fuzzy system
@@ -127,15 +131,14 @@ print('>> Home_(x, y, z) -> ({xx}, {yy}, {zz})'.format(xx=home.x_val, yy=home.y_
 # Set waypoint
 Waypoints_name = client.simListSceneObjects("Wp_.*")
 print(">> Waypoint list: {ww:}".format(ww=Waypoints_name))
-wp = SetWaypoint(Waypoints_name)
+wp = SetWaypoint(Waypoints_name,key='Wp_')
 
 # record object to txt
 _object_name =  client.simListSceneObjects("object_.*")
 print(">> _object  list: {ww:}".format(ww=_object_name))
-ob = SetWaypoint(_object_name)                             
+ob = SetWaypoint(_object_name,key="object_")                             
 try:            
-    f= open(path+object_name,"w")    
-    f.write(str(ob.__len__())+ '\n')    
+    f= open(path+object_name,"w")            
     for i in range(ob.__len__()):
         f.write(str(ob[i][0])+' '+str(ob[i][1])+' '+str(ob[i][2])+' \n')    
     f.close()         
@@ -243,8 +246,10 @@ while wp_i < (num_wp):
     cv2.putText(img=imgcolor, text='Pos [x,y,z]: [{:.1f}, {:.1f}, {:.1f}]'.format(GPS[0],GPS[1],GPS[2]), org=(10, 18), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(255, 255, 255), fontScale=0.4, thickness=1) 
     cv2.putText(img=imgcolor, text='V_global [x,y,z]: [{:.1f}, {:.1f}, {:.1f}]'.format(V_global[0],V_global[1],V_global[2]), org=(10, 40), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(255, 255, 255), fontScale=0.4, thickness=1) 
     cv2.putText(img=imgcolor, text='way_point: {}/{}, dist: {:.2f} m, Fuzzy_system: {}'.format(wp_i+1, len(wp), dist_to_waypoint, current_fuzzy_name), org=(10, 60), fontFace=cv2.FONT_HERSHEY_SIMPLEX, color=(255, 255, 255), fontScale=0.4, thickness=1)
-    
-   
+    if ( dist_to_waypoint <= 5):
+        current_fuzzy_name = 'B'
+    else:
+        current_fuzzy_name = 'A'
     # Movement decision
     if ROI_process(temp2):            
         SEND = True
@@ -252,11 +257,12 @@ while wp_i < (num_wp):
         m_i, m_j, Horizontal_value, Vertical_value, Forward_value = ROI_process(temp2)
         #print(">> Recieve data: X= {VH:}, Y= {VV:}, Dist= {VF:}".format(VH=Horizontal_value, VV=Vertical_value, VF=Forward_value))        
         # Fuzzy Control        
-        if ( dist_to_waypoint <= 5):
-            current_fuzzy_name = 'B'
-            V_Hor, V_Ver, V_For, cost_time = fzB.fzprocess(delta_x=Horizontal_value, delta_y=Vertical_value, distance=Forward_value)
-        else:
-            current_fuzzy_name = 'A'
+        if current_fuzzy_name == 'B':            
+            if Forward_value < 300:
+                V_Hor, V_Ver, V_For, cost_time = fzB.fzprocess(delta_x=Horizontal_value, delta_y=Vertical_value, distance=Forward_value)
+            else:
+                client.moveToPositionAsync(wp[wp_i][0], wp[wp_i][1], GPS[2], velocity=velocity, yaw_mode=airsim.YawMode(False, Heading))
+        elif current_fuzzy_name == 'A':              
             V_Hor, V_Ver, V_For, cost_time = fzA.fzprocess(delta_x=Horizontal_value, delta_y=Vertical_value, distance=Forward_value)
         # Round
         V_Hor = round(V_Hor,2)
@@ -310,7 +316,7 @@ while wp_i < (num_wp):
         # Show info. in frame
         cv2.putText(imgcolor, 'CLEAR', (300, 200), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
         #cv2.putText(imgcolor, str_tag, (300, 220), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-        if tag_time<5:
+        if tag_time<8:
             client.moveToPositionAsync(wp[wp_i][0], wp[wp_i][1], GPS[2], velocity=velocity, yaw_mode=airsim.YawMode(False, Heading))
         else:
             client.moveToPositionAsync(wp[wp_i][0], wp[wp_i][1], wp[wp_i][2], velocity=velocity, yaw_mode=airsim.YawMode(False, Heading))
@@ -318,7 +324,7 @@ while wp_i < (num_wp):
     GPS = GetPos()
     # Check if reach the waypoint(x,y)
     #if (abs(GPS[0] - wp[wp_i][0]) <= 0.15) and (abs(GPS[1] - wp[wp_i][1]) <= 0.15):
-    if math.sqrt(abs(GPS[0] - wp[wp_i][0])**2 + abs(GPS[1] - wp[wp_i][1])**2) <= 2:
+    if math.sqrt(abs(GPS[0] - wp[wp_i][0])**2 + abs(GPS[1] - wp[wp_i][1])**2) <= 1:
         SEND = True
         gps_temp = GetPos()
         client.moveByVelocityAsync(vx=0, vy=0, vz=0, duration=1).join()

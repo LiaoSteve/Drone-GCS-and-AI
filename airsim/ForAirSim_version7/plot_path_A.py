@@ -91,7 +91,7 @@ if __name__ == '__main__':
     ax1.set_zlim(0, 90) 
     ax1.view_init(azim=159, elev=23 )
     ax1.dist = 9 # zoom in/out
-    plt.title('The result of fuzzy system avoidance', fontsize = 14)
+    plt.title('The trajectory of fuzzy avoidance', fontsize = 14)
     for i in range(len(wp)):
         ax1.scatter(wp[i,0], wp[i,1], -1*wp[i,2],c='b', marker="2", s=2)                                           
         plt.pause(0.0001)  
@@ -100,7 +100,11 @@ if __name__ == '__main__':
     for i in range(50):
         ax1.view_init(azim=159+i, elev=23 )
         plt.pause(0.0001)
-        plt.savefig(data_dir+'/'+str(len(wp))+str(i)+'.png')
+        plt.savefig(data_dir+'/'+str(len(wp)+1+i)+'.png')
+    for i in range(40):
+        ax1.view_init(azim=159+50, elev=38+i)
+        plt.pause(0.0001)
+        plt.savefig(data_dir+'/'+str(len(wp)+159+50+20+i)+'.png')
     print('OK')
     plt.ioff()
     plt.show()

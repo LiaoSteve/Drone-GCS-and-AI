@@ -2,13 +2,13 @@
 import os
 import imageio
 
-dirName1 = 'Data_B/'
+dirName1 = 'Data_A/'
 
 dirs = os.listdir(dirName1) #--- change dirName 1 ,2
 dirs.sort(key=lambda x:int(x[:-4]))
 frames = []
 
-gif_name1 = 'Data_gif_B.gif'
+gif_name1 = 'Data_gif_A.gif'
 
 for file in dirs:    
     frames.append(imageio.imread(dirName1 + file)) #-- change dirName 1,2

@@ -108,9 +108,9 @@ th2.setDaemon(True)
 
 path = 'record_position/' #record position
 os.makedirs(path, exist_ok=True)
-path_name = 'B.txt'
+path_name = 'C.txt'
 object_name = 'object_'+path_name
-
+wp_name = 'wp_'+path_name
 # Fuzzy system
 fzA = FuzzyControlA.FuzzyControl()
 fzB = FuzzyControlB.FuzzyControl()
@@ -132,6 +132,14 @@ print('>> Home_(x, y, z) -> ({xx}, {yy}, {zz})'.format(xx=home.x_val, yy=home.y_
 Waypoints_name = client.simListSceneObjects("Wp_.*")
 print(">> Waypoint list: {ww:}".format(ww=Waypoints_name))
 wp = SetWaypoint(Waypoints_name,key='Wp_')
+try:            
+    f= open(path+wp_name,"w")            
+    for i in range(wp.__len__()):
+        f.write(str(wp[i][0])+' '+str(wp[i][1])+' '+str(wp[i][2])+' \n')    
+    f.close()         
+except Exception as e:
+    print('error: ',e)        
+    pass
 
 # record object to txt
 _object_name =  client.simListSceneObjects("object_.*")

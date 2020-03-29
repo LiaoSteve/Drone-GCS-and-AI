@@ -73,37 +73,42 @@ if __name__ == '__main__':
     data_dir = 'Data_B'
     os.makedirs(data_dir, exist_ok=True)
     ob = get_object_position_from_txt('record_position/object_B.txt')    
-    wp = np.array(get_path_data_from_txt('record_position/B.txt'))
-
+    trajectory = np.array(get_path_data_from_txt('record_position/B.txt'))
+    wp = get_object_position_from_txt('record_position/wp_B.txt')
     fig = plt.figure(figsize=(8,6))
     ax1 = fig.add_subplot(111, projection='3d')
     plt.ion()
     plt.show()
     ax1.set_xlabel('x')
     ax1.set_ylabel('y')
-    ax1.set_zlabel('z')
-    #plot_linear_cube(ax1,ob[0][0], ob[0][1], ob[0][2], 7.5, 7.5, 7.5)
+    ax1.set_zlabel('z')    
     for i in range(len(ob)):
-        plot_opaque_cube(ax1,ob[i][0], ob[i][1], ob[i][2], 5, 5, 5)  # 10*10*10 cube  
-    
+        plot_opaque_cube(ax1,ob[i][0], ob[i][1], ob[i][2], 5, 5, 5)  # 10*10*10 cube      
 
-    ax1.scatter(wp[0,0], wp[0,1], -0.5, c='g', marker="$Start$", s= 1000) # marker>> https://matplotlib.org/3.1.1/api/markers_api.html#module-matplotlib.markers
-    ax1.scatter(wp[-1,0], wp[-1,1], -0.5, c='r', marker="x", s= 80)
-    ax1.set_xlim(-10, 80)
-    ax1.set_ylim( 50,-40)
-    ax1.set_zlim(0, 90) 
-    ax1.view_init(azim=159, elev=23 )
-    ax1.dist = 9 # zoom in/out
-    plt.title('The result of fuzzy system avoidance', fontsize = 14)
+    ax1.scatter(trajectory[0,0], trajectory[0,1], 0, c='g', marker="$Start$", s= 1000) # marker>> https://matplotlib.org/3.1.1/api/markers_api.html#module-matplotlib.markers
     for i in range(len(wp)):
-        ax1.scatter(wp[i,0], wp[i,1], -1*wp[i,2],c='b', marker="2", s=2)                                           
+        ax1.scatter(wp[i][0], wp[i][1], 0, c='r', marker="x", s= 60)
+
+    ax1.set_xlim(-10, 80)
+    ax1.set_ylim( 70,-20)
+    ax1.set_zlim(0, 90) 
+
+    ax1.view_init(azim=117, elev=38)
+    ax1.dist = 9 # zoom in/out
+    plt.title('The trajectory of fuzzy avoidance', fontsize = 14)
+    for i in range(len(trajectory)):
+        ax1.scatter(trajectory[i,0], trajectory[i,1], -1*trajectory[i,2],c='b', marker="2", s=2)                                           
         plt.pause(0.0001)  
-        #plt.savefig(data_dir+'/'+str(i)+'.png')
-    #plt.savefig(data_dir+'_final.png')
-    for i in range(50):
-        ax1.view_init(azim=159+i, elev=23 )
+        plt.savefig(data_dir+'/'+str(i)+'.png')
+    plt.savefig(data_dir+'_final.png')
+    for i in range(70):
+        ax1.view_init(azim=117+i, elev=38)
         plt.pause(0.0001)
-        #plt.savefig(data_dir+'/'+str(len(wp))+str(i)+'.png')
+        plt.savefig(data_dir+'/'+str(len(trajectory)+i)+'.png')
+    for i in range(40):
+        ax1.view_init(azim=117+70, elev=38+i)
+        plt.pause(0.0001)
+        plt.savefig(data_dir+'/'+str(len(trajectory)+117+70+10+i)+'.png')
     print('OK')
     plt.ioff()
     plt.show()

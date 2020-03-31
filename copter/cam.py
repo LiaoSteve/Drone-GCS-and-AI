@@ -30,11 +30,11 @@ class CAM(object):
             cv2.destroyAllWindows()
 if __name__ == '__main__':
     my_cam = CAM(0)
-    my_cam.start()     
-    import time 
-    time.sleep(2) # wait for frame 
+    my_cam.start()      
     while 1:
-        frame = my_cam.getframe()
+        frame = my_cam.getframe()        
+        if not len(frame): # wait for frame
+            continue        
         cv2.imshow('cam',frame)
         key = cv2.waitKey(1) & 0xFF        
         if key==27:

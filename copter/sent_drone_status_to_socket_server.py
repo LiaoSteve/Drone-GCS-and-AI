@@ -8,28 +8,26 @@ from FlightFunc import haversine, read_json
 class DRONE_STATUS_SOCKET(object):
     def __init__(self, vehicle, home, wp, ip, port):
         self.vehicle = vehicle
+        self.cur_pos = None
         self.ip = ip
         self.port = port 
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.settimeout(1)      
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)            
         self.home = home 
         self.wp   = wp
     def connect(self):
         try:
-            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.sock.settimeout(0.1)   
-            self.sock.connect((self.ip,self.port))
-            print('Success connecting to Mapserver ')
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)                     
+            #print('Success connecting to Mapserver ')
         except :            
             print('>> Error to connect to Map_server\nmaybe should open Map page or Map server')             
     def send_data_to_MapServer(self, message):
         try:           
-            self.sock.send(message.encode('utf-8'))
+            self.sock.sendto(message.encode('utf-8'),(self.ip,self.port))            
         except:
             print('\n*******\nSend data to MapServer error')
             try:                
                 print('Try connecting to MapServer ...')
-                self.connect()
+                self.connect()                
                 self.mark_vehicle_home()  
                 self.generate_checkpoint()  
                 print('OK')                                         
@@ -41,26 +39,24 @@ class DRONE_STATUS_SOCKET(object):
         data['latitude'] = self.home.lat
         data['longitude'] = self.home.lon
         message = json.dumps(data)
-        print(message)
-        time.sleep(0.1)
+        #print(message)        
         self.send_data_to_MapServer(message)          
     def generate_checkpoint(self): 
         """Mark the copter waypoints on the map, and
            use geojson.io to build a '.json' file please."""               
         data = {}  
         data['channel'] = '00003'         
-        i = 0
-        time.sleep(0.1)
+        i = 0        
         while i < len(self.wp):        
             data['latitude'] = self.wp[i][1]
             data['longitude'] = self.wp[i][0]       
             data['waypoint'] = i+1
             message = json.dumps(data)
-            print(message)
+            #print(message)
             self.send_data_to_MapServer(message)                                                   
             i+=1    
     def send_drone_status_to_GCS(self):        
-        cur_pos = self.vehicle.location.global_relative_frame
+        self.cur_pos = self.vehicle.location.global_relative_frame
         velocity = self.vehicle.velocity
         attitude = self.vehicle.attitude        
         data = {}
@@ -69,18 +65,18 @@ class DRONE_STATUS_SOCKET(object):
         data['velocity_N']     = velocity[0]
         data['velocity_E']     = velocity[1]
         data['velocity_Down']  = velocity[2]
+        
+        data['latitude']       = self.cur_pos.lat
+        data['longitude']      = self.cur_pos.lon    
+        data['altitude']       = self.cur_pos.alt
 
-        data['latitude']       = cur_pos.lat
-        data['longitude']      = cur_pos.lon    
-        data['altitude']       = cur_pos.alt
-
-        data['yaw']            = attitude.yaw
-        data['roll']           = attitude.roll
-        data['pitch']          = attitude.pitch
+        data['yaw']            = attitude.yaw * 57.295 # [radian] to [degree]
+        data['roll']           = attitude.roll * 57.295
+        data['pitch']          = attitude.pitch * 57.295
 
         data['groundspeed']    = self.vehicle.groundspeed 
         data['mode']           = self.vehicle.mode.name        
-        data['dist_to_home']   = haversine( pos1 = cur_pos, pos2_lon = self.home.lon , pos2_lat = self.home.lat)
+        data['dist_to_home']   = haversine( pos1 = self.cur_pos, pos2_lon = self.home.lon , pos2_lat = self.home.lat)
         data['heading']        = self.vehicle.heading
         data['gps_status']     = str(self.vehicle.gps_0)
         data['battery']        = str(self.vehicle.battery)
@@ -88,25 +84,23 @@ class DRONE_STATUS_SOCKET(object):
         self.send_data_to_MapServer(message)        
 
         # send_current_mark
-        ''' data = {}        
-        data['channel'] = '00002'
-        data['latitude'] = cur_pos.lat
-        data['longitude'] = cur_pos.lon
-        message = json.dumps(data)
-        self.send_data_to_MapServer(message) ''' 
-
-    def send_current_mark(self):       
         data = {}
         cur_pos = self.vehicle.location.global_relative_frame    
         data['channel'] = '00002'
-        data['latitude'] = cur_pos.lat
-        data['longitude'] = cur_pos.lon
+        data['latitude'] = self.cur_pos.lat
+        data['longitude'] = self.cur_pos.lon
+        message = json.dumps(data)
+        self.send_data_to_MapServer(message) 
+
+    def send_current_mark(self):       
+        data = {}
+        self.cur_pos = self.vehicle.location.global_relative_frame    
+        data['channel'] = '00002'
+        data['latitude'] = self.cur_pos.lat
+        data['longitude'] = self.cur_pos.lon
         message = json.dumps(data)
         self.send_data_to_MapServer(message)          
-        #return cur_pos
-        
-           
-
+        #return self.cur_pos                  
 
 if __name__ == '__main__':
     import dronekit    
@@ -124,13 +118,15 @@ if __name__ == '__main__':
     my_drone_status_socket.connect()
     my_drone_status_socket.mark_vehicle_home()
     my_drone_status_socket.generate_checkpoint()
-
+    
     arm_and_takeoff(my_drone,10)
     i = 1
-    target = dronekit.LocationGlobalRelative(lat=wp[i][1]+1,lon=wp[i][0],alt=3)
+    target = dronekit.LocationGlobalRelative(lat=wp[i][1],lon=wp[i][0],alt=3)
     my_drone.simple_goto(target, groundspeed=3) # max groundspeed 15[m/s] in dronekit sitl 
     
     while 1:  
-        my_drone_status_socket.send_current_mark()              
-        my_drone_status_socket.send_drone_status_to_GCS()                    
+        #my_drone_status_socket.send_current_mark()              
+        my_drone_status_socket.send_drone_status_to_GCS()   
+        my_drone_status_socket.mark_vehicle_home()
+        my_drone_status_socket.generate_checkpoint()                         
         time.sleep(0.5)

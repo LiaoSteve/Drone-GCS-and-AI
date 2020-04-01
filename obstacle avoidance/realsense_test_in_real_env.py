@@ -1,7 +1,6 @@
 from ObsRS import *
 from FlightFunc import *
 import FuzzyControlA, FuzzyControlB
-import dronekit_sitl
 
 "---------------- Fuzzy System -----------------"
 fzA = FuzzyControlA.FuzzyControl()

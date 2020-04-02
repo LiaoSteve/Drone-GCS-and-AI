@@ -1,5 +1,6 @@
 import cv2
 import threading
+
 class Cam():
         def __init__(self, URL):
             self.cam_Frame = []

@@ -9,7 +9,7 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
 mapMarkers1 = [];
 mapMarkers2 = [];
 mapMarkers3 = [];
-path = [];
+//path = [];
 
 var source = new EventSource('eventsource/'); //ENTER YOUR TOPICNAME HERE
 
@@ -44,20 +44,24 @@ source.addEventListener('message', function(e){
   }
   if(obj.channel == '00003') {
     //mark the path on map
-    /*for (var i = 0; i < hmapMarkers3.lengt; i+  +) {
-      mymap.removeLayer(mapMarkers3[i]);
-    }*/
+    //num_wp = obj.num_wp
+    
     circle = L.circleMarker([obj.latitude, obj.longitude], {
       color: 'red',
       fillColor: '#f03',
       fillOpacity: 0.5,
       radius: 5 }).addTo(mymap);   
-    path.push([obj.latitude, obj.longitude]);    
+      mapMarkers3.push([obj.latitude, obj.longitude]);    
     /*
     if(obj.path_is_ok==1){//plot path
       polyline =  L.polyline(path, {color: 'pink',weight:5,opacity:0.3,}).addTo(mymap);
     }*/
     circle.bindTooltip("WP"+ obj.waypoint).openTooltip();
+    /* if(mapMarkers3.length==num_wp){
+      for (var i = 0; i < mapMarkers3.length; i++) {
+        mymap.removeLayer(mapMarkers3[i]);
+      }
+    }  */
   }
   if(obj.channel == '00004') {
     //mark the HOME   
@@ -83,7 +87,7 @@ source.addEventListener('message', function(e){
         + "<br>[      roll      ] : " + obj.roll          + "<b>(deg)"
         + "<br>[      pitch     ] : " + obj.pitch         + "<b>(deg)"            
         + "<br>[  Dist to home  ] : " + obj.dist_to_home  + "<b>(m)"
-        + "<br>"+obj.gps_status+"<b>"
-        + "<br>"+obj.battery+"<b>"
+        + "<br>[   gps_status   ] : " + obj.gps_status+"<b>"
+        + "<br>[     battery    ] : " + obj.battery+"<b>"
   } 
 }, false);

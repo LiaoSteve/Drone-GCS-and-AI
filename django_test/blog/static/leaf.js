@@ -1,4 +1,4 @@
-var mymap = L.map('mapid').setView([25.149822504614438 ,121.77673101425172], 20);
+﻿var mymap = L.map('mapid').setView([25.149822504614438 ,121.77673101425172], 20);
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 30,
@@ -84,10 +84,11 @@ source.addEventListener('message', function(e){
         + "<br>[ Velocity_East  ] : " + obj.velocity_E    + "<b>(m/sec)"
         + "<br>[ Velocity_Down  ] : " + obj.velocity_Down + "<b>(m/sec)"
         + "<br>[      Yaw       ] : " + obj.yaw           + "<b>(deg)"
-        + "<br>[      roll      ] : " + obj.roll          + "<b>(deg)"
-        + "<br>[      pitch     ] : " + obj.pitch         + "<b>(deg)"            
+        + "<br>[      Roll      ] : " + obj.roll          + "<b>(deg)"
+        + "<br>[      Pitch     ] : " + obj.pitch         + "<b>(deg)"            
         + "<br>[  Dist to home  ] : " + obj.dist_to_home  + "<b>(m)"
-        + "<br>[   gps_status   ] : " + obj.gps_status+"<b>"
-        + "<br>[     battery    ] : " + obj.battery+"<b>"
+        + "<br>[  Dist to Target  ] : " + obj.dist_to_target  + "<b>(m)"
+        + "<br>[   Gps   ] : " + obj.gps_status+"<b>"
+        + "<br>[   Batt   ] : " + obj.battery+"<b>"
   } 
 }, false);

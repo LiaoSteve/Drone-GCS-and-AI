@@ -8,28 +8,32 @@ from pymavlink import mavutil # Needed for command message definitions
 import numpy as np
 from math import asin, sin, cos, sqrt, radians
 
-""" make sure that our drone is in guided mode"""
+""" 
+------------------------------ Make sure that our drone is in guided mode ---------------------
+#   Author  : LiaoSteve.
+#   My Goal : Greate my ground center station throught network (4G, Wi-Fi, Ethernet).
+#   Do do list:
+        1. Resolve GCS map problem : home and waypoint marks, resent to the GCS. 
 """
-Do do list:
-    resolve GCS map: home and waypoint marks, resent to the GCS. 
-"""
+
 class GCS():
     def __init__(self, gcs_ip, gcs_port, wp_path = 'data/X_ground.json', connection_string= 'tcp:127.0.0.1:5762', baud = 115200, wait_ready = True, timeout = 180, heartbeat_timeout = 180):     
         self.gcs_isstop = False
         # ------------------------- udp socket  ------------------------
-        self.gcs_ip = gcs_ip
-        self.gcs_port = gcs_port
-        self.gcs_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  
+        self.__gcs_ip   = gcs_ip
+        self.__gcs_port = gcs_port
+        self.__gcs_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  
         # -------------------------- my drone ---------------------------
         self.vehicle = connect( ip = connection_string, 
                                 baud = baud, 
                                 wait_ready = wait_ready, 
                                 timeout = timeout, 
                                 heartbeat_timeout = heartbeat_timeout)
+        print('\n>> Completely connect to pixhawk')
         # ------------------------ waypoint and drone_home -----------------
         self.home           = self.vehicle.location.global_relative_frame
         self.wp             = self.read_json(wp_path)
-        self.num_wp         = 0  # current index of wp 
+        self.num_wp         = 0    # current index of wp 
         self.target         = LocationGlobalRelative(lat=self.wp[self.num_wp][1],lon=self.wp[self.num_wp][0],alt=10)
         self.dist_to_home   = None  
         self.dist_to_target = None       
@@ -40,27 +44,29 @@ class GCS():
         self.groundspeed    = None
         self.mode           = None        
         self.heading        = None
-
+        # GPS info
         self.gps_status     = None
         self.gps_fix        = None
         self.gps_num        = None
-
+        # Battery info
         self.batt_vol       = None          
         self.batt_level     = None
         # -------------- Timer -----------
        
     def next_target(self):      
-        if self.num_wp < len(self.wp)-1:      
+        if self.num_wp < len(self.wp)-1:                 
             self.num_wp +=1                          
             self.target = LocationGlobalRelative(lat=self.wp[self.num_wp][1],lon=self.wp[self.num_wp][0],alt=10)
         else:
             self.num_wp = 0                         
             self.target = LocationGlobalRelative(lat=self.wp[self.num_wp][1],lon=self.wp[self.num_wp][0],alt=10)
-    def GCS_start(self):
-        print('\n>>GCS monitor start ...\n')
+        time.sleep(1)
+
+    def GCS_start(self):        
         threading.Thread(target=self.status_monitor, daemon=True, args=()).start()
 
     def status_monitor(self):        
+        print('\n>> GCS monitor started !')
         while (not self.gcs_isstop):
             self.cur_pos      = self.vehicle.location.global_relative_frame # lat, lon, alt
             self.velocity     = self.vehicle.velocity                       # [m/s]
@@ -86,7 +92,7 @@ class GCS():
             time.sleep(1)
     def send_data_to_MapServer(self, message):
         try:           
-            self.gcs_sock.sendto(message.encode('utf-8'),(self.gcs_ip,self.gcs_port))            
+            self.__gcs_sock.sendto(message.encode('utf-8'),(self.__gcs_ip,self.__gcs_port))            
         except Exception as e:
             print(e)          
     def mark_vehicle_home(self):
@@ -129,6 +135,7 @@ class GCS():
         data['groundspeed']    = round(self.vehicle.groundspeed, 2)
         data['mode']           = self.mode
         data['dist_to_home']   = round(self.dist_to_home, 2)
+        data['dist_to_target'] = round(self.dist_to_target, 2)
         
         data['heading']        = self.heading
         data['gps_status']     = 'fix:{} sat:{}'.format(self.gps_fix,self.gps_num)
@@ -277,7 +284,7 @@ if __name__ == '__main__':
     gcs.GCS_start()
     gcs.arm_and_takeoff(10)
     gcs.mark_vehicle_home()
-    gcs.generate_checkpoint()
+    gcs.generate_checkpoint()    
     while 1:
         gcs.goto(gcs.target, 3)
         print(round(gcs.dist_to_target, 2))

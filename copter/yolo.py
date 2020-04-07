@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Class definition of YOLO_v3 style detection model on image and video
+Class definition of YOLO_v3 style detection model on image.
+Adapted from https://github.com/qqwweee/keras-yolo3
 """
 import cv2
 import colorsys
@@ -18,14 +19,14 @@ from yolo3.utils import letterbox_image
 from keras.utils import multi_gpu_model
 
 class YOLO(object):
-    _defaults = {
-        #"model_path": 'model_data/yolo.h5',
+    _defaults = {       
         "model_path": 'model_data/trained_weights_final_009.h5',        
         "anchors_path": 'model_data/yolo_anchors_009.txt',
         "classes_path": 'model_data/voc_classes.txt',
-        "score" : 0.5,
+        "score" : 0.3,
         "iou" : 0.45,
-        "model_image_size" : (416, 416),
+        "model_image_size" : (672, 672), # factor 32*21
+        #"model_image_size" : (416, 416),# factor 32*13
         "gpu_num" : 1,
     }
 
@@ -35,7 +36,6 @@ class YOLO(object):
             return cls._defaults[n]
         else:
             return "Unrecognized attribute name '" + n + "'"
-
     def __init__(self, **kwargs):
         self.__dict__.update(self._defaults) # set up default values
         self.__dict__.update(kwargs) # and update with user overrides
@@ -43,7 +43,7 @@ class YOLO(object):
         self.anchors = self._get_anchors()
         self.sess = K.get_session()
         self.boxes, self.scores, self.classes = self.generate()
-
+        self.yolo_result = []
     def _get_class(self):
         classes_path = os.path.expanduser(self.classes_path)
         with open(classes_path) as f:
@@ -97,6 +97,7 @@ class YOLO(object):
         boxes, scores, classes = yolo_eval(self.yolo_model.output, self.anchors,
                 len(self.class_names), self.input_image_shape,
                 score_threshold=self.score, iou_threshold=self.iou)
+        print('\n>> Yolo3 ready !')
         return boxes, scores, classes
 
     def detect_image(self, image):
@@ -112,7 +113,7 @@ class YOLO(object):
             boxed_image = letterbox_image(image, new_image_size)
         image_data = np.array(boxed_image, dtype='float32')
 
-        print(image_data.shape)
+        #print(image_data.shape)
         image_data /= 255.
         image_data = np.expand_dims(image_data, 0)  # Add batch dimension.
 
@@ -124,52 +125,72 @@ class YOLO(object):
                 K.learning_phase(): 0
             })
 
-        print('Found {} boxes for {}'.format(len(out_boxes), 'img'))
+        print('\n>> Found {} boxes for {}'.format(len(out_boxes), 'img'))
+        if len(out_boxes):
+            self.yolo_result = []
+            font = ImageFont.truetype(font='font/FiraMono-Medium.otf',
+                        size=np.floor(3e-2 * image.size[1] + 0.5).astype('int32'))        
 
-        font = ImageFont.truetype(font='font/FiraMono-Medium.otf',
-                    size=np.floor(3e-2 * image.size[1] + 0.5).astype('int32'))
-        thickness = (image.size[0] + image.size[1]) // 300
+            for i, c in reversed(list(enumerate(out_classes))):
+                predicted_class = self.class_names[c]
+                box = out_boxes[i]
+                score = out_scores[i]
 
-        for i, c in reversed(list(enumerate(out_classes))):
-            predicted_class = self.class_names[c]
-            box = out_boxes[i]
-            score = out_scores[i]
+                label = '{} {:.2f}'.format(predicted_class, score)
+                draw = ImageDraw.Draw(image)
+                label_size = draw.textsize(label, font)
 
-            label = '{} {:.2f}'.format(predicted_class, score)
-            draw = ImageDraw.Draw(image)
-            label_size = draw.textsize(label, font)
+                top, left, bottom, right = box
+                top = max(0, np.floor(top + 0.5).astype('int32'))
+                left = max(0, np.floor(left + 0.5).astype('int32'))
+                bottom = min(image.size[1], np.floor(bottom + 0.5).astype('int32'))
+                right = min(image.size[0], np.floor(right + 0.5).astype('int32'))
 
-            top, left, bottom, right = box
-            top = max(0, np.floor(top + 0.5).astype('int32'))
-            left = max(0, np.floor(left + 0.5).astype('int32'))
-            bottom = min(image.size[1], np.floor(bottom + 0.5).astype('int32'))
-            right = min(image.size[0], np.floor(right + 0.5).astype('int32'))
-            print(label, (left, top), (right, bottom))
+                #print(label, (left, top), (right, bottom))
+                self.yolo_result.append((predicted_class, round(score,2), (left, top), (right, bottom)))
 
-            if top - label_size[1] >= 0:
-                text_origin = np.array([left, top - label_size[1]])
-            else:
-                text_origin = np.array([left, top + 1])
-
-            # My kingdom for a good redistributable image drawing library.
-            for i in range(thickness):
+                if top - label_size[1] >= 0:
+                    text_origin = np.array([left, top - label_size[1]])
+                else:
+                    text_origin = np.array([left, top + 1])
+                thickness = (image.size[0] + image.size[1]) // 300
+                for i in range(thickness):
+                    draw.rectangle(
+                        [left + i, top + i, right - i, bottom - i],
+                        outline=self.colors[c])
                 draw.rectangle(
-                    [left + i, top + i, right - i, bottom - i],
-                    outline=self.colors[c])
-            draw.rectangle(
-                [tuple(text_origin), tuple(text_origin + label_size)],
-                fill=self.colors[c])
-            draw.text(text_origin, label, fill=(0, 0, 0), font=font)
-            del draw
-
+                    [tuple(text_origin), tuple(text_origin + label_size)],
+                    fill=self.colors[c])
+                draw.text(text_origin, label, fill=(0, 0, 0), font=font)
+                del draw           
         end = timer()
-        print(end - start)
+        print(round((end - start),2),' s')
+       
         return image
 
     def close_session(self):
         self.sess.close()
 
-   
+if __name__ == '__main__':
+    from cam import*    
+    cam     = Cam(0)
+    cam.cam_start()
+    my_yolo = YOLO()        
+    while 1:        
+        frame = cam.cam_Frame
+        if not len(frame):
+            continue
+        image = Image.fromarray(frame)
+        image = my_yolo.detect_image(image)
+        print(my_yolo.yolo_result)
+        result = np.asarray(image)    
+        cv2.imshow("result", result)  
+        key = cv2.waitKey(1) & 0xFF
+        if key == 27 :
+            cam.cam_stop()
+            my_yolo.close_session()
+            cv2.destroyAllWindows()
+            break
 
    
        

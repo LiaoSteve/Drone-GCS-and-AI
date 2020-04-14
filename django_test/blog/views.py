@@ -14,6 +14,9 @@ import pickle
 import numpy as np
 import struct ## new
 import zlib
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 # Create your views here.
 def home(request):
@@ -29,7 +32,7 @@ def eventsource(request):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
         sock.bind(('', 9999))        
-        print('\n*************\nMap server start.')                          
+        logging.debug('\n*************\nMap server start.')                          
         while 1:            
             msg, adr = sock.recvfrom(1024) # type(msg):str
             msg = msg.decode('utf-8')
@@ -37,7 +40,7 @@ def eventsource(request):
                 print('not msg')
                 continue                                                
             else:
-                print (">> Client {} send {}: ".format(adr,msg))                                             
+                logging.debug(">> Client {} send {}: ".format(adr,msg))                                             
                 yield "data:{0}\n\n".format(msg)                         
                                
     return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
@@ -50,12 +53,12 @@ def web_cam(request):
             s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)    
             s.bind(('',9998))    
             s.listen(5)
-            print('\n**********\nCam server now listening ...')
+            logging.debug('\n**********\nCam server now listening ...')
             conn, addr = s.accept()
-            print ("\n**********\nClient Info: ", conn, addr)        
+            logging.debug("\n**********\nClient Info: ", conn, addr)        
             data = b""
             payload_size = struct.calcsize(">L")
-            print("payload_size: {}".format(payload_size))
+            logging.debug("payload_size: {}".format(payload_size))
             while True:
                 try:
                     no_data_occur = 0

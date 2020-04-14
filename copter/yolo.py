@@ -17,8 +17,10 @@ from PIL import Image, ImageFont, ImageDraw
 from yolo3.model import yolo_eval, yolo_body, tiny_yolo_body
 from yolo3.utils import letterbox_image
 from keras.utils import multi_gpu_model
+import threading
+from cam import*
 
-class YOLO(object):
+class YOLO():   
     _defaults = {       
         "model_path": 'model_data/trained_weights_final_009.h5',        
         "anchors_path": 'model_data/yolo_anchors_009.txt',
@@ -29,13 +31,13 @@ class YOLO(object):
         #"model_image_size" : (416, 416),# factor 32*13
         "gpu_num" : 1,
     }
-
     @classmethod
     def get_defaults(cls, n):
         if n in cls._defaults:
             return cls._defaults[n]
         else:
             return "Unrecognized attribute name '" + n + "'"
+
     def __init__(self, **kwargs):
         self.__dict__.update(self._defaults) # set up default values
         self.__dict__.update(kwargs) # and update with user overrides
@@ -43,7 +45,8 @@ class YOLO(object):
         self.anchors = self._get_anchors()
         self.sess = K.get_session()
         self.boxes, self.scores, self.classes = self.generate()
-        self.yolo_result = []
+        self.yolo_result = []        
+
     def _get_class(self):
         classes_path = os.path.expanduser(self.classes_path)
         with open(classes_path) as f:
@@ -121,11 +124,11 @@ class YOLO(object):
             [self.boxes, self.scores, self.classes],
             feed_dict={
                 self.yolo_model.input: image_data,
-                self.input_image_shape: [image.size[1], image.size[0]],
-                K.learning_phase(): 0
-            })
+                self.input_image_shape: [image.size[1], image.size[0]]})
+                #K.learning_phase(): 0
+            
 
-        print('\n>> Found {} boxes for {}'.format(len(out_boxes), 'img'))
+        #print('\n>> Found {} boxes for {}'.format(len(out_boxes), 'img'))
         if len(out_boxes):
             self.yolo_result = []
             font = ImageFont.truetype(font='font/FiraMono-Medium.otf',
@@ -164,8 +167,7 @@ class YOLO(object):
                 draw.text(text_origin, label, fill=(0, 0, 0), font=font)
                 del draw           
         end = timer()
-        print(round((end - start),2),' s')
-       
+        #print(round((end - start),2),' s')        
         return image
 
     def close_session(self):

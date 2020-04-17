@@ -16,7 +16,7 @@ import struct ## new
 import zlib
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 # Create your views here.
 def home(request):
@@ -32,7 +32,7 @@ def eventsource(request):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
         sock.bind(('', 9999))        
-        logging.debug('\n*************\nMap server start.')                          
+        logging.info('Map server start.')                          
         while 1:            
             msg, adr = sock.recvfrom(1024) # type(msg):str
             msg = msg.decode('utf-8')
@@ -53,9 +53,9 @@ def web_cam(request):
             s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)    
             s.bind(('',9998))    
             s.listen(5)
-            logging.debug('\n**********\nCam server now listening ...')
+            logging.info('Cam server now listening ...')
             conn, addr = s.accept()
-            logging.debug("\n**********\nClient Info: ", conn, addr)        
+            logging.info("Client Info:{}{}".format(conn, addr))        
             data = b""
             payload_size = struct.calcsize(">L")
             logging.debug("payload_size: {}".format(payload_size))
@@ -63,22 +63,22 @@ def web_cam(request):
                 try:
                     no_data_occur = 0
                     while len(data) < payload_size:                        
-                        #print("Recv: {}".format(len(data)))
+                        logging.debug("Recv: {}".format(len(data)))
                         data += conn.recv(4096)
                         # if no data, close socket and restart the new one.
                         if len(data) == 0:  
                             #print('\nlen(data)==0')                   
                             no_data_occur += 1
                         if no_data_occur  >= 50:  
-                            #print('\nwebcam client is disconnected ')                   
+                            logging.INFO('\nwebcam client is disconnected ')                   
                             s.close()     
                             break     
-                    #print("Done Recv: {}".format(len(data)))                    
+                    logging.debug("Done Recv: {}".format(len(data)))                    
                                   
                     packed_msg_size = data[:payload_size]
                     data = data[payload_size:]
                     msg_size = struct.unpack(">L", packed_msg_size)[0]
-                    #print("msg_size: {}".format(msg_size))
+                    logging.debug("msg_size: {}".format(msg_size))
 
                     while len(data) < msg_size:
                         data += conn.recv(4096)
@@ -96,6 +96,7 @@ def web_cam(request):
                 
     return StreamingHttpResponse(images_stream(),
                      content_type='multipart/x-mixed-replace; boundary=frame') 
+
 ''' def web_cam(request):  
     # -- Socket UDP fail--          
     def images_stream(): 

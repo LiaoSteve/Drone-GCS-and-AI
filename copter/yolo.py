@@ -17,8 +17,7 @@ from PIL import Image, ImageFont, ImageDraw
 from yolo3.model import yolo_eval, yolo_body, tiny_yolo_body
 from yolo3.utils import letterbox_image
 from keras.utils import multi_gpu_model
-import threading
-from cam import*
+import threading, logging
 
 class YOLO():   
     _defaults = {       
@@ -27,8 +26,8 @@ class YOLO():
         "classes_path": 'model_data/voc_classes.txt',
         "score" : 0.3,
         "iou" : 0.45,
-        "model_image_size" : (672, 672), # factor 32*21
-        #"model_image_size" : (416, 416),# factor 32*13
+        #"model_image_size" : (672, 672), # factor 32*21
+        "model_image_size" : (416, 416),# factor 32*13
         "gpu_num" : 1,
     }
     @classmethod
@@ -45,7 +44,8 @@ class YOLO():
         self.anchors = self._get_anchors()
         self.sess = K.get_session()
         self.boxes, self.scores, self.classes = self.generate()
-        self.yolo_result = []        
+        self.yolo_result = []       
+        self.yolo_thread_isstop = False
 
     def _get_class(self):
         classes_path = os.path.expanduser(self.classes_path)
@@ -125,11 +125,12 @@ class YOLO():
             feed_dict={
                 self.yolo_model.input: image_data,
                 self.input_image_shape: [image.size[1], image.size[0]]})
-                #K.learning_phase(): 0
+                #K.learning_phase(): 0     
             
-
-        #print('\n>> Found {} boxes for {}'.format(len(out_boxes), 'img'))
+        
+        
         if len(out_boxes):
+            #logging.debug('\n>> Found {} boxes for {}'.format(len(out_boxes), 'img'))
             self.yolo_result = []
             font = ImageFont.truetype(font='font/FiraMono-Medium.otf',
                         size=np.floor(3e-2 * image.size[1] + 0.5).astype('int32'))        
@@ -167,7 +168,7 @@ class YOLO():
                 draw.text(text_origin, label, fill=(0, 0, 0), font=font)
                 del draw           
         end = timer()
-        #print(round((end - start),2),' s')        
+        logging.debug(f'elapsed time:{round((end - start),2)}')        
         return image
 
     def close_session(self):
@@ -175,6 +176,8 @@ class YOLO():
 
 if __name__ == '__main__':
     from cam import*    
+    logging.basicConfig(level=logging.DEBUG)
+
     cam     = Cam(0)
     cam.cam_start()
     my_yolo = YOLO()        
@@ -184,17 +187,16 @@ if __name__ == '__main__':
             continue
         image = Image.fromarray(frame)
         image = my_yolo.detect_image(image)
-        print(my_yolo.yolo_result)
+        logging.debug(my_yolo.yolo_result)
         result = np.asarray(image)    
-        cv2.imshow("result", result)  
-        key = cv2.waitKey(1) & 0xFF
-        if key == 27 :
+        cv2.imshow("result", result)          
+        if cv2.waitKey(1) & 0xFF == 27 :
             cam.cam_stop()
             my_yolo.close_session()
             cv2.destroyAllWindows()
             break
 
-   
+
        
         
       

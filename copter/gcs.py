@@ -11,9 +11,9 @@ from math import asin, sin, cos, sqrt, radians
 """ 
 ------------------------------ Make sure that our drone is in guided mode ---------------------
 #   Author  : LiaoSteve.
-#   My Goal : Greate my ground center station throught network (4G, Wi-Fi, Ethernet).
+#   My Goal : create my ground center station throught network (4G, Wi-Fi, Ethernet).
 #   Do do list:
-        1. Resolve GCS map problem : home and waypoint marks, resent to the GCS. 
+        1. resolve GCS map problem : home and waypoint marks, resent to the GCS. 
 """
 
 class GCS():

@@ -1,49 +1,56 @@
 import cv2
 import threading, time
-
+import logging
 class Cam():
-        def __init__(self, URL):
+        def __init__(self, URL, original_size = False):
             self.__URL = URL
-            self.cam_Frame = []
-            self.cam_status = False
-            self.cam_isstop = False            
-            self.cam_vid = cv2.VideoCapture(URL, cv2.CAP_DSHOW)
-            if not self.cam_vid.isOpened():
-                raise IOError("Couldn't open webcam or video")
-            self.cam_video_FourCC = int(self.cam_vid.get(cv2.CAP_PROP_FOURCC))
+            self.cam_Frame = []  
+            self.cam_state = None         
+            self.cam_isstop = False     
+            self.__original_size = original_size    
+            self.cam_connect()
+
+        def cam_connect(self):
+            self.cam_vid = cv2.VideoCapture(self.__URL)          
+            if not self.cam_vid.isOpened():      
+                return 0          
+            if not self.__original_size:
+                self.cam_vid.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+                self.cam_vid.set(cv2.CAP_PROP_FRAME_HEIGHT, 480) 
+            self.__cam_video_FourCC = int(self.cam_vid.get(cv2.CAP_PROP_FOURCC))
             #self.video_FourCC2    = cv2.VideoWriter_fourcc(*"mp4v")
-            self.cam_video_fps = self.cam_vid.get(cv2.CAP_PROP_FPS)
-            self.cam_video_size = (int(self.cam_vid.get(cv2.CAP_PROP_FRAME_WIDTH)),
+            self.__cam_video_fps = self.cam_vid.get(cv2.CAP_PROP_FPS)
+            self.__cam_video_size = (int(self.cam_vid.get(cv2.CAP_PROP_FRAME_WIDTH)),
                         int(self.cam_vid.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+    
         def cam_start(self):	              
             threading.Thread(target=self.cam_queryframe, daemon=True, args=()).start()
+
         def cam_stop(self):	   
-            self.cam_isstop = True
-            print('Cam stopped!')   
+            self.cam_isstop = True               
+
         def cam_getframe(self):        
-            return self.cam_Frame        
+            return self.cam_Frame     
+
         def cam_queryframe(self):               
-            print('\n>> Cam',str(self.__URL),'started !')        
+            logging.info(' >> cam {} start'.format(self.__URL))        
             while (not self.cam_isstop):                
-                self.cam_status, self.cam_Frame = self.cam_vid.read()                
-                if self.cam_status == False:                    
-                    self.cam_vid = cv2.VideoCapture(self.__URL)
-                    if not self.cam_vid.isOpened():                        
-                        pass
-                    
+                self.cam_state, self.cam_Frame = self.cam_vid.read()                
+                if not self.cam_state:   
+                    self.cam_vid.release() 
+                    time.sleep(1)                                
+                    self.cam_connect()                     
             self.cam_vid.release()   
-            cv2.destroyAllWindows()
+            logging.info('Cam stopped!')
+
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     my_cam = Cam(0)    
     my_cam.cam_start()       
     time.sleep(1)   
-    while 1:        
-        frame = my_cam.cam_Frame  
-        if not len(frame): # wait for frame
-            continue        
-        cv2.imshow('cam',frame)
-    
-        key = cv2.waitKey(1) & 0xFF        
-        if key==27:            
+    while 1:                
+        try:    cv2.imshow('cam',my_cam.cam_Frame)                
+        except: continue        
+        if cv2.waitKey(5) & 0xFF ==27:            
             my_cam.cam_stop()
             break

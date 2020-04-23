@@ -127,22 +127,25 @@ if __name__ == "__main__":
     SO = SenseObstacle(coord1=c1, coord2=c2)
     SO.start()
     time.sleep(2)
+    import timeit
     while True:
+        timer = timeit.default_timer()  
         frame_out = SO.get_frame()
         if frame_out.any():
             x_location, y_location, z_distance = SO.getObsLocation()
             cv2.rectangle(frame_out, c1[0], c2[0], (0, 255, 255), 2)
             if x_location != np.inf:
-                print('x_:{x}, y_:{y}, distance:{z:.2f}cm'.format(x=x_location, y=y_location, z=z_distance))
+                #print('x_:{x}, y_:{y}, distance:{z:.2f}cm'.format(x=x_location, y=y_location, z=z_distance))
                 cv2.circle(frame_out, (cent_x-x_location, cent_y-y_location), 5, (0,0,255), -1)
             else:
-                print('clear')
+                pass
+                #print('clear')
             result = 'Distance:{z:.2f}cm'.format(z=z_distance)
             cv2.putText(img=frame_out,text=result,org=(175,360),fontFace=cv2.FONT_HERSHEY_DUPLEX,color=(0, 255, 255),fontScale=1)
             cv2.imshow('Test Out', frame_out) 
-            
+            print('time: {:.4f}'.format(timeit.default_timer()-timer))
                     
-            if cv2.waitKey(1) & 0xFF ==ord('e'):
+            if cv2.waitKey(1) & 0xFF ==27:
                 print('Finish')
                 SO.stop()
                 break

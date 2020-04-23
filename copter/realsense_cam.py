@@ -2,8 +2,10 @@ import cv2
 import pyrealsense2 as rs
 import numpy as np
 import threading, time
+
 """
-This script is created by Tzung-Hsien Huang in 2019/12/19, and adapted by LiaoSteve.
+@ Auther : LiaoSteve
+@ Adapted from Tzung-Hsien Huang.
 """
 class RealSense():
     def __init__(self):
@@ -23,9 +25,11 @@ class RealSense():
         self.color_frame, self.depth_frame, self.combine_frame = [], [], []       
 
         self.realsense_isstop = False    
+
     def realsense_info(self):
-        # show device info.
-        devices = rs.context().query_devices()
+        # show device info.    
+        time.sleep(1)
+        devices = rs.context().query_devices()        
         print ('\n>> ',devices[0])
     def realsense_get_frame(self):
         self.combine_frame = np.hstack((self.color_frame ,self.depth_frame))
@@ -34,15 +38,13 @@ class RealSense():
     def realsense_start(self):
         # Start a thread working for getting the obstacle values as fuzzy inputs.        
         threading.Thread(target=self.operation, daemon=True, args=()).start()       
+
     def realsense_stop(self):
         # Stop the operation.
-        self.realsense_isstop = True
-        print("Stop the RealSense.")
+        self.realsense_isstop = True   
+        print("\n>> Stop the RealSense.")
         self.__pipeline.stop()
-        cv2.destroyAllWindows()     
-    def realsense_get_frame(self):
-            self.combine_frame = np.hstack((self.color_frame,self.depth_frame))
-            return self.combine_frame  
+        cv2.destroyAllWindows()  
     def filter_setup(self):
         # Spatial filter
         self.__spatial         = rs.spatial_filter()
@@ -58,6 +60,7 @@ class RealSense():
         self.__threshold       = rs.threshold_filter()
         self.__threshold.set_option(rs.option.max_distance, 8) # in meter
         self.__threshold.set_option(rs.option.min_distance, 0.28)
+
     def imgprocessing(self, frame_in):
         #frame = self.depth2disparity.process(frame_in)
         #frame = self.spatial.process(frame)
@@ -65,6 +68,7 @@ class RealSense():
         frame = self.__hole_filling.process(frame_in)
         self.__process_frame = self.__threshold.process(frame)
         return self.__process_frame
+
     def operation(self):        
         print("\n>> RealSense cam started ! ")
         self.filter_setup()        
@@ -82,7 +86,7 @@ class RealSense():
             self.__depth_image = np.asanyarray(self.__process_frame.get_data())                    
             
             self.depth_frame = cv2.applyColorMap(cv2.convertScaleAbs(self.__depth_image, alpha=0.03), cv2.COLORMAP_JET)
-            
+         
 
 if __name__ =='__main__':   
     RS = RealSense()
@@ -91,11 +95,11 @@ if __name__ =='__main__':
     time.sleep(2)
     import timeit             
     while 1:
-        timer = timeit.default_timer()        
-        cv2.imshow('realsense',RS.realsense_get_frame())
-        print('time: {:.4f}'.format(timeit.default_timer()-timer))
-        key = cv2.waitKey(1) & 0xFF
+        #timer = timeit.default_timer()         
+        cv2.imshow('realsense',RS.realsense_get_frame())      
+        #print('time: {:.4f}'.format(timeit.default_timer()-timer))                
+        key = cv2.waitKey(5) & 0xFF # use jetson xavier use waitKey(5)
+        
         if key == 27:
             RS.realsense_stop()
             break
-    

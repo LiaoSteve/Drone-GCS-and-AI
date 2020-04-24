@@ -1,15 +1,22 @@
 import cv2
 import threading, time
 import logging
+'''
+-----------------------------------
+@ Auther : LiaoSteve            
+-----------------------------------'''
 class Cam():
         def __init__(self, URL, original_size = False):
+            self.__cam_log = logging.getLogger('cam')            
+            self.__cam_log.setLevel(logging.WARNING)                      
+            
             self.__URL = URL
             self.cam_Frame = []  
             self.cam_state = None         
             self.cam_isstop = False     
             self.__original_size = original_size    
-            self.cam_connect()
-
+            self.cam_connect()        
+            
         def cam_connect(self):
             self.cam_vid = cv2.VideoCapture(self.__URL)          
             if not self.cam_vid.isOpened():      
@@ -32,8 +39,8 @@ class Cam():
         def cam_getframe(self):        
             return self.cam_Frame     
 
-        def cam_queryframe(self):               
-            logging.info(' >> cam {} start'.format(self.__URL))        
+        def cam_queryframe(self):                       
+            self.__cam_log.warning('\n>> Cam {} start.'.format(self.__URL))        
             while (not self.cam_isstop):                
                 self.cam_state, self.cam_Frame = self.cam_vid.read()                
                 if not self.cam_state:   
@@ -41,16 +48,15 @@ class Cam():
                     time.sleep(1)                                
                     self.cam_connect()                     
             self.cam_vid.release()   
-            logging.info('Cam stopped!')
+            self.__cam_log.warning('\n>> Stop the cam .')
 
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+if __name__ == '__main__':    
     my_cam = Cam(0)    
     my_cam.cam_start()       
     time.sleep(1)   
     while 1:                
-        try:    cv2.imshow('cam',my_cam.cam_Frame)                
-        except: continue        
+        try:cv2.imshow('cam',my_cam.cam_Frame)                
+        except:continue        
         if cv2.waitKey(5) & 0xFF ==27:            
             my_cam.cam_stop()
             break

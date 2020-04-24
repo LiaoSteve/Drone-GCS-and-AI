@@ -1,14 +1,16 @@
 import cv2
 import pyrealsense2 as rs
 import numpy as np
-import threading, time
-
-"""
-@ Auther : LiaoSteve
-@ Adapted from Tzung-Hsien Huang.
-"""
+import threading, time, logging
+'''
+-----------------------------------
+@ Auther : LiaoSteve              
+@ Adapted from Tzung-Hsien Huang. 
+-----------------------------------'''
 class RealSense():
     def __init__(self):
+        self.__realsense_log = logging.getLogger('realsense')            
+        self.__realsense_log.setLevel(logging.WARNING)
         self.__pipeline = rs.pipeline()
         self.__config = rs.config()
         #self.__config.enable_device('823112061027')
@@ -30,7 +32,7 @@ class RealSense():
         # show device info.    
         time.sleep(1)
         devices = rs.context().query_devices()        
-        print ('\n>> ',devices[0])
+        self.__realsense_log.warning('{}'.format(devices[0]))
     def realsense_get_frame(self):
         self.combine_frame = np.hstack((self.color_frame ,self.depth_frame))
         return self.combine_frame    
@@ -41,10 +43,8 @@ class RealSense():
 
     def realsense_stop(self):
         # Stop the operation.
-        self.realsense_isstop = True   
-        print("\n>> Stop the RealSense.")
-        self.__pipeline.stop()
-        cv2.destroyAllWindows()  
+        self.realsense_isstop = True           
+        
     def filter_setup(self):
         # Spatial filter
         self.__spatial         = rs.spatial_filter()
@@ -70,7 +70,7 @@ class RealSense():
         return self.__process_frame
 
     def operation(self):        
-        print("\n>> RealSense cam started ! ")
+        self.__realsense_log.warning("\n>> RealSense cam started.")
         self.filter_setup()        
         while (not self.realsense_isstop):
             # Grab data from the device.                        
@@ -86,9 +86,10 @@ class RealSense():
             self.__depth_image = np.asanyarray(self.__process_frame.get_data())                    
             
             self.depth_frame = cv2.applyColorMap(cv2.convertScaleAbs(self.__depth_image, alpha=0.03), cv2.COLORMAP_JET)
-         
+        self.__realsense_log.warning("\n>> Stop the RealSense.")
+        self.__pipeline.stop() 
 
-if __name__ =='__main__':   
+if __name__ =='__main__':      
     RS = RealSense()
     RS.realsense_info()
     RS.realsense_start()

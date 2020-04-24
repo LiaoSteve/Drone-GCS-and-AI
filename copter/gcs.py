@@ -1,43 +1,46 @@
 from datetime import datetime
-import time, json, sys, timeit
-import socket
+import time, json, sys
+from timeit import default_timer as timer
+import socket, logging
 import threading
-import dronekit_sitl
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command
 from pymavlink import mavutil # Needed for command message definitions
 import numpy as np
 from math import asin, sin, cos, sqrt, radians
-
-""" 
------------------------------- Make sure that our drone is in guided mode ---------------------
-#   Author  : LiaoSteve.
-#   My Goal : create my ground center station throught network (4G, Wi-Fi, Ethernet).
-#   Do do list:
-        1. resolve GCS map problem : home and waypoint marks, resent to the GCS. 
-"""
-
+'''
+------------------------------ -----------------------------------------------------
+Make sure that our drone is in guided mode :
+@  Author  : LiaoSteve.
+@  My Goal : create my ground center station throught network (4G, Wi-Fi, Ethernet).
+@  Do do list:
+            1. resolve GCS map problem : home and waypoint marks, resent to the GCS.
+-------------------------------------------------------------------------------------'''
 class GCS():
     def __init__(self, gcs_ip, gcs_port, wp_path = 'data/X_ground.json', connection_string= 'tcp:127.0.0.1:5762', baud = 115200, wait_ready = True, timeout = 180, heartbeat_timeout = 180):     
+        # -- logger
+        self.__gcs_log = logging.getLogger('gcs')            
+        self.__gcs_log.setLevel(logging.WARNING)
+        # -- gcs enabled
         self.gcs_isstop = False
-        # ------------------------- udp socket  ------------------------
+        # -- udp socket  
         self.__gcs_ip   = gcs_ip
         self.__gcs_port = gcs_port
         self.__gcs_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  
-        # -------------------------- my drone ---------------------------
+        # -- my drone 
         self.vehicle = connect( ip = connection_string, 
                                 baud = baud, 
                                 wait_ready = wait_ready, 
                                 timeout = timeout, 
                                 heartbeat_timeout = heartbeat_timeout)
-        print('\n>> Completely connect to pixhawk')
-        # ------------------------ waypoint and drone_home -----------------
+        self.__gcs_log.warning('\n>> Connect to pixhawk completely ')
+        # -- waypoint and drone_home 
         self.home           = self.vehicle.location.global_relative_frame
         self.wp             = self.read_json(wp_path)
         self.num_wp         = 0    # current index of wp 
         self.target         = LocationGlobalRelative(lat=self.wp[self.num_wp][1],lon=self.wp[self.num_wp][0],alt=10)
         self.dist_to_home   = None  
         self.dist_to_target = None       
-        # ------------------------ drone status -------------------------
+        # --drone status 
         self.cur_pos        = None
         self.velocity       = None
         self.attitude       = None
@@ -51,8 +54,8 @@ class GCS():
         # Battery info
         self.batt_vol       = None          
         self.batt_level     = None
-        # -------------- Timer -----------
-       
+        # --Timer 
+        
     def next_target(self):      
         if self.num_wp < len(self.wp)-1:                 
             self.num_wp +=1                          
@@ -66,7 +69,7 @@ class GCS():
         threading.Thread(target=self.status_monitor, daemon=True, args=()).start()
 
     def status_monitor(self):        
-        print('\n>> GCS monitor started !')
+        self.__gcs_log.warning('\n>> GCS monitor started !')
         while (not self.gcs_isstop):
             self.cur_pos      = self.vehicle.location.global_relative_frame # lat, lon, alt
             self.velocity     = self.vehicle.velocity                       # [m/s]
@@ -90,11 +93,13 @@ class GCS():
             self.send_current_mark()
             self.send_drone_status_to_GCS()                           
             time.sleep(1)
+
     def send_data_to_MapServer(self, message):
         try:           
             self.__gcs_sock.sendto(message.encode('utf-8'),(self.__gcs_ip,self.__gcs_port))            
         except Exception as e:
-            print(e)          
+            self.__gcs_log.warning(e)    
+
     def mark_vehicle_home(self):
         data = {}
         data['channel'] = '00004'
@@ -102,6 +107,7 @@ class GCS():
         data['longitude'] = self.home.lon
         message = json.dumps(data)            
         self.send_data_to_MapServer(message) 
+
     def generate_checkpoint(self): 
         """Mark the copter waypoints on the map, and
            use geojson.io to build a '.json' file please."""               
@@ -116,6 +122,7 @@ class GCS():
             self.send_data_to_MapServer(message)                                                   
             i+=1    
         del i
+
     def send_drone_status_to_GCS(self):                    
         data = {}
         data['channel']  = '00009'              
@@ -149,7 +156,8 @@ class GCS():
         data['latitude'] = self.cur_pos.lat
         data['longitude'] = self.cur_pos.lon
         message = json.dumps(data)        
-        self.send_data_to_MapServer(message)       
+        self.send_data_to_MapServer(message)   
+
     # ---------------------------------------- BASIC FUNCTIONS -----------------------------------
     def read_json(self, path):
         # READ COORDINATES FROM JSON 
@@ -159,7 +167,7 @@ class GCS():
             coordinates = json_array['features'][0]['geometry']['coordinates']
             return coordinates 
         except Exception as e:
-            print(e)
+            self.__gcs_log.warning(str(e))
             return None
              
     def haversine(self, pos1, pos2_lon, pos2_lat):
@@ -175,34 +183,35 @@ class GCS():
         c = 2 * asin(sqrt(a)) 
         r = 6378137.0 #-- Radius of "spherical" earth in meter
         return c * r   
+
     # ----------------------------------------- DRONE CONTROL --------------------------------
     def arm_and_takeoff(self, aTargetAltitude=5):
         """
         Arms vehicle and fly to aTargetAltitude.
         """
-        print("Basic pre-arm checks")
+        self.__gcs_log.warning("Basic pre-arm checks")
         # Don't try to arm until autopilot is ready
         while not self.vehicle.is_armable:
-            print(" Waiting for vehicle to initialise...")
+            self.__gcs_log.warning(" Waiting for vehicle to initialise...")
             time.sleep(1)
-        print("Arming motors")
+        self.__gcs_log.warning("Arming motors")
         # Copter should arm in GUIDED mode
         self.vehicle.mode = VehicleMode("GUIDED")
         self.vehicle.armed = True
         # Confirm vehicle armed before attempting to take off
         while not self.vehicle.armed:
-            print(" Waiting for arming...")
+            self.__gcs_log.warning(" Waiting for arming...")
             time.sleep(1)
-        print("Taking off!")
+        self.__gcs_log.warning("Taking off!")
         self.vehicle.simple_takeoff(aTargetAltitude)  # Take off to target altitude
         # Wait until the vehicle reaches a safe height before processing the goto
         #  (otherwise the command after Vehicle.simple_takeoff will execute
         #   immediately).
         while True:
-            print(">> Altitude: ", self.vehicle.location.global_relative_frame.alt)
+            self.__gcs_log.warning(">> Altitude: ", self.vehicle.location.global_relative_frame.alt)
             # Break and return from function just below target altitude.
             if self.vehicle.location.global_relative_frame.alt >= aTargetAltitude * 0.95:
-                print("Reached target altitude")
+                self.__gcs_log.warning("Reached target altitude")
                 break
             time.sleep(1)
     def goto(self, location, groundspeed=0.5):
@@ -254,29 +263,30 @@ class GCS():
         self.vehicle.flush()    
     def security_lock(self, channel):
         while self.vehicle.channels[channel] > 1500 :
-            print ("RC_%s :%s" %channel,self.vehicle.channels[channel])
-            print ("switch down to continue the mission")
+            self.__gcs_log.warning("RC_%s :%s" %channel,self.vehicle.channels[channel])
+            self.__gcs_log.warning("switch down to continue the mission")
             time.sleep(1)	
-        print ("Start Mission")    
+        self.__gcs_log.warning("Start Mission")    
     def stop_monitor(self):
         # Not success yet
         while True:
             if self.vehicle.channels['8'] > 1500:
-                print("Stop mission ,RTL")
+                self.__gcs_log.warning("Stop mission ,RTL")
                 self.vehicle.mode = VehicleMode("RTL")
                 sys.exit(0)    
     def get_attributes(self):       
-        print ("System status: %s" % self.vehicle.system_status.state)   
-        print ( self.vehicle.gimbal)        
-        print ("EKF OK?: %s" % self.vehicle.ekf_ok)
-        print ("Last Heartbeat: %s" % self.vehicle.last_heartbeat)
-        print (self.vehicle.rangefinder)
-        print ("Rangefinder distance: %s" % self.vehicle.rangefinder.distance)
-        print ("Rangefinder voltage: %s" % self.vehicle.rangefinder.voltage)        
-        print ("Is Armable?: %s" % self.vehicle.is_armable)
+        self.__gcs_log.warning("System status: %s" % self.vehicle.system_status.state)   
+        self.__gcs_log.warning( self.vehicle.gimbal)        
+        self.__gcs_log.warning("EKF OK?: %s" % self.vehicle.ekf_ok)
+        self.__gcs_log.warning("Last Heartbeat: %s" % self.vehicle.last_heartbeat)
+        self.__gcs_log.warning(self.vehicle.rangefinder)
+        self.__gcs_log.warning("Rangefinder distance: %s" % self.vehicle.rangefinder.distance)
+        self.__gcs_log.warning("Rangefinder voltage: %s" % self.vehicle.rangefinder.voltage)        
+        self.__gcs_log.warning("Is Armable?: %s" % self.vehicle.is_armable)
         
                           
 if __name__ == '__main__':
+    import dronekit_sitl
     X_ground = {'lat':25.149657404957285 ,'lon':121.77688926458357}
     sitl = dronekit_sitl.start_default(lat = X_ground['lat'], lon = X_ground['lon'])
     connection_string = sitl.connection_string()      

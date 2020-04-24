@@ -3,22 +3,26 @@ import cv2
 import socket, time, pickle, io, zlib, struct
 import logging
 
-# -- TCP --
+# -- TCP 
 class CamSocket():
-    def __init__(self, ip, port, timeout):       
+    def __init__(self, ip, port, timeout):    
+        # -- logger
+        self.__camsocket_log = logging.getLogger('gcs')            
+        self.__camsocket_log.setLevel(logging.WARNING)  
+
         self.__cam_ip = ip
         self.__cam_port = port         
         self.__timeout = timeout        
-        self.__encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 60] 
+        self.__encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 50] 
 
     def cam_socket_start(self):
         try:
             self.__cam_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.__cam_sock.settimeout(self.__timeout)   
             self.__cam_sock.connect((self.__cam_ip,self.__cam_port))
-            logging.info(' >> Cam socket OK ')
+            self.__camsocket_log.warning('Cam socket OK ')
         except :                       
-            logging.info(' >> Cam socket error, maybe you should open webcam page or webcam server')
+            self.__camsocket_log.warning('Cam socket error, maybe you should open webcam page or webcam server')
     
     def send_img_to_server(self, frame):
         if frame is not None:
@@ -27,16 +31,14 @@ class CamSocket():
             size = len(data)                
             try:          
                 self.__cam_sock.sendall(struct.pack(">L", size)+  data)
-            except Exception as e:                
-                logging.info(' webcam connection error')
+            except Exception as e:                               
                 self.__cam_sock.close()                                 
                 self.cam_socket_start()                                                    
-                logging.debug(e)
+                self.__camsocket_log.warning(type(e))
     
 if __name__ == '__main__':
     from cam import*
-    #from yolo import*
-    logging.basicConfig(level=logging.INFO)
+    #from yolo import*    
 
     #my_yolo = YOLO()
     my_cam_socket = CamSocket('140.121.130.133', 9998, timeout = 0.01)

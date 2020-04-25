@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 import time
+from timeit import default_timer as timer 
 from django.http import StreamingHttpResponse
 from django.utils.timezone import now
 
@@ -16,7 +17,7 @@ import struct ## new
 import zlib
 import logging
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 # Create your views here.
 def home(request):
@@ -50,9 +51,9 @@ def web_cam(request):
     def images_stream():        
         while True:
             s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)    
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)           
             s.bind(('',9998))    
-            s.listen(5)
+            s.listen(1)
             logging.info('Cam server now listening ...')
             conn, addr = s.accept()
             logging.info("Client Info:{}{}".format(conn, addr))        
@@ -61,26 +62,27 @@ def web_cam(request):
             logging.debug("payload_size: {}".format(payload_size))
             while True:
                 try:
-                    no_data_occur = 0
-                    while len(data) < payload_size:                        
+                    t = timer()
+                    while len(data) < payload_size:                
+                        if timer()-t > 0.25:                            
+                            logging.warning(' >> time out')
+                            break        
                         logging.debug("Recv: {}".format(len(data)))
+                        #data += conn.recv(1024)
                         data += conn.recv(4096)
-                        # if no data, close socket and restart the new one.
-                        if len(data) == 0:  
-                            #print('\nlen(data)==0')                   
-                            no_data_occur += 1
-                        if no_data_occur  >= 50:  
-                            logging.INFO('\nwebcam client is disconnected ')                   
-                            s.close()     
-                            break     
+                        
                     logging.debug("Done Recv: {}".format(len(data)))                    
                                   
                     packed_msg_size = data[:payload_size]
                     data = data[payload_size:]
                     msg_size = struct.unpack(">L", packed_msg_size)[0]
                     logging.debug("msg_size: {}".format(msg_size))
-
+                    t = timer()
                     while len(data) < msg_size:
+                        if timer()-t > 0.25:                            
+                            logging.warning(' >> time out')
+                            break
+                        #data += conn.recv(1024)
                         data += conn.recv(4096)
                     frame_data = data[:msg_size]
                     data = data[msg_size:]
@@ -90,7 +92,7 @@ def web_cam(request):
                     yield (b'--frame\r\n'
                         b'Content-Type: image/jpeg\r\n\r\n' + (frame.tobytes()) + b'\r\n\r\n')
                 except Exception as e:
-                    print("webcam server ...",e)
+                    logging.warning(str(e))
                     s.close()
                     break
                 
@@ -105,29 +107,31 @@ def web_cam(request):
             s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)    
             s.bind(('',9998))   
             print('\n**********\nCam server now listening ...')
-            while True:                                                       
+            while 1:                                                       
                 data = b""
                 payload_size = struct.calcsize(">L")
+                no_data_occur = 0
                 print("payload_size: {}".format(payload_size))            
-                try:
-                    no_data_occur = 0
+                try:                    
                     while len(data) < payload_size:                        
                         print("Recv: {}".format(len(data)))
-                        recieve_data, adr = s.recvfrom(4096*2) 
-                        data += recieve_data                    
-                        if len(data) == 0:  
-                            print('\nlen(data)==0')                   
+                        recieve_data, adr = s.recvfrom(4096) 
+                        data += recieve_data   
+                        if len(data) == 0:                                                 
                             no_data_occur += 1
-                        if no_data_occur  >= 50:  
-                            print('\nwebcam client is disconnected ')                             
-                            break     
+                        if no_data_occur  >= 3:  
+                            logging.INFO('\nwebcam client is disconnected ')                   
+                            s.close()     
+                            break           
+                        print(data)                                             
+                        
                     print("Done Recv: {}".format(len(data)))                                        
                     packed_msg_size = data[:payload_size]
                     data = data[payload_size:]
                     msg_size = struct.unpack(">L", packed_msg_size)[0]
                     print("msg_size: {}".format(msg_size))
                     while len(data) < msg_size:
-                        recieve_data, adr = s.recvfrom(4096*2)
+                        recieve_data, adr = s.recvfrom(4096)
                         data += recieve_data
                     frame_data = data[:msg_size]
                     data = data[msg_size:]
@@ -140,7 +144,7 @@ def web_cam(request):
                     print(e)
                     
     return StreamingHttpResponse(images_stream(),
-                        content_type='multipart/x-mixed-replace; boundary=frame') ''' 
+                        content_type='multipart/x-mixed-replace; boundary=frame')  '''
 
 
                      

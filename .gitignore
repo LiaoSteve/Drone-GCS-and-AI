@@ -1,8 +1,14 @@
 copter/model_data/trained_weights_final_009.h5
-copter/__pycache__
+copter/__pycache__/
+copter/.vscode
+copter/yolo3/__pycache__/
 django_test/.vscode/
 django_test/__pycache__/
 copter/yolo3/__pycache__/
 django_test/blog/__pycache__/
 django_test/django_test/__pycache__/
-airsim_v2.0/__pycache__/
+
+airsim/__pycache__/
+airsim/ForAirSim_version7/__pycache__/
+
+obstacle avoidance/__pycache__/

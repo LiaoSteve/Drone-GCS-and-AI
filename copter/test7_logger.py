@@ -7,7 +7,7 @@ error = logging.getLogger('CAM')
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
 
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 ch.setFormatter(formatter)
 error.addHandler(ch)
 
@@ -16,4 +16,4 @@ try:
     a=1/0
 except Exception as e:
     error.critical(e)
-    print(timer()-t)
+    print('Elapsed time',timer()-t)

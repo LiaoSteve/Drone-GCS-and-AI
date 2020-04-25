@@ -7,8 +7,8 @@ import logging
 -----------------------------------'''
 class Cam():
         def __init__(self, URL, original_size = False):
-            self.__cam_log = logging.getLogger('cam')            
-            self.__cam_log.setLevel(logging.WARNING)                      
+            self.__cam_log = logging.getLogger(__name__)            
+            self.__cam_log.setLevel(logging.INFO)                      
             
             self.__URL = URL
             self.cam_Frame = []  
@@ -35,20 +35,23 @@ class Cam():
 
         def cam_stop(self):	   
             self.cam_isstop = True               
+            self.cam_vid.release()  
+            self.__cam_log.info(' >> Stop the cam .')
 
         def cam_getframe(self):        
             return self.cam_Frame     
 
         def cam_queryframe(self):                       
-            self.__cam_log.warning('\n>> Cam {} start.'.format(self.__URL))        
+            self.__cam_log.info(' >> Cam {} start.'.format(self.__URL))        
             while (not self.cam_isstop):                
                 self.cam_state, self.cam_Frame = self.cam_vid.read()                
                 if not self.cam_state:   
                     self.cam_vid.release() 
                     time.sleep(1)                                
-                    self.cam_connect()                     
-            self.cam_vid.release()   
-            self.__cam_log.warning('\n>> Stop the cam .')
+                    self.cam_connect()   
+                              
+             
+            
 
 if __name__ == '__main__':    
     my_cam = Cam(0)    
@@ -60,3 +63,4 @@ if __name__ == '__main__':
         if cv2.waitKey(5) & 0xFF ==27:            
             my_cam.cam_stop()
             break
+    

@@ -5,24 +5,24 @@ import logging
 
 # -- TCP 
 class CamSocket():
-    def __init__(self, ip, port, timeout):    
+    def __init__(self, ip, port, timeout = 1):    
         # -- logger
-        self.__camsocket_log = logging.getLogger('gcs')            
+        self.__camsocket_log = logging.getLogger(__name__)            
         self.__camsocket_log.setLevel(logging.WARNING)  
 
         self.__cam_ip = ip
         self.__cam_port = port         
         self.__timeout = timeout        
-        self.__encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 50] 
+        self.__encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 20] 
 
     def cam_socket_start(self):
         try:
             self.__cam_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.__cam_sock.settimeout(self.__timeout)   
             self.__cam_sock.connect((self.__cam_ip,self.__cam_port))
-            self.__camsocket_log.warning('Cam socket OK ')
+            self.__camsocket_log.info(' >> Cam socket OK ')
         except :                       
-            self.__camsocket_log.warning('Cam socket error, maybe you should open webcam page or webcam server')
+            self.__camsocket_log.info(' >> Cam socket error, maybe you should open webcam page or webcam server')
     
     def send_img_to_server(self, frame):
         if frame is not None:
@@ -34,7 +34,7 @@ class CamSocket():
             except Exception as e:                               
                 self.__cam_sock.close()                                 
                 self.cam_socket_start()                                                    
-                self.__camsocket_log.warning(type(e))
+                self.__camsocket_log.info(type(e))
     
 if __name__ == '__main__':
     from cam import*

@@ -24,10 +24,10 @@ class YOLO():
         "model_path": 'model_data/trained_weights_final_009.h5',        
         "anchors_path": 'model_data/yolo_anchors_009.txt',
         "classes_path": 'model_data/voc_classes.txt',
-        "score" : 0.3,
+        "score" : 0.1,
         "iou" : 0.45,
-        #"model_image_size" : (672, 672), # factor 32*21
-        "model_image_size" : (416, 416),# factor 32*13
+        "model_image_size" : (672, 672), # factor 32*21
+        #"model_image_size" : (416, 416),# factor 32*13
         "gpu_num" : 1,
     }
     @classmethod
@@ -38,14 +38,17 @@ class YOLO():
             return "Unrecognized attribute name '" + n + "'"
 
     def __init__(self, **kwargs):
+        self.__yolo_log = logging.getLogger(__name__)            
+        self.__yolo_log.setLevel(logging.INFO) 
+
         self.__dict__.update(self._defaults) # set up default values
         self.__dict__.update(kwargs) # and update with user overrides
         self.class_names = self._get_class()
         self.anchors = self._get_anchors()
         self.sess = K.get_session()
         self.boxes, self.scores, self.classes = self.generate()
-        self.yolo_result = []       
-        self.yolo_thread_isstop = False
+        self.yolo_result = []  
+              
 
     def _get_class(self):
         classes_path = os.path.expanduser(self.classes_path)
@@ -80,7 +83,7 @@ class YOLO():
                 num_anchors/len(self.yolo_model.output) * (num_classes + 5), \
                 'Mismatch between model and given anchor and class sizes'
 
-        print('{} model, anchors, and classes loaded.'.format(model_path))
+        self.__yolo_log.warning('{} model, anchors, and classes loaded.'.format(model_path))
 
         # Generate colors for drawing bounding boxes.
         hsv_tuples = [(x / len(self.class_names), 1., 1.)
@@ -100,12 +103,11 @@ class YOLO():
         boxes, scores, classes = yolo_eval(self.yolo_model.output, self.anchors,
                 len(self.class_names), self.input_image_shape,
                 score_threshold=self.score, iou_threshold=self.iou)
-        print('\n>> Yolo3 ready !')
+        self.__yolo_log.info('>> Yolo3 ready !')
         return boxes, scores, classes
 
     def detect_image(self, image):
         start = timer()
-
         if self.model_image_size != (None, None):
             assert self.model_image_size[0]%32 == 0, 'Multiples of 32 required'
             assert self.model_image_size[1]%32 == 0, 'Multiples of 32 required'
@@ -116,7 +118,7 @@ class YOLO():
             boxed_image = letterbox_image(image, new_image_size)
         image_data = np.array(boxed_image, dtype='float32')
 
-        #print(image_data.shape)
+        self.__yolo_log.debug(image_data.shape)
         image_data /= 255.
         image_data = np.expand_dims(image_data, 0)  # Add batch dimension.
 
@@ -125,9 +127,7 @@ class YOLO():
             feed_dict={
                 self.yolo_model.input: image_data,
                 self.input_image_shape: [image.size[1], image.size[0]]})
-                #K.learning_phase(): 0     
-            
-        
+                #K.learning_phase(): 0               
         
         if len(out_boxes):
             #logging.debug('\n>> Found {} boxes for {}'.format(len(out_boxes), 'img'))
@@ -150,7 +150,7 @@ class YOLO():
                 bottom = min(image.size[1], np.floor(bottom + 0.5).astype('int32'))
                 right = min(image.size[0], np.floor(right + 0.5).astype('int32'))
 
-                #print(label, (left, top), (right, bottom))
+                self.__yolo_log.info(label)
                 self.yolo_result.append((predicted_class, round(score,2), (left, top), (right, bottom)))
 
                 if top - label_size[1] >= 0:
@@ -168,16 +168,14 @@ class YOLO():
                 draw.text(text_origin, label, fill=(0, 0, 0), font=font)
                 del draw           
         end = timer()
-        logging.debug(f'elapsed time:{round((end - start),2)}')        
+        self.__yolo_log.debug(f'elapsed time:{round((end - start),2)}')        
         return image
 
     def close_session(self):
         self.sess.close()
 
 if __name__ == '__main__':
-    from cam import*    
-    logging.basicConfig(level=logging.DEBUG)
-
+    from cam import*       
     cam     = Cam(0)
     cam.cam_start()
     my_yolo = YOLO()        

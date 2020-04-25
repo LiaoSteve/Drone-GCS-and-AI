@@ -18,8 +18,8 @@ Make sure that our drone is in guided mode :
 class GCS():
     def __init__(self, gcs_ip, gcs_port, wp_path = 'data/X_ground.json', connection_string= 'tcp:127.0.0.1:5762', baud = 115200, wait_ready = True, timeout = 180, heartbeat_timeout = 180):     
         # -- logger
-        self.__gcs_log = logging.getLogger('gcs')            
-        self.__gcs_log.setLevel(logging.WARNING)
+        self.__gcs_log = logging.getLogger(__name__)            
+        self.__gcs_log.setLevel(logging.DEBUG)
         # -- gcs enabled
         self.gcs_isstop = False
         # -- udp socket  
@@ -32,26 +32,27 @@ class GCS():
                                 wait_ready = wait_ready, 
                                 timeout = timeout, 
                                 heartbeat_timeout = heartbeat_timeout)
-        self.__gcs_log.warning('\n>> Connect to pixhawk completely ')
-        # -- waypoint and drone_home 
+        self.__gcs_log.info(' >> Connect to pixhawk completely ')
+        # -- waypoints and drone_home 
         self.home           = self.vehicle.location.global_relative_frame
         self.wp             = self.read_json(wp_path)
-        self.num_wp         = 0    # current index of wp 
+        # -- current index of wp
+        self.num_wp         = 0     
         self.target         = LocationGlobalRelative(lat=self.wp[self.num_wp][1],lon=self.wp[self.num_wp][0],alt=10)
         self.dist_to_home   = None  
         self.dist_to_target = None       
-        # --drone status 
+        # -- drone status 
         self.cur_pos        = None
         self.velocity       = None
         self.attitude       = None
         self.groundspeed    = None
         self.mode           = None        
         self.heading        = None
-        # GPS info
+        # -- GPS info
         self.gps_status     = None
         self.gps_fix        = None
         self.gps_num        = None
-        # Battery info
+        # -- Battery info
         self.batt_vol       = None          
         self.batt_level     = None
         # --Timer 
@@ -69,7 +70,7 @@ class GCS():
         threading.Thread(target=self.status_monitor, daemon=True, args=()).start()
 
     def status_monitor(self):        
-        self.__gcs_log.warning('\n>> GCS monitor started !')
+        self.__gcs_log.info(' >> GCS monitor started !')
         while (not self.gcs_isstop):
             self.cur_pos      = self.vehicle.location.global_relative_frame # lat, lon, alt
             self.velocity     = self.vehicle.velocity                       # [m/s]
@@ -98,7 +99,7 @@ class GCS():
         try:           
             self.__gcs_sock.sendto(message.encode('utf-8'),(self.__gcs_ip,self.__gcs_port))            
         except Exception as e:
-            self.__gcs_log.warning(e)    
+            self.__gcs_log.info(e)    
 
     def mark_vehicle_home(self):
         data = {}
@@ -189,35 +190,38 @@ class GCS():
         """
         Arms vehicle and fly to aTargetAltitude.
         """
-        self.__gcs_log.warning("Basic pre-arm checks")
+        self.__gcs_log.info("Basic pre-arm checks")
         # Don't try to arm until autopilot is ready
         while not self.vehicle.is_armable:
-            self.__gcs_log.warning(" Waiting for vehicle to initialise...")
+            self.__gcs_log.info(" Waiting for vehicle to initialise...")
             time.sleep(1)
-        self.__gcs_log.warning("Arming motors")
+        self.__gcs_log.info("Arming motors")
         # Copter should arm in GUIDED mode
         self.vehicle.mode = VehicleMode("GUIDED")
         self.vehicle.armed = True
         # Confirm vehicle armed before attempting to take off
         while not self.vehicle.armed:
-            self.__gcs_log.warning(" Waiting for arming...")
+            self.__gcs_log.info(" Waiting for arming...")
             time.sleep(1)
-        self.__gcs_log.warning("Taking off!")
+        self.__gcs_log.info("Taking off!")
         self.vehicle.simple_takeoff(aTargetAltitude)  # Take off to target altitude
         # Wait until the vehicle reaches a safe height before processing the goto
         #  (otherwise the command after Vehicle.simple_takeoff will execute
         #   immediately).
         while True:
-            self.__gcs_log.warning(">> Altitude: ", self.vehicle.location.global_relative_frame.alt)
+            self.__gcs_log.info(f">> Altitude: {self.vehicle.location.global_relative_frame.alt}")
             # Break and return from function just below target altitude.
             if self.vehicle.location.global_relative_frame.alt >= aTargetAltitude * 0.95:
-                self.__gcs_log.warning("Reached target altitude")
+                self.__gcs_log.info("Reached target altitude")
                 break
             time.sleep(1)
+
     def goto(self, location, groundspeed=0.5):
-        self.vehicle.simple_goto(location, groundspeed=groundspeed)        
+        self.vehicle.simple_goto(location, groundspeed=groundspeed)   
+
     def close_vehicle(self):
         self.vehicle.close()
+
     def send_velocity(self, velocity_x, velocity_y, velocity_z):
         msg = self.vehicle.message_factory.set_position_target_local_ned_encode(
         0,       # time_boot_ms (not used)
@@ -233,6 +237,7 @@ class GCS():
             vehicle.send_mavlink(msg)
             time.sleep(1) """
         self.vehicle.flush()    
+
     def servo_pwm(self, servo_num, pwm):
         """
         Enable the servo
@@ -247,6 +252,7 @@ class GCS():
             0,
             0, 0, 0)
         self.vehicle.send_mavlink(msg)    
+
     def send_ned_velocity(self, n, e, d, duration):
         msg = self.vehicle.message_factory.set_position_target_local_ned_encode(
         0,       # time_boot_ms (not used)
@@ -261,12 +267,14 @@ class GCS():
             self.vehicle.send_mavlink(msg)
             time.sleep(1)
         self.vehicle.flush()    
+
     def security_lock(self, channel):
         while self.vehicle.channels[channel] > 1500 :
             self.__gcs_log.warning("RC_%s :%s" %channel,self.vehicle.channels[channel])
             self.__gcs_log.warning("switch down to continue the mission")
             time.sleep(1)	
-        self.__gcs_log.warning("Start Mission")    
+        self.__gcs_log.warning("Start Mission")  
+
     def stop_monitor(self):
         # Not success yet
         while True:
@@ -274,15 +282,16 @@ class GCS():
                 self.__gcs_log.warning("Stop mission ,RTL")
                 self.vehicle.mode = VehicleMode("RTL")
                 sys.exit(0)    
+
     def get_attributes(self):       
-        self.__gcs_log.warning("System status: %s" % self.vehicle.system_status.state)   
-        self.__gcs_log.warning( self.vehicle.gimbal)        
-        self.__gcs_log.warning("EKF OK?: %s" % self.vehicle.ekf_ok)
-        self.__gcs_log.warning("Last Heartbeat: %s" % self.vehicle.last_heartbeat)
-        self.__gcs_log.warning(self.vehicle.rangefinder)
-        self.__gcs_log.warning("Rangefinder distance: %s" % self.vehicle.rangefinder.distance)
-        self.__gcs_log.warning("Rangefinder voltage: %s" % self.vehicle.rangefinder.voltage)        
-        self.__gcs_log.warning("Is Armable?: %s" % self.vehicle.is_armable)
+        self.__gcs_log.info("System status: %s" % self.vehicle.system_status.state)   
+        self.__gcs_log.info( self.vehicle.gimbal)        
+        self.__gcs_log.info("EKF OK?: %s" % self.vehicle.ekf_ok)
+        self.__gcs_log.info("Last Heartbeat: %s" % self.vehicle.last_heartbeat)
+        self.__gcs_log.info(self.vehicle.rangefinder)
+        self.__gcs_log.info("Rangefinder distance: %s" % self.vehicle.rangefinder.distance)
+        self.__gcs_log.info("Rangefinder voltage: %s" % self.vehicle.rangefinder.voltage)        
+        self.__gcs_log.infos("Is Armable?: %s" % self.vehicle.is_armable)
         
                           
 if __name__ == '__main__':

@@ -19,14 +19,14 @@ source.addEventListener('message', function(e){
   console.log(obj);
   
   if(obj.channel == '00001') {   
-    //Mark the 'TRASH','CAP' if it is identified by yolov3 
+    //Mark the 'trash','cap', 'plastic_bag'if it is identified by yolov3 
     trash_marker = L.circleMarker([obj.latitude, obj.longitude], {
       color: 'green',
       fillColor: '#f03',
       fillOpacity: 0.5,
       radius: 2 }).addTo(mymap); 
     trash_marker.bindTooltip("lon:"+obj.longitude
-      +"<br>lat:"+obj.latitude+"<br>trash:"+obj.trash_num+"<br>cap:"+obj.cap_num+"<br>time:"+obj.timestamp).openTooltip();
+      +"<br>lat:"+obj.latitude+"<br>trash:"+obj.trash_num+"<br>cap:"+obj.cap_num+"<br>plastic_bag:"+obj.plastic_bag_num+"<br>time:"+obj.timestamp).openTooltip();
     mapMarkers1.push(trash_marker);    
     //trash_marker.bindTooltip("lon:"+obj.longitude).openTooltip();
     

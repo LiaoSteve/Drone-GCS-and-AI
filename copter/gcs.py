@@ -33,6 +33,7 @@ class GCS():
                                 timeout = timeout, 
                                 heartbeat_timeout = heartbeat_timeout)
         self.__gcs_log.info(' >> Connect to pixhawk completely ')
+        self.__gcs_log.info(self.vehicle.version) 
         # -- waypoints and drone_home 
         self.home           = self.vehicle.location.global_relative_frame
         self.wp             = self.read_json(wp_path)
@@ -82,14 +83,12 @@ class GCS():
             self.batt_vol     = self.vehicle.battery.voltage
             self.batt_level   = self.vehicle.battery.level
 
+            self.gps_status   = self.vehicle.ekf_ok
             self.gps_fix      = self.vehicle.gps_0.fix_type
             self.gps_num      = self.vehicle.gps_0.satellites_visible
                    
             self.dist_to_home = self.haversine( pos1 = self.cur_pos, pos2_lon = self.home.lon , pos2_lat = self.home.lat)
-            self.dist_to_target = self.haversine( pos1 = self.cur_pos, pos2_lon = self.target.lon , pos2_lat = self.target.lat)
-            
-            ''' self.mark_vehicle_home()
-            self.generate_checkpoint() '''
+            self.dist_to_target = self.haversine( pos1 = self.cur_pos, pos2_lon = self.target.lon , pos2_lat = self.target.lat)            
             
             self.send_current_mark()
             self.send_drone_status_to_GCS()                           
@@ -146,7 +145,7 @@ class GCS():
         data['dist_to_target'] = round(self.dist_to_target, 2)
         
         data['heading']        = self.heading
-        data['gps_status']     = 'fix:{} sat:{}'.format(self.gps_fix,self.gps_num)
+        data['gps_status']     = 'ekf_ok:{} fix:{} sat:{}'.format(self.gps_status, self.gps_fix, self.gps_num)
         data['battery']        = 'vol:{} level:{}'.format(self.batt_vol,self.batt_level)
         message = json.dumps(data)    
         self.send_data_to_MapServer(message)   

@@ -33,6 +33,7 @@ class RealSense():
         time.sleep(1)
         devices = rs.context().query_devices()        
         self.__realsense_log.info('{}'.format(devices[0]))
+
     def realsense_get_frame(self):
         self.combine_frame = np.hstack((self.color_frame ,self.depth_frame))
         return self.combine_frame    
@@ -100,8 +101,7 @@ if __name__ =='__main__':
         #timer = timeit.default_timer()         
         cv2.imshow('realsense',RS.realsense_get_frame())      
         #print('time: {:.4f}'.format(timeit.default_timer()-timer))                
-        key = cv2.waitKey(5) & 0xFF # use jetson xavier use waitKey(5)
-        
+        key = cv2.waitKey(5) & 0xFF # use jetson xavier use waitKey(5)        
         if key == 27:
             RS.realsense_stop()            
             break

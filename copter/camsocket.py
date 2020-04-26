@@ -13,7 +13,7 @@ class CamSocket():
         self.__cam_ip = ip
         self.__cam_port = port         
         self.__timeout = timeout        
-        self.__encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 20] 
+        self.__encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 10] # 110KB per frame
 
     def cam_socket_start(self):
         try:
@@ -43,16 +43,18 @@ if __name__ == '__main__':
     #my_yolo = YOLO()
     my_cam_socket = CamSocket('140.121.130.133', 9998, timeout = 0.01)
     my_cam_socket.cam_socket_start()    
-    cam = Cam(0)
+    cam = Cam('../../2019-11-19.mp4')
     cam.cam_start()
     time.sleep(2)
-    while 1:      
-        #image = Image.fromarray(cam.cam_Frame)
-        #image = my_yolo.detect_image(image)
-        #result = np.asarray(image)
-        #my_cam_socket.send_img_to_server(result)   
-        my_cam_socket.send_img_to_server(cam.cam_Frame)      
-        cv2.imshow('img', cam.cam_Frame)
+    while 1:                     
+        try:
+            #image = Image.fromarray(cam.cam_Frame)
+            #image = my_yolo.detect_image(image)
+            #result = np.asarray(image)
+            frame = cv2.resize(cam.cam_Frame,(640,480))
+            my_cam_socket.send_img_to_server(frame)      
+            cv2.imshow('img', cam.cam_Frame)
+        except: continue
         if cv2.waitKey(100) & 0xFF == 27: # ESC                    
             break
 

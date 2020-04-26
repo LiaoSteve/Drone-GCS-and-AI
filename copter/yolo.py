@@ -24,7 +24,7 @@ class YOLO():
         "model_path": 'model_data/trained_weights_final_009.h5',        
         "anchors_path": 'model_data/yolo_anchors_009.txt',
         "classes_path": 'model_data/voc_classes.txt',
-        "score" : 0.1,
+        "score" : 0.3,
         "iou" : 0.45,
         "model_image_size" : (672, 672), # factor 32*21
         #"model_image_size" : (416, 416),# factor 32*13
@@ -39,7 +39,7 @@ class YOLO():
 
     def __init__(self, **kwargs):
         self.__yolo_log = logging.getLogger(__name__)            
-        self.__yolo_log.setLevel(logging.INFO) 
+        self.__yolo_log.setLevel(logging.WARNING) 
 
         self.__dict__.update(self._defaults) # set up default values
         self.__dict__.update(kwargs) # and update with user overrides
@@ -167,18 +167,20 @@ class YOLO():
                     fill=self.colors[c])
                 draw.text(text_origin, label, fill=(0, 0, 0), font=font)
                 del draw           
-        end = timer()
+        end = timer()        
         self.__yolo_log.debug(f'elapsed time:{round((end - start),2)}')        
         return image
 
     def close_session(self):
         self.sess.close()
+        self.__yolo_log(' >> stop the yolo')
 
 if __name__ == '__main__':
     from cam import*       
-    cam     = Cam(0)
-    cam.cam_start()
+    cam = Cam(0)    
     my_yolo = YOLO()        
+    cam.cam_start()
+    time.sleep(3)
     while 1:        
         frame = cam.cam_Frame
         if not len(frame):

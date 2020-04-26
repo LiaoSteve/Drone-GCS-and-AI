@@ -25,7 +25,7 @@ class Cam():
                 self.cam_vid.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
                 self.cam_vid.set(cv2.CAP_PROP_FRAME_HEIGHT, 480) 
             self.__cam_video_FourCC = int(self.cam_vid.get(cv2.CAP_PROP_FOURCC))
-            #self.video_FourCC2    = cv2.VideoWriter_fourcc(*"mp4v")
+            #self.__cam_video_FourCC2    = cv2.VideoWriter_fourcc(*"mp4v")
             self.__cam_video_fps = self.cam_vid.get(cv2.CAP_PROP_FPS)
             self.__cam_video_size = (int(self.cam_vid.get(cv2.CAP_PROP_FRAME_WIDTH)),
                         int(self.cam_vid.get(cv2.CAP_PROP_FRAME_HEIGHT)))
@@ -44,7 +44,7 @@ class Cam():
         def cam_queryframe(self):                       
             self.__cam_log.info(' >> Cam {} start.'.format(self.__URL))        
             while (not self.cam_isstop):                
-                self.cam_state, self.cam_Frame = self.cam_vid.read()                
+                self.cam_state, self.cam_Frame = self.cam_vid.read()                 
                 if not self.cam_state:   
                     self.cam_vid.release() 
                     time.sleep(1)                                
@@ -54,7 +54,7 @@ class Cam():
             
 
 if __name__ == '__main__':    
-    my_cam = Cam(0)    
+    my_cam = Cam('../../2019-11-19.mp4')    
     my_cam.cam_start()       
     time.sleep(1)   
     while 1:                

@@ -1,7 +1,5 @@
 # Drone-GCS-and-AI
 ***Use yolov3 to detect coast's debries : plastic bottles , plastic bags , caps etc ...***
-<hr></hr>
-
 
 ***[See demo video 1](https://drive.google.com/open?id=1H6hfDKPacrxpqa3XGIi3flVTbuDY8Ano)***
 
@@ -58,7 +56,7 @@ https://drive.google.com/open?id=1opCO01u4EebdOHxc5JBBf8GlgSw6qIfa
 
 <hr></hr>
 <h2>Airsim</h2>
-
+<h4>Authors</h4>
 - [x] Created by Tzung-Hsien Huang, and adapted by LisoSteve
 - [x] In AirSim simulator, use the fuzzy rule to control the drone.
 

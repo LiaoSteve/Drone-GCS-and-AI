@@ -1,3 +1,4 @@
+<h2>Authors</h2>
 - [x] Created by Tzung-Hsien Huang, and adapted by LisoSteve
 - [x] In AirSim simulator, use the fuzzy rule to control the drone.
 <h2>Test A</h2>

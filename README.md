@@ -56,7 +56,7 @@ https://drive.google.com/open?id=1opCO01u4EebdOHxc5JBBf8GlgSw6qIfa
 
 <hr></hr>
 <h2>Airsim</h2>
-<h4>Authors</h4>
+<h4>Author</h4>
 - [x] Created by Tzung-Hsien Huang, and adapted by LisoSteve
 - [x] In AirSim simulator, use the fuzzy rule to control the drone.
 

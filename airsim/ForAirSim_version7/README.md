@@ -1,4 +1,4 @@
-<h2>Authors</h2>
+<h2>Author</h2>
 
 - [x] Created by Tzung-Hsien Huang, and adapted by LisoSteve
 

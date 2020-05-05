@@ -46,16 +46,17 @@ if __name__ == '__main__':
     cam = Cam('../../2019-11-19.mp4')
     cam.cam_start()
     time.sleep(2)
-    while 1:                     
+    while 1:                          
         try:
             #image = Image.fromarray(cam.cam_Frame)
             #image = my_yolo.detect_image(image)
             #result = np.asarray(image)
             frame = cv2.resize(cam.cam_Frame,(640,480))
             my_cam_socket.send_img_to_server(frame)      
-            cv2.imshow('img', cam.cam_Frame)
-        except: continue
-        if cv2.waitKey(100) & 0xFF == 27: # ESC                    
+            cv2.imshow('img', frame)
+        except: continue        
+        if cv2.waitKey(50) & 0xFF == 27: # ESC  
+            cam.cam_stop()                  
             break
 
         

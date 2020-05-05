@@ -52,7 +52,7 @@ try:
         
         """--------------------------  COLOR MAP ---------------------------------"""
         filter_depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(filtered_depth, alpha=0.03), cv2.COLORMAP_BONE)
-        color_image = cv2.addWeighted(color_image, 0.15, filter_depth_colormap, 0.85, 0) # shape: (440,600,3)
+        color_image = cv2.addWeighted(color_image, 0, filter_depth_colormap, 1, 0) # shape: (440,600,3)
         
         
         """--------------------------  Show Result ---------------------------------"""
@@ -94,35 +94,14 @@ try:
             cv2.circle(color_image, (M_j+(center_M[0]-eq_w),M_i+(center_M[1]-shift)), 5, (255, 255, 0), -1)
         else:
             cv2.putText(img=color_image, text='safe', org=((center_M[0]-50), (center_M[1]+200)), fontFace=cv2.FONT_HERSHEY_COMPLEX, color=(255, 255, 0), fontScale=1, thickness=1)            
-        ''' if dx_L.any():            
-            for i,j in zip(dx_L, dy_L):                
-                cv2.circle(color_image, (j+(center_L[0]-eq_w),i+(center_L[1]-shift)), 1, (0, 255, 255), -1)
-        if dx_R.any():
-            for i,j in zip(dx_R, dy_R):                
-                cv2.circle(color_image, (j+(center_R[0]-eq_w),i+(center_R[1]-shift)), 1, (255, 0, 255), -1)
-        if dx_M.any():
-            for i,j in zip(dx_M, dy_M):                
-                cv2.circle(color_image, (j+(center_M[0]-eq_w),i+(center_M[1]-shift)), 1, (255, 255, 0), -1) '''
-
-        ''' ROI_L = np.median(ROI_L.reshape(-1))
-        ROI_R = np.median(ROI_R.reshape(-1))
-        ROI_M = np.median(ROI_M.reshape(-1)) '''
 
         cv2.rectangle(color_image, ((center_L[0]-eq_w), (center_L[1]-shift)), ((center_L[0]+eq_w), (center_L[1]+shift)), (0, 255, 255), 2)  
         cv2.rectangle(color_image, ((center_R[0]-eq_w), (center_R[1]-shift)), ((center_R[0]+eq_w), (center_R[1]+shift)), (255, 0, 255), 2)
-        cv2.rectangle(color_image, ((center_M[0]-eq_w), (center_M[1]-shift)), ((center_M[0]+eq_w), (center_M[1]+shift)), (255, 255, 0), 2)    
-
-        ''' cv2.circle(color_image, tuple(center_L), 3, (0, 255, 255), -1)  
-        cv2.circle(color_image, tuple(center_R), 3, (255, 0, 255), -1)
-        cv2.circle(color_image, tuple(center_M), 3, (255, 255, 0), -1) '''
-
-        ''' cv2.putText(img=color_image, text=str(filtered_depth[center_L[1],center_L[0]]/10)+'cm', org=((center_L[0]-50), (center_L[1]+200)), fontFace=cv2.QT_FONT_BLACK, color=(0, 255, 255), fontScale=1, thickness=1)
-        cv2.putText(img=color_image, text=str(filtered_depth[center_R[1],center_R[0]]/10)+'cm', org=((center_R[0]-50), (center_R[1]+200)), fontFace=cv2.QT_FONT_BLACK, color=(255, 0, 255), fontScale=1, thickness=1)
-        cv2.putText(img=color_image, text=str(filtered_depth[center_M[1],center_M[0]]/10)+'cm', org=((center_M[0]-50), (center_M[1]+200)), fontFace=cv2.QT_FONT_BLACK, color=(255, 255, 0), fontScale=1, thickness=1) '''        
+        cv2.rectangle(color_image, ((center_M[0]-eq_w), (center_M[1]-shift)), ((center_M[0]+eq_w), (center_M[1]+shift)), (255, 255, 0), 2)   
       
-        cv2.imshow('depth_colormap', color_image)         
+        cv2.imshow('depth_colormap', color_image)       
         
-        if cv2.waitKey(1) & 0xFF==ord('q'):
+        if cv2.waitKey(1) & 0xFF == 27:
             break   
         print(f'time: {timeit.default_timer()-t} sec')
 finally:

@@ -82,7 +82,7 @@ class RealSense():
             # Grab data from the device.                        
             frames  = self.__pipeline.wait_for_frames()  
             # Align the depth frame to color frame   
-            #frames = self.__align.process(frames)       
+            frames = self.__align.process(frames)       
             depth_f = frames.get_depth_frame()
             color_f = frames.get_color_frame()
             if not depth_f or not color_f:

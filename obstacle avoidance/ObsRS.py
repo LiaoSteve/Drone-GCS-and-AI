@@ -118,6 +118,7 @@ class SenseObstacle(object):
             self.depth_frame1 = cv2.applyColorMap(cv2.convertScaleAbs(self.depth_image1, alpha=0.03), cv2.COLORMAP_JET)
 
 if __name__ == "__main__":
+    import time
     print('Testing for this class function,\n press E to break the loop.')
     c1 = [(170, 100)]
     c2 = [(425, 325)]
@@ -128,6 +129,7 @@ if __name__ == "__main__":
     SO.start()
     time.sleep(2)
     while True:
+        t = time.time()
         frame_out = SO.get_frame()
         if frame_out.any():
             x_location, y_location, z_distance = SO.getObsLocation()
@@ -140,7 +142,7 @@ if __name__ == "__main__":
             result = 'Distance:{z:.2f}cm'.format(z=z_distance)
             cv2.putText(img=frame_out,text=result,org=(175,360),fontFace=cv2.FONT_HERSHEY_DUPLEX,color=(0, 255, 255),fontScale=1)
             cv2.imshow('Test Out', frame_out) 
-            
+            print(time.time()-t)
                     
             if cv2.waitKey(1) & 0xFF ==ord('e'):
                 print('Finish')

@@ -8,7 +8,7 @@ import threading, time, logging
 @ Adapted from Tzung-Hsien Huang. 
 -----------------------------------'''
 class RealSense():
-    def __init__(self):
+    def __init__(self, cut_x = 20, cut_y = 20):
         # Realsense Logger
         self.__realsense_log = logging.getLogger(__name__)            
         self.__realsense_log.setLevel(logging.INFO)
@@ -27,20 +27,13 @@ class RealSense():
         self.color_frame, self.depth_frame = None, None  
         self.realsense_isstop = False    
         # Sense obstacle param.
-        self.h, self.w = (480, 640)
-        self.eq_w = int(self.w/5)
-        self.center_L = [int(self.w/8) * 2, int(self.h/2)]
-        self.center_M = [int(self.w/8) * 4, int(self.h/2)]
-        self.center_R = [int(self.w/8) * 6, int(self.h/2)]
-        self.shift = 120  
-        # Sense obstacle ROI      
-        self.LBox = [((self.center_L[1]-self.shift), (self.center_L[0]-self.eq_w)), ((self.center_L[1]+self.shift), (self.center_L[0]+self.eq_w))]
-        self.MBox = [((self.center_M[1]-self.shift), (self.center_M[0]-self.eq_w)), ((self.center_M[1]+self.shift), (self.center_M[0]+self.eq_w))]
-        self.RBox = [((self.center_R[1]-self.shift), (self.center_R[0]-self.eq_w)), ((self.center_R[1]+self.shift), (self.center_R[0]+self.eq_w))]
-
+        self.cut_x = cut_x
+        self.cut_y = cut_y
+        self.h, self.w = (480 - 2 * self.cut_y, 640 - 2 * self.cut_x)                     
+       
     def realsense_info(self):
-        # Show device info.    
-        time.sleep(1)
+        # Show device info.      
+        time.sleep(1) 
         devices = rs.context().query_devices()        
         self.__realsense_log.info('{}'.format(devices[0]))
 
@@ -75,10 +68,10 @@ class RealSense():
         self.__threshold.set_option(rs.option.min_distance, 0.28)
 
     def imgprocessing(self, frame_in):        
-        frame = self.__depth2disparity.process(frame_in)
+        '''frame = self.__depth2disparity.process(frame_in)
         frame = self.__spatial.process(frame)
-        frame = self.__disparity2depth.process(frame)
-        frame = self.__hole_filling.process(frame)
+        frame = self.__disparity2depth.process(frame)'''
+        frame = self.__hole_filling.process(frame_in)
         frame = self.__threshold.process(frame)
         return frame
 
@@ -89,7 +82,7 @@ class RealSense():
             # Grab data from the device.                        
             frames  = self.__pipeline.wait_for_frames()  
             # Align the depth frame to color frame   
-            frames = self.__align.process(frames)       
+            #frames = self.__align.process(frames)       
             depth_f = frames.get_depth_frame()
             color_f = frames.get_color_frame()
             if not depth_f or not color_f:
@@ -97,53 +90,55 @@ class RealSense():
             # Get filtered depth frame
             process_frame = self.imgprocessing(depth_f)                      
             # RGB frame and depth frame
-            self.color_frame = np.asanyarray(color_f.get_data())[20:-20,20:-20]
-            self.depth_frame = np.asanyarray(process_frame.get_data())[20:-20,20:-20]               
+            self.color_frame = np.asanyarray(color_f.get_data())[self.cut_y:-self.cut_y, self.cut_x:-self.cut_x]
+            self.depth_frame = np.asanyarray(process_frame.get_data())[self.cut_y:-self.cut_y, self.cut_x:-self.cut_x]               
             # Show depth in color map
             self.depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(self.depth_frame, alpha=0.03), cv2.COLORMAP_JET)
     
-    def sense_obs(self):
-        # Sense obstacles
-        self.depth_frame[self.depth_frame <= 0] = np.inf
-        self.ROI_L = self.depth_frame[self.LBox[0][0]:self.LBox[1][0], self.LBox[0][1]:self.LBox[1][1]]
-        self.ROI_R = self.depth_frame[self.RBox[0][0]:self.RBox[1][0], self.RBox[0][1]:self.RBox[1][1]]
-        self.ROI_M = self.depth_frame[self.MBox[0][0]:self.MBox[1][0], self.MBox[0][1]:self.MBox[1][1]]
-        
-        dx_L, dy_L = np.where(self.ROI_L < 1500) # [mm]
-        dx_R, dy_R = np.where(self.ROI_R < 1500) 
-        dx_M, dy_M = np.where(self.ROI_M < 1500)
-
-        if dx_L.any():            
-            L_i = int(np.median(dx_L)) 
-            L_j = int(np.median(dy_L))          
-            L_depth = self.depth_frame[]
-        else:
-           
-        
-        if dx_R.any():
-            R_i = int(np.median(dx_R)) 
-            R_j = int(np.median(dy_R)) 
-           
-        else:
-          
-        
+    def sense_obstacle(self, roi_points = [(100, 170), (325, 425)], thresh = 1500):
+        """
+        --------------------------------------------------------------------------------------------------------------------
+        @ roi_points: a list like [(1,2),(3,4)] : Rectangle top-left point (1,2) and bottom-right point (3,4)
+        @ thresh: Sense obstacle under thresh-distance [mm] in ROI  
+        @ return: one sensed obstacle data [y, x, depth] in frame, y is row , x is colunm and depth is obstacle distance in [mm]
+        --------------------------------------------------------------------------------------------------------------------
+        """        
+        #self.depth_frame[self.depth_frame <= 0] = np.inf
+        ROI = self.depth_frame[roi_points[0][0]:roi_points[1][0], roi_points[0][1]:roi_points[1][1]]               
+        dy_M, dx_M = np.where(ROI < thresh)        
         if dx_M.any():
-            M_i = int(np.median(dx_M)) 
-            M_j = int(np.median(dy_M))  
-           
-          
+            i = int(np.median(dy_M))
+            j = int(np.median(dx_M))               
+            depth = ROI[i, j]
+            if depth == 0:
+                return False, [None, None, None]
+            y = roi_points[0][0] + i
+            x = roi_points[0][1] + j
+            return True, [y, x, depth]
+        else:
+            return False, [None, None, None]
        
-if __name__ =='__main__':      
+if __name__ =='__main__':          
     RS = RealSense()
     RS.realsense_info()
     RS.realsense_start()
     time.sleep(2)
-    import timeit             
+    import timeit    
+            
     while 1:
-        timer = timeit.default_timer()       
-        cv2.imshow('realsense',RS.realsense_get_frame())      
-        print('time: {:.4f}'.format(timeit.default_timer()-timer))                
-        key = cv2.waitKey(5) & 0xFF # use jetson xavier use waitKey(5)        
+        t = time.time()      
+        img = RS.realsense_get_frame()
+        ret, obs = RS.sense_obstacle(thresh=2000)           
+        cv2.rectangle(img, (170, 100), (425, 325), (0, 255, 255), 2)                     
+        if ret:  
+            print(obs)         
+            cv2.circle(img, (obs[1], obs[0]), 3, (0,0,255), -1)
+            cv2.putText(img=img, text=str(obs[2])+' mm', org=(obs[1], obs[0]),fontFace=cv2.FONT_HERSHEY_DUPLEX,color=(0, 255, 0),fontScale=0.7)
+                    
+        cv2.imshow('realsense', img)      
+        print(f'time:{time.time()-t}')         
+        key = cv2.waitKey(1) & 0xFF    
         if key == 27:
             RS.realsense_stop()            
             break
+    

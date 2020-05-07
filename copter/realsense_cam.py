@@ -8,7 +8,7 @@ import threading, time, logging
 @ Adapted from Tzung-Hsien Huang. 
 -----------------------------------'''
 class RealSense():
-    def __init__(self, cut_x = 20, cut_y = 20):
+    def __init__(self, cut_row = 20, cut_col = 20):
         # Realsense Logger
         self.__realsense_log = logging.getLogger(__name__)            
         self.__realsense_log.setLevel(logging.INFO)
@@ -27,9 +27,9 @@ class RealSense():
         self.color_frame, self.depth_frame = None, None  
         self.realsense_isstop = False    
         # Sense obstacle param.
-        self.cut_x = cut_x
-        self.cut_y = cut_y
-        self.h, self.w = (480 - 2 * self.cut_y, 640 - 2 * self.cut_x)                     
+        self.cut_col = cut_col
+        self.cut_row = cut_row
+        self.h, self.w = (480 - 2 * self.cut_row, 640 - 2 * self.cut_col)                     
        
     def realsense_info(self):
         # Show device info.      
@@ -90,8 +90,8 @@ class RealSense():
             # Get filtered depth frame
             process_frame = self.imgprocessing(depth_f)                      
             # RGB frame and depth frame
-            self.color_frame = np.asanyarray(color_f.get_data())[self.cut_y:-self.cut_y, self.cut_x:-self.cut_x]
-            self.depth_frame = np.asanyarray(process_frame.get_data())[self.cut_y:-self.cut_y, self.cut_x:-self.cut_x]               
+            self.color_frame = np.asanyarray(color_f.get_data())[self.cut_row:-self.cut_row, self.cut_col:-self.cut_col]
+            self.depth_frame = np.asanyarray(process_frame.get_data())[self.cut_row:-self.cut_row, self.cut_col:-self.cut_col]               
             # Show depth in color map
             self.depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(self.depth_frame, alpha=0.03), cv2.COLORMAP_JET)
     
@@ -100,43 +100,43 @@ class RealSense():
         --------------------------------------------------------------------------------------------------------------------
         @ roi_points: a list like [(1,2),(3,4)] : Rectangle top-left point (1,2) and bottom-right point (3,4)
         @ thresh: Sense obstacle under thresh-distance [mm] in ROI  
-        @ return: one sensed obstacle data [y, x, depth] in frame, y is row , x is colunm and depth is obstacle distance in [mm]
+        @ return: Obstacle data : ret, [row, col, depth] in frame, ret is whether or not sensed obstacle, depth is obstacle distance in [mm]
         --------------------------------------------------------------------------------------------------------------------
         """        
         #self.depth_frame[self.depth_frame <= 0] = np.inf
         ROI = self.depth_frame[roi_points[0][0]:roi_points[1][0], roi_points[0][1]:roi_points[1][1]]               
-        dy_M, dx_M = np.where(ROI < thresh)        
-        if dx_M.any():
-            i = int(np.median(dy_M))
-            j = int(np.median(dx_M))               
+        U_row, U_col = np.where(ROI < thresh)        
+        if U_row.any():
+            i = int(np.median(U_row))
+            j = int(np.median(U_col))               
             depth = ROI[i, j]
             if depth == 0:
                 return False, [None, None, None]
-            y = roi_points[0][0] + i
-            x = roi_points[0][1] + j
-            return True, [y, x, depth]
+            row = roi_points[0][0] + i
+            col = roi_points[0][1] + j
+            return True, [row, col, depth]
         else:
             return False, [None, None, None]
        
 if __name__ =='__main__':          
-    RS = RealSense()
+    RS = RealSense(cut_row = 30, cut_col = 30)
     RS.realsense_info()
     RS.realsense_start()
     time.sleep(2)
     import timeit    
             
     while 1:
-        t = time.time()      
+        #t = time.time()      
         img = RS.realsense_get_frame()
         ret, obs = RS.sense_obstacle(thresh=2000)           
         cv2.rectangle(img, (170, 100), (425, 325), (0, 255, 255), 2)                     
         if ret:  
-            print(obs)         
+            print(f'(row, col, depth) = {obs}')         
             cv2.circle(img, (obs[1], obs[0]), 3, (0,0,255), -1)
             cv2.putText(img=img, text=str(obs[2])+' mm', org=(obs[1], obs[0]),fontFace=cv2.FONT_HERSHEY_DUPLEX,color=(0, 255, 0),fontScale=0.7)
                     
         cv2.imshow('realsense', img)      
-        print(f'time:{time.time()-t}')         
+        #print(f'time:{time.time()-t}')         
         key = cv2.waitKey(1) & 0xFF    
         if key == 27:
             RS.realsense_stop()            

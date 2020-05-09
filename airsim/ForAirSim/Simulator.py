@@ -141,7 +141,7 @@ except Exception as e:
     print('error: ',e)        
     pass
 
-# record object to txt
+# record object to txt (the center of object, notice that the third param. is -z)
 _object_name =  client.simListSceneObjects("object_.*")
 print(">> _object  list: {ww:}".format(ww=_object_name))
 ob = SetWaypoint(_object_name,key="object_")                             

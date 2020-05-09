@@ -64,17 +64,17 @@ https://drive.google.com/open?id=1opCO01u4EebdOHxc5JBBf8GlgSw6qIfa
 <h4>Test A</h4>
 
 ***[See demo video](https://drive.google.com/open?id=1oGbn28wQA_o-EyqqzDqoxLLuQZKde3WK)***
-![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim_version7/Data_gif_A.gif)
+![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_A.gif)
 <hr></hr>
 <h4>Test B</h4>
 
 ***[See demo video](https://drive.google.com/open?id=1G7rWvAg8GuQ7e9GqmgrFNUia2IaKj6rS)***
-![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim_version7/Data_gif_B.gif)
+![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_B.gif)
 <hr></hr>
 <h4>Test F</h4>
 
 ***[See demo video](https://drive.google.com/open?id=1KNb6ggzH0gUVQc07_ZdVgUQq8zr_T9sn)***
-![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim_version7/Data_gif_F.gif)
+![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_F.gif)
 
 
 

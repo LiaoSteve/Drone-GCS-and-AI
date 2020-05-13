@@ -8,7 +8,7 @@ import threading, time, logging
 @ Adapted from Tzung-Hsien Huang. 
 -----------------------------------'''
 class RealSense():
-    def __init__(self, cut_row = 20, cut_col = 20):
+    def __init__(self):
         # Realsense Logger
         self.__realsense_log = logging.getLogger(__name__)            
         self.__realsense_log.setLevel(logging.INFO)
@@ -26,10 +26,8 @@ class RealSense():
         # Realsense cam frame
         self.color_frame, self.depth_frame = None, None  
         self.realsense_isstop = False    
-        # Sense obstacle param.
-        self.cut_col = cut_col
-        self.cut_row = cut_row
-        self.h, self.w = (480 - 2 * self.cut_row, 640 - 2 * self.cut_col)                     
+        # Sense obstacle param.        
+        self.h, self.w = (480 , 640)                     
        
     def realsense_info(self):
         # Show device info.      
@@ -38,7 +36,7 @@ class RealSense():
         self.__realsense_log.info('{}'.format(devices[0]))
 
     def realsense_get_frame(self):
-        self.combine_frame = np.hstack((self.color_frame ,self.depth_colormap))
+        self.combine_frame = np.hstack((self.depth_colormap, self.color_frame))
         return self.combine_frame    
 
     def realsense_start(self):
@@ -53,13 +51,13 @@ class RealSense():
 
     def filter_setup(self):
         # Spatial filter
-        self.__spatial         = rs.spatial_filter()
+        '''self.__spatial         = rs.spatial_filter()
         self.__spatial.set_option(rs.option.holes_fill, 2) # default: 0
         self.__spatial.set_option(rs.option.filter_smooth_alpha, 1) # default: 0.5, range:[0.25,1]
         self.__spatial.set_option(rs.option.filter_smooth_delta, 50) # default: 20, range:[1, 50]
         # For longer range
         self.__depth2disparity = rs.disparity_transform(True)
-        self.__disparity2depth = rs.disparity_transform(False)
+        self.__disparity2depth = rs.disparity_transform(False)'''
         # Hole filling filter
         self.__hole_filling    = rs.hole_filling_filter(mode=2)
         # Threshold Filter
@@ -90,23 +88,24 @@ class RealSense():
             # Get filtered depth frame
             process_frame = self.imgprocessing(depth_f)                      
             # RGB frame and depth frame
-            self.color_frame = np.asanyarray(color_f.get_data())[self.cut_row:-self.cut_row, self.cut_col:-self.cut_col]
-            self.depth_frame = np.asanyarray(process_frame.get_data())[self.cut_row:-self.cut_row, self.cut_col:-self.cut_col]               
+            self.color_frame = np.asanyarray(color_f.get_data())
+            self.depth_frame = np.asanyarray(process_frame.get_data())            
             # Show depth in color map
             self.depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(self.depth_frame, alpha=0.03), cv2.COLORMAP_JET)
     
     def sense_obstacle(self, roi_points = [(100, 170), (325, 425)], thresh = 1500):
         """
         --------------------------------------------------------------------------------------------------------------------
-        @ roi_points: a list like [(1,2),(3,4)] : Rectangle top-left point (1,2) and bottom-right point (3,4)
+        @ roi_points: a list like [(row = 1, col = 2),(row = 3, col = 4)] : Rectangle top-left point (1,2) and bottom-right point (3,4)
         @ thresh: Sense obstacle under thresh-distance [mm] in ROI  
         @ return: Obstacle data : ret, [row, col, depth] in frame, ret is whether or not sensed obstacle, depth is obstacle distance in [mm]
         --------------------------------------------------------------------------------------------------------------------
         """        
         #self.depth_frame[self.depth_frame <= 0] = np.inf
         ROI = self.depth_frame[roi_points[0][0]:roi_points[1][0], roi_points[0][1]:roi_points[1][1]]               
-        U_row, U_col = np.where(ROI < thresh)        
+        U_row, U_col = np.where(ROI < thresh)                
         if U_row.any():
+            # Sensed obstacle
             i = int(np.median(U_row))
             j = int(np.median(U_col))               
             depth = ROI[i, j]
@@ -114,12 +113,14 @@ class RealSense():
                 return False, [None, None, None]
             row = roi_points[0][0] + i
             col = roi_points[0][1] + j
+            # return True status and obstacle info.
             return True, [row, col, depth]
         else:
+            # Didn't sensed obstacle, return status false
             return False, [None, None, None]
        
-if __name__ =='__main__':          
-    RS = RealSense(cut_row = 30, cut_col = 30)
+if __name__ == '__main__':          
+    RS = RealSense()
     RS.realsense_info()
     RS.realsense_start()
     time.sleep(2)
@@ -128,13 +129,12 @@ if __name__ =='__main__':
     while 1:
         #t = time.time()      
         img = RS.realsense_get_frame()
-        ret, obs = RS.sense_obstacle(thresh=2000)           
-        cv2.rectangle(img, (170, 100), (425, 325), (0, 255, 255), 2)                     
-        if ret:  
-            print(f'(row, col, depth) = {obs}')         
+        ret, obs = RS.sense_obstacle(roi_points = [(120, 160), (360, 480)], thresh=2000)                              
+        if ret: 
+            print(f'[row, col, depth] = {obs}')         
             cv2.circle(img, (obs[1], obs[0]), 3, (0,0,255), -1)
             cv2.putText(img=img, text=str(obs[2])+' mm', org=(obs[1], obs[0]),fontFace=cv2.FONT_HERSHEY_DUPLEX,color=(0, 255, 0),fontScale=0.7)
-                    
+        cv2.rectangle(img, (160 , 120), (480, 360), (0, 255, 255), 2)  # In opencv : (col, row)    
         cv2.imshow('realsense', img)      
         #print(f'time:{time.time()-t}')         
         key = cv2.waitKey(1) & 0xFF    

@@ -93,7 +93,7 @@ class RealSense():
             # Show depth in color map
             self.depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(self.depth_frame, alpha=0.03), cv2.COLORMAP_JET)
     
-    def sense_obstacle(self, roi_points = [(100, 170), (325, 425)], thresh = 1500):
+    def sense_obstacle(self, roi_points = [(120, 160), (360, 480)], thresh = 2000):
         """
         --------------------------------------------------------------------------------------------------------------------
         @ roi_points: a list like [(row = 1, col = 2),(row = 3, col = 4)] : Rectangle top-left point (1,2) and bottom-right point (3,4)
@@ -131,7 +131,8 @@ if __name__ == '__main__':
         img = RS.realsense_get_frame()
         ret, obs = RS.sense_obstacle(roi_points = [(120, 160), (360, 480)], thresh=2000)                              
         if ret: 
-            print(f'[row, col, depth] = {obs}')         
+            # Display delta pixel between ROI center and obstacle, top to bottom +row , left to right +col
+            print(f'[del_row, del_col, depth] = [{obs[0]-RS.h/2}, {obs[1]-RS.w/2}, {obs[2]}]')         
             cv2.circle(img, (obs[1], obs[0]), 3, (0,0,255), -1)
             cv2.putText(img=img, text=str(obs[2])+' mm', org=(obs[1], obs[0]),fontFace=cv2.FONT_HERSHEY_DUPLEX,color=(0, 255, 0),fontScale=0.7)
         cv2.rectangle(img, (160 , 120), (480, 360), (0, 255, 255), 2)  # In opencv : (col, row)    

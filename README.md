@@ -78,7 +78,7 @@ https://drive.google.com/open?id=1opCO01u4EebdOHxc5JBBf8GlgSw6qIfa
 <hr></hr>
 <h2>License reserved</h2>
 
-- [x] License reserved
+- [x] Notice that our License is reserved
 
 
 

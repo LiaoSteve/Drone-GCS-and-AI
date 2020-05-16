@@ -10,8 +10,8 @@
 <hr></hr>
 <h2>Getting Started</h2>
 
->
-- [x] Notice that in ***model_data***  folder ...
+
+> - [x] Notice that in ***model_data***  folder ...
 ```bush
 model_data/
             trained_weights_final_009.h5

@@ -56,12 +56,12 @@ https://drive.google.com/open?id=1opCO01u4EebdOHxc5JBBf8GlgSw6qIfa
 
 <hr></hr>
 <h2>Airsim</h2>
-> <h4>Author</h4>
+> **Author**
 
 > - [x] Created by Tzung-Hsien Huang, and adapted by LisoSteve
 > - [x] In AirSim simulator, use the fuzzy rule to control the drone.
 <hr></hr>
-> <h4>Test A</h4>
+<h4>Test A</h4>
 
 ***[See demo video](https://drive.google.com/open?id=1oGbn28wQA_o-EyqqzDqoxLLuQZKde3WK)***
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_A.gif)

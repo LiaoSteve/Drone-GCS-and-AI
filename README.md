@@ -1,7 +1,7 @@
 # Drone-GCS-and-AI
-   ***Use yolov3 to detect coast's debries : plastic bottles , plastic bags , caps etc ...***
+> ***Use yolov3 to detect coast's debries : plastic bottles , plastic bags , caps etc ...***
 
-***[See demo video 1](https://drive.google.com/open?id=1H6hfDKPacrxpqa3XGIi3flVTbuDY8Ano)***
+> ***[See demo video 1](https://drive.google.com/open?id=1H6hfDKPacrxpqa3XGIi3flVTbuDY8Ano)***
 
 ***[See demo video 2](https://drive.google.com/open?id=1Lma_kVY98y7Zlkeo5f46-ZTPgNvyxGDc)***
 

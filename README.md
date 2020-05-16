@@ -19,12 +19,12 @@ model_data/
             voc_classes.txt
  ```
 
-- [x] You should download ***trained_weights_final_009.h5*** below, and add to ***model_data*** folder
+> - [x] You should download ***trained_weights_final_009.h5*** below, and add to ***model_data*** folder
 ```bush
  https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
  ```
  
-- [x] Download video ***20191010.mov*** below
+> - [x] Download video ***20191010.mov*** below
 ```bush
 https://drive.google.com/open?id=1hoyO722VzyuK36tE-YZ4oRicDJdD7aoN
 ```
@@ -32,7 +32,7 @@ https://drive.google.com/open?id=1hoyO722VzyuK36tE-YZ4oRicDJdD7aoN
  <hr></hr>
  <h4>Another choice</h4>
  
-- [x] Create ***model_data*** folder, and delete original ***one*** .
+> - [x] Create ***model_data*** folder, and delete original ***one*** .
 
 ```bush
 model_data/
@@ -41,27 +41,27 @@ model_data/
             voc_classes_006.txt 
 ```
 
-- [x] Download trained_weights_final_007.h5
+> - [x] Download trained_weights_final_007.h5
 ```bush
 https://drive.google.com/open?id=1SGOiFA-EHPm-4ZJMVj2neefBmp-etnDS
 ```
-- [x] Download yolo_anchors_007.txt
+> - [x] Download yolo_anchors_007.txt
 ```bush
 https://drive.google.com/open?id=1LNn4cPTo-lJHQ10zKjKuGzDLcd8oQ_8c
 ```
-- [x] Download voc_classes_006.txt
+> - [x] Download voc_classes_006.txt
 ```bush
 https://drive.google.com/open?id=1opCO01u4EebdOHxc5JBBf8GlgSw6qIfa
 ```
 
 <hr></hr>
 <h2>Airsim</h2>
-<h4>Author</h4>
+> <h4>Author</h4>
 
-- [x] Created by Tzung-Hsien Huang, and adapted by LisoSteve
-- [x] In AirSim simulator, use the fuzzy rule to control the drone.
+> - [x] Created by Tzung-Hsien Huang, and adapted by LisoSteve
+> - [x] In AirSim simulator, use the fuzzy rule to control the drone.
 <hr></hr>
-<h4>Test A</h4>
+> <h4>Test A</h4>
 
 ***[See demo video](https://drive.google.com/open?id=1oGbn28wQA_o-EyqqzDqoxLLuQZKde3WK)***
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_A.gif)

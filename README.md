@@ -19,12 +19,12 @@ model_data/
             voc_classes.txt 
 ```
 
-> - [x] You should download ***trained_weights_final_009.h5*** below, and add to ***model_data*** folder
+- [x] You should download ***trained_weights_final_009.h5*** below, and add to ***model_data*** folder
 ```
  https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
 ```
  
-> - [x] Download video ***20191010.mov*** below
+- [x] Download video ***20191010.mov*** below
 ```bush
 https://drive.google.com/open?id=1hoyO722VzyuK36tE-YZ4oRicDJdD7aoN
 ```
@@ -32,7 +32,7 @@ https://drive.google.com/open?id=1hoyO722VzyuK36tE-YZ4oRicDJdD7aoN
  
 2. **Another choice**
  
-> - [x] Create ***model_data*** folder, and delete original ***one*** .
+- [x] Create ***model_data*** folder, and delete original ***one*** .
 
 ```
 model_data/
@@ -41,15 +41,15 @@ model_data/
             voc_classes_006.txt
 ```
 
-> - [x] Download trained_weights_final_007.h5
+- [x] Download trained_weights_final_007.h5
 ```
 https://drive.google.com/open?id=1SGOiFA-EHPm-4ZJMVj2neefBmp-etnDS
 ```
-> - [x] Download yolo_anchors_007.txt
+- [x] Download yolo_anchors_007.txt
 ```
 https://drive.google.com/open?id=1LNn4cPTo-lJHQ10zKjKuGzDLcd8oQ_8c
 ```
-> - [x] Download voc_classes_006.txt
+- [x] Download voc_classes_006.txt
 ```
 https://drive.google.com/open?id=1opCO01u4EebdOHxc5JBBf8GlgSw6qIfa
 ```
@@ -65,11 +65,11 @@ https://drive.google.com/open?id=1opCO01u4EebdOHxc5JBBf8GlgSw6qIfa
 
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_A.gif)
 
-2. **Test B:  [See demo video](https://drive.google.com/open?id=1G7rWvAg8GuQ7e9GqmgrFNUia2IaKj6rS)**
+2. **Test B:   [See demo video](https://drive.google.com/open?id=1G7rWvAg8GuQ7e9GqmgrFNUia2IaKj6rS)**
 
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_B.gif)
 
-3. **Test F:  [See demo video](https://drive.google.com/open?id=1KNb6ggzH0gUVQc07_ZdVgUQq8zr_T9sn)**
+3. **Test F:   [See demo video](https://drive.google.com/open?id=1KNb6ggzH0gUVQc07_ZdVgUQq8zr_T9sn)**
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_F.gif)
 
 ## License reserved

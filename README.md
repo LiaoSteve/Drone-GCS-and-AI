@@ -10,7 +10,7 @@
 
 ## Getting Started
 
-**Notice that in model_data folder**
+**Notice that in model_data folder:**
 
 ```
 model_data/
@@ -30,7 +30,7 @@ https://drive.google.com/open?id=1hoyO722VzyuK36tE-YZ4oRicDJdD7aoN
 ```
  
  
-**Another choice**
+**Another choice:**
  
 - [x] Create ***model_data*** folder, and delete original ***one*** .
 
@@ -56,7 +56,7 @@ https://drive.google.com/open?id=1opCO01u4EebdOHxc5JBBf8GlgSw6qIfa
 
 
 ## Airsim
-**Author**
+**Author:**
 
 > - [x] Created by Tzung-Hsien Huang, and adapted by LisoSteve
 > - [x] In AirSim simulator, use the fuzzy rule to control the drone.
@@ -66,12 +66,15 @@ https://drive.google.com/open?id=1opCO01u4EebdOHxc5JBBf8GlgSw6qIfa
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_A.gif)
 
 <hr></hr>
+
 **Test B [ (See demo video)](https://drive.google.com/open?id=1G7rWvAg8GuQ7e9GqmgrFNUia2IaKj6rS):**
 
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_B.gif)
 
 <hr></hr>
+
 **Test F [ (See demo video)](https://drive.google.com/open?id=1KNb6ggzH0gUVQc07_ZdVgUQq8zr_T9sn):**
+
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_F.gif)
 
 ## License 

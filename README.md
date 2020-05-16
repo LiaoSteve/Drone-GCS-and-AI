@@ -56,10 +56,10 @@ https://drive.google.com/open?id=1opCO01u4EebdOHxc5JBBf8GlgSw6qIfa
 
 
 ## Airsim
-[x] In AirSim simulator, use the fuzzy rule to control the drone.
+- [x] In AirSim simulator, use the fuzzy rule to control the drone.
 
 **Author:**
-[x] Created by Tzung-Hsien Huang, and adapted by LisoSteve
+- [x] Created by Tzung-Hsien Huang, and adapted by LisoSteve
 
 <hr></hr>
 

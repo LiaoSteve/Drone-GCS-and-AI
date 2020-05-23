@@ -58,11 +58,15 @@ if __name__ == '__main__':
         # Save cube 2D location
         for i in range(len(ob)): 
             if my_env[num_env] == 'A':
-                l = 15 
+                l = 15 # Cube 15*15*15
             if my_env[num_env] == 'B':
-                l = 10
+                l = 10 # Cube 10*10*10
             if my_env[num_env] == 'F':
-                l = 6
+                l = 6  # Cube 6*6*6
+            if my_env[num_env] == 'G':
+                l = 15 
+            else:
+                l = 15
             save_cube_2D_location(env_info_name, i, ob[i][0], ob[i][1], ob[i][2], l/2, l/2, l/2) 
         # Save wp 2D location
         for i in range(len(wp)):

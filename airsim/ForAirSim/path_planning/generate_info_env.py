@@ -45,7 +45,7 @@ def get_path_data_from_txt(path):
       
         
 if __name__ == '__main__':
-    my_env = ['A', 'B','F']
+    my_env = ['A', 'B','F', 'G']
     for num_env in range(my_env.__len__()):
         env_info_name = 'env_' + my_env[num_env] +'_info.txt'
         ob = get_object_position_from_txt('../record_position/object_' + my_env[num_env] +'.txt')    

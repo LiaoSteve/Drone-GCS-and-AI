@@ -105,13 +105,13 @@ velocity = 2    # m/s
 tag_time = 0
 th2 = threading.Thread(target=adjH)
 th2.setDaemon(True)
-
-path = 'record_position/' #record position
+# record position to .txt file
+path = 'record_position/' 
 os.makedirs(path, exist_ok=True)
-path_name = 'C.txt'
+path_name = 'G.txt'
 object_name = 'object_'+path_name
 wp_name = 'wp_'+path_name
-# Fuzzy system
+# Two fuzzy system
 fzA = FuzzyControlA.FuzzyControl()
 fzB = FuzzyControlB.FuzzyControl()
 fzA.pre_fzprocess()
@@ -339,8 +339,8 @@ while wp_i < (num_wp):
         print(">> Arrived at wp{Nwp:}({x:}, {y:}, {z:})!".format(Nwp=wp_i+1, x=gps_temp[0], y=gps_temp[1], z=gps_temp[2]))
         wp_i += 1        
     # Frame show 
-    cv2.imshow("Cam", depth)
-    cv2.imshow("COLOR", imgcolor)  
+    cv2.imshow("depth cam", depth)
+    cv2.imshow("clolor cam", imgcolor)  
     key = cv2.waitKey(1) & 0xFF
     if key == 27 or key == ord('q'):
         cv2.destroyAllWindows()

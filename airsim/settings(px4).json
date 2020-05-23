@@ -1,0 +1,28 @@
+{
+  "SeeDocsAt": "https://github.com/Microsoft/AirSim/blob/master/docs/settings.md",
+  "SettingsVersion": 1.2,
+  "Vehicles": {
+    "PX4": {
+      "VehicleType": "PX4Multirotor",
+      "LogViewerHostIp": "127.0.0.1",
+      "LogViewerPort": 14388,
+      "OffboardCompID": 1,
+      "OffboardSysID": 134,
+      "QgcHostIp": "127.0.0.1",
+      "QgcPort": 14550,
+      "SerialBaudRate": 115200,
+      "SerialPort": "*",
+      "SimCompID": 42,
+      "SimSysID": 142,
+      "SitlIp": "127.0.0.1",
+      "SitlPort": 14556,
+      "UdpIp": "127.0.0.1",
+      "UdpPort": 14560,
+      "UseSerial": true,
+      "VehicleCompID": 1,
+      "VehicleSysID": 135,
+      "Model": "Generic",
+      "LocalHostIp": "127.0.0.1"
+    }
+  }
+}

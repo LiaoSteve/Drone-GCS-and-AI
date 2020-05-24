@@ -26,7 +26,7 @@ model_data/
  
 - [x] Download video ***20191010.mov*** below
 ```bush
-https://drive.google.com/open?id=1hoyO722VzyuK36tE-YZ4oRicDJdD7aoN
+ https://drive.google.com/open?id=1hoyO722VzyuK36tE-YZ4oRicDJdD7aoN
 ```
  
  

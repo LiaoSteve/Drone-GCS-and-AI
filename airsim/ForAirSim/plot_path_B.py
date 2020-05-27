@@ -70,6 +70,7 @@ def get_path_data_from_txt(path):
         sys.exit(1)  
         
 if __name__ == '__main__':
+    l = 10
     data_dir = 'Data_B'
     os.makedirs(data_dir, exist_ok=True)
     ob = get_object_position_from_txt('record_position/object_B.txt')    
@@ -83,7 +84,7 @@ if __name__ == '__main__':
     ax1.set_ylabel('y')
     ax1.set_zlabel('z')    
     for i in range(len(ob)):
-        plot_opaque_cube(ax1,ob[i][0], ob[i][1], ob[i][2], 5, 5, 5)  # 10*10*10 cube      
+        plot_opaque_cube(ax1,ob[i][0]-l/2, ob[i][1]-l/2, ob[i][2], l, l, l)  # 10*10*10 cube      
 
     ax1.scatter(trajectory[0,0], trajectory[0,1], 0, c='g', marker="$Start$", s= 1000) # marker>> https://matplotlib.org/3.1.1/api/markers_api.html#module-matplotlib.markers
     for i in range(len(wp)):

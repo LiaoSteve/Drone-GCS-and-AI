@@ -29,10 +29,9 @@ model_data/
 https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 ```
 
-
 # Airsim
-- [x] In AirSim simulator, use the fuzzy rules to control the drone.
-- [x] Use depth to sense the objects.
+1.In AirSim simulator, use the fuzzy rules to control the drone.
+2.Use depth to sense the objects.
 
 ### Author
 - [x] Created by Tzung-Hsien Huang, and adapted by LisoSteve
@@ -56,7 +55,7 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 # Drone (ardupilot firmware) using RTK (real time kinematic):
 ## Via Radio Telemery (COM PORT):
 ### BASE(your notebook mission planner):
-0. ***(https://ardupilot.org/copter/docs/common-here-plus-gps.html)***
+0. Ref: ***https://ardupilot.org/copter/docs/common-here-plus-gps.html***
 1. Open Mission planner Initial Setup >> Optional Hardware >> RTK GPS Inject screen
 2. Connect your F9P to computer via COM PORT and Baud rate is 115200
 3. Set surveyin accuracy in meter and time in second (you can use default setting: 2(m) and 60(s)) 

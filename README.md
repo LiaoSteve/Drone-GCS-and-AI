@@ -1,12 +1,9 @@
 # Drone-GCS-and-AI
-```
-1. Use yolov3 to detect coast's debries : plastic bottles , plastic bags , caps etc
-2. RTK
-3.obstacle avoidance
-```
-##### 1. Use yolov3 to detect coast's debries : plastic bottles , plastic bags , caps etc
-##### 2. RTK
-##### 3.obstacle avoidance
+
+- [x] Use yolov3 to detect coast's debries : plastic bottles , plastic bags , caps etc
+- [x] RTK
+- [x] Obstacle avoidance
+
 
 ***[See demo video 1](https://drive.google.com/open?id=1H6hfDKPacrxpqa3XGIi3flVTbuDY8Ano)***
 

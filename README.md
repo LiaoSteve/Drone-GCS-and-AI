@@ -34,8 +34,8 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 ```
 
 # Airsim
-- [x] In AirSim simulator, use the fuzzy rules to control the drone.
-- [x] Use depth to sense the objects.
+* In AirSim simulator, use the fuzzy rules to control the drone.
+* Use depth to sense the objects.
 
 ### Author
 - [x] Created by Tzung-Hsien Huang, and adapted by LisoSteve
@@ -57,23 +57,23 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 
 
 # Drone (ardupilot firmware) using RTK (real time kinematic):
-## Via Radio Telemery (COM PORT):
-### BASE (your notebook mission planner):
-* Ref: ***https://ardupilot.org/copter/docs/common-here-plus-gps.html***
-* 1. Open Mission planner Initial Setup >> Optional Hardware >> RTK GPS Inject screen
-* 2. Connect your F9P to computer via COM PORT and Baud rate is 115200
-* 3. Set surveyin accuracy in meter and time in second (you can use default setting: 2(m) and 60(s)) 
-* 4. Press connect buttom and wait for BASE is ready
+### Via radio telemery (COM PORT)
+#### Base (your notebook mission planner)
+Ref: ***https://ardupilot.org/copter/docs/common-here-plus-gps.html***
+1. Open Mission planner Initial Setup >> Optional Hardware >> RTK GPS Inject screen
+2. Connect your F9P to computer via COM PORT and Baud rate is 115200
+3. Set surveyin accuracy in meter and time in second (you can use default setting: 2(m) and 60(s)) 
+4. Press connect buttom and wait for BASE is ready
 
-### ROVER (pixhawk which use ardupilot firmware version higher than 3.6.9, i use 3.6.11 hexacopter):
-* 1. Use I2C provide power (that is, plug the GPS module's GPS pin +5V and GND and insert to I2C)
-* 2. Use your F9P pins insert to your pixhawk GPS pins
-* 3. Use mission planner connect to drone's via radio telemery
-* 4. wait for rtk ready
-*5.(option) paramter list setting: EK2_ALT_SOURCE:2, EK2_POSNE_M_NSE : 0.1
+#### Rover 
+0. Notice that your ardupilot firmware version should higher than 3.6.9, i use 3.6.11 hexacopter
+1. Use I2C provide power (that is, plug the GPS module's GPS pin +5V and GND and insert to I2C)
+2. Use your F9P pins insert to your pixhawk GPS pins
+3. Use mission planner connect to drone's via radio telemery
+4. wait for rtk ready
+5. (option) paramter list setting: EK2_ALT_SOURCE:2, EK2_POSNE_M_NSE : 0.1
 
 ## License 
-
 - [x] Notice that our License is reserved
 
 

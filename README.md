@@ -34,11 +34,10 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 ```
 
 # Airsim
+* Created by Tzung-Hsien Huang, and adapted by LisoSteve
 * In AirSim simulator, use the fuzzy rules to control the drone.
 * Use depth to sense the objects.
 
-### Author
-- [x] Created by Tzung-Hsien Huang, and adapted by LisoSteve
 ### Test A [ (See demo video)](https://drive.google.com/open?id=1oGbn28wQA_o-EyqqzDqoxLLuQZKde3WK):
 
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_A.gif)
@@ -59,12 +58,12 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 # Drone With RTK :
 ## 1. Via radio telemery (serial port)
 #### Base (GCS mission planner)
-Ref: ***https://ardupilot.org/copter/docs/common-here-plus-gps.html***
+```Ref: ***https://ardupilot.org/copter/docs/common-here-plus-gps.html***
 1. Open Mission planner Initial Setup >> Optional Hardware >> RTK GPS Inject screen
 2. Connect your F9P to computer via COM port and baud rate is 115200
 3. Check the autoconfig, then set the surveyin accuracy in meter and time in second (you can use default setting: 2(m) and 60(s)) 
 4. Press connect bottom and wait for BASE is ready
-
+```
 #### Rover 
 0. Notice that your ardupilot firmware version should higher than 3.6.9, i use 3.6.11 hexacopter
 1. Use I2C provide power (that is, plug the GPS module's GPS pin +5V and GND and insert to I2C)

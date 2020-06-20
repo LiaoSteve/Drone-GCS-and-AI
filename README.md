@@ -57,7 +57,7 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 
 # Drone With RTK :
 ## 1. Via radio telemery (serial port)
-#### Base (GCS mission planner):
+#### Base (GCS mission planner) :
 Ref: ***https://ardupilot.org/copter/docs/common-here-plus-gps.html***
 1. Open Mission planner Initial Setup >> Optional Hardware >> RTK GPS Inject screen
 2. Connect your F9P to computer via COM port and baud rate is 115200
@@ -72,7 +72,7 @@ Ref: ***https://ardupilot.org/copter/docs/common-here-plus-gps.html***
 5. (option) paramter list setting: EK2_ALT_SOURCE:2, EK2_POSNE_M_NSE : 0.1[meter] or 0.01[meter](0.01 should use carefully)
 
 ## 2. Via wifi or 4G LTE
-#### Base (tcp server):
+#### Base (tcp server) :
 0. Use Windows 10 as server, and you need a Static IP and
 1. `git clone https://github.com/tomojitakasu/RTKLIB_bin/tree/rtklib_2.4.3/bin`
 2. Click `strsvr.exe`, `Input Type` choose `Serial`, `opt` choose COM port where F9P is connecting and baud rate is 115200, `output Type` choose `TCP server` and give it a port, i use `1688`, and click `start` bottom

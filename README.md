@@ -30,8 +30,8 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 ```
 
 # Airsim
-1.In AirSim simulator, use the fuzzy rules to control the drone.
-2.Use depth to sense the objects.
+- [x] In AirSim simulator, use the fuzzy rules to control the drone.
+- [x] Use depth to sense the objects.
 
 ### Author
 - [x] Created by Tzung-Hsien Huang, and adapted by LisoSteve

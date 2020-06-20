@@ -8,7 +8,7 @@
 ***[PID parameter AutoTuning](https://drive.google.com/open?id=12vV1WJXvEIu-ZyxeH2k5318cdNbjx9j2)***
 
 
-## Getting Started
+# YOLOv3
 
 **Notice that in model_data folder:**
 
@@ -62,9 +62,26 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_G.gif)
 
 
+# Drone (ardupilot firmware) using RTK (real time kinematic)***https://ardupilot.org/copter/docs/common-here-plus-gps.html***:
+## Via Radio Telemery (COM PORT):
+### BASE(your notebook mission planner):
+1. Open Mission planner Initial Setup >> Optional Hardware >> RTK GPS Inject screen
+2. Connect your F9P to computer via COM PORT and Baud rate is 115200
+3. Set surveyin accuracy in meter and time in second (you can use default setting: 2(m) and 60(s)) 
+4. Press connect buttom and wait for BASE is ready
+
+### ROVER(pixhawk which use ardupilot firmware version higher than 3.6.9, i use 3.6.11 hexacopter):
+1. Use I2C provide power ( that is, plug the GPS module's GPS pin +5V and GND and insert to I2C)
+2. Use your F9P pins insert to your pixhawk GPS pins
+3. Use mission planner connect to drone's via radio telemery
+4. wait for rtk ready
+5.(option) paramter list setting: EK2_ALT_SOURCE:2, EK2_POSNE_M_NSE : 0.1
+
 ## License 
 
 - [x] Notice that our License is reserved
+
+
 
 
 

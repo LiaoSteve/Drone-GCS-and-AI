@@ -3,7 +3,7 @@
 - [x] Use yolov3 to detect coast's debries : plastic bottles , plastic bags , caps etc
 - [x] RTK
 - [x] Obstacle avoidance
-
+- [x] django GCS
 
 ***[See demo video 1](https://drive.google.com/open?id=1H6hfDKPacrxpqa3XGIi3flVTbuDY8Ano)***
 

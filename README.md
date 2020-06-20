@@ -62,7 +62,7 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_G.gif)
 
 
-# Drone (ardupilot firmware) using RTK (real time kinematic)***https://ardupilot.org/copter/docs/common-here-plus-gps.html***:
+# Drone (ardupilot firmware) using RTK (real time kinematic)***(https://ardupilot.org/copter/docs/common-here-plus-gps.html)***:
 ## Via Radio Telemery (COM PORT):
 ### BASE(your notebook mission planner):
 1. Open Mission planner Initial Setup >> Optional Hardware >> RTK GPS Inject screen

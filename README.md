@@ -55,13 +55,13 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_G.gif)
 
 # Drone with pixhawk : 
-'''
+```
 1. Upload firmware : i use hexacopter version 3.6.11
 2. Accelerometer Calibration
 3. Radio Control Calibration 
 4. Compass Calibration : if you use GPS module, you only need to use compass 1 (external compass). After calibration, reboot your pixhawk
-5. ESC Calibration: Push throttle to highest position, power up pixhawk and wait for RGB LED. Reboot, disarm your hardware switch and wait for beep~beep~beep~. Push throttle to lowest position, and wait for beep~beep~beep~. Push throttle from lowest position to highest position, and push throttle to lowest position. Reboot pixhawk.
-'''
+5. ESC Calibration: Push throttle to highest position, power up pixhawk and wait for RGB LED. Reboot, disarm your hardware switch and wait for beep~ beep~ beep~. Push throttle to lowest position, and wait for beep~ beep~ beep~. Push throttle from lowest position to highest position, and push throttle to lowest position. Reboot pixhawk.
+```
 # Drone with RTK :
 ## 1. Via radio telemery (serial port)
 #### Base (GCS mission planner) :

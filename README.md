@@ -55,17 +55,24 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_G.gif)
 
 # Drone with pixhawk : 
-```
-1. Upload firmware : i use hexacopter version 3.6.11
-2. Accelerometer Calibration
-3. Radio Control Calibration 
+### first setup
+1. Upload firmware : i use hexacopter version 3.6.11.
+2. Accelerometer Calibration.
+3. Radio Control Calibration .
 4. Compass Calibration : if you use GPS module, you only need to use compass 1 (external compass). After calibration, reboot your pixhawk
 5. ESC Calibration: Push throttle to highest position, power up pixhawk and wait for RGB LED. Reboot, disarm your hardware switch and wait for beep~ beep~ beep~. Push throttle to lowest position, and wait for beep~ beep~ beep~. Push throttle from lowest position to highest position, and push throttle to lowest position. Reboot pixhawk.
-```
+### PID auto tuning
+* tuning   : ***https://ardupilot.org/copter/docs/tuning.html***
+* autotune : ***https://ardupilot.org/copter/docs/autotune.html***
+1. Open mission planner and connect your pixhawk via serial port.
+2. Choose Config/Tune panel>> Extended Tuning >> Alttitude Hold >> `RC7 opt` >> `Auto tune`, and `RC10 opt` >> `Motor Interlock`
+3. Config/Tune >> Full Parameter >> set `AUTOTUNE_AGGR` : 0.05 (default 0.1),  `AUTOTUNE_AXES`: 0 (I suggest tuning roll, pitch, yaw separately)
+4. fly in reality: take off in alt-hold flight mode, and push throttle to 50% ~ 59%, and activate your Radio Controller CH7 to HIGH, then PID Auto tuning will work. Wait UAV beep~ indicate that autotuning is done, and let your UAV land in Alt-Hold fight mode, and arm(You will see pid parameters saved). Finally, disabled your CH7 to LOW.
+
 # Drone with RTK :
 ## 1. Via radio telemery (serial port)
 #### Base (GCS mission planner) :
-Ref: ***https://ardupilot.org/copter/docs/common-here-plus-gps.html***
+0. ***https://ardupilot.org/copter/docs/common-here-plus-gps.html***
 1. Open Mission planner Initial Setup >> Optional Hardware >> RTK GPS Inject screen
 2. Connect your F9P to computer via COM port and baud rate is 115200
 3. Check the autoconfig, then set the surveyin accuracy in meter and time in second (you can use default setting: 2(m) and 60(s)) 

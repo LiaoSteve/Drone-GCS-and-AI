@@ -54,16 +54,18 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_G.gif)
 
-# Drone with pixhawk : 
+# How to getting started to pixhawk : 
 ### first setup
-1. Upload firmware : i use hexacopter version 3.6.11.
-2. Accelerometer Calibration.
-3. Radio Control Calibration .
-4. Compass Calibration : if you use GPS module, you only need to use compass 1 (external compass). After calibration, reboot your pixhawk
-5. ESC Calibration: Push throttle to highest position, power up pixhawk and wait for RGB LED. Reboot, disarm your hardware switch and wait for beep~ beep~ beep~. Push throttle to lowest position, and wait for beep~ beep~ beep~. Push throttle from lowest position to highest position, and push throttle to lowest position. Reboot pixhawk.
+1. Upload firmware : use [mission planner](https://ardupilot.org/planner/docs/mission-planner-installation.html) upload firmware, i use hexacopter version 3.6.11.
+2. Connect your pixhawk with mission planner, and open Intial setup then choose your UAV frame.
+3. [Accelerometer Calibration](https://ardupilot.org/copter/docs/common-accelerometer-calibration.html?highlight=calibration)
+4. [Radio Control Calibration](https://ardupilot.org/copter/docs/common-radio-control-calibration.html?highlight=calibration)
+5. [Compass Calibration](https://ardupilot.org/copter/docs/common-compass-calibration-in-mission-planner.html?highlight=calibration) : if you use GPS module, you only need to use compass 1 (external compass). After calibration, reboot your pixhawk
+6. ESC Calibration: Push throttle to highest position, power up pixhawk and wait for RGB LED. Reboot, disarm your hardware switch and wait for beep~ beep~ beep~. Push throttle to lowest position, and wait for beep~ beep~ beep~. Push throttle from lowest position to highest position, and push throttle to lowest position. Reboot pixhawk.
+
 ### PID auto tuning
-* tuning   : ***https://ardupilot.org/copter/docs/tuning.html***
-* autotune : ***https://ardupilot.org/copter/docs/autotune.html***
+* Tuning   : ***https://ardupilot.org/copter/docs/tuning.html***
+* Autotune : ***https://ardupilot.org/copter/docs/autotune.html***
 1. Open mission planner and connect your pixhawk via serial port.
 2. Choose Config/Tune panel>> Extended Tuning >> Alttitude Hold >> `RC7 opt` >> `Auto tune`, and `RC10 opt` >> `Motor Interlock`
 3. Config/Tune >> Full Parameter >> set `AUTOTUNE_AGGR` : 0.05 (default 0.1),  `AUTOTUNE_AXES`: 0 (I suggest tuning roll, pitch, yaw separately)

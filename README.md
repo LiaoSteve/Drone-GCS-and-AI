@@ -54,14 +54,14 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_G.gif)
 
-# How to getting started to pixhawk : 
-### first setup
+# How to getting started with ardupilot and pixhawk : 
+### First setup
 1. Upload firmware : use [mission planner](https://ardupilot.org/planner/docs/mission-planner-installation.html) upload firmware, i use hexacopter version 3.6.11.
 2. Connect your pixhawk with mission planner, and open Intial setup then choose your UAV frame.
 3. [Accelerometer Calibration](https://ardupilot.org/copter/docs/common-accelerometer-calibration.html?highlight=calibration)
 4. [Radio Control Calibration](https://ardupilot.org/copter/docs/common-radio-control-calibration.html?highlight=calibration)
 5. [Compass Calibration](https://ardupilot.org/copter/docs/common-compass-calibration-in-mission-planner.html?highlight=calibration) : if you use GPS module, you only need to use compass 1 (external compass). After calibration, reboot your pixhawk
-6. ESC Calibration: Push throttle to highest position, power up pixhawk and wait for RGB LED. Reboot, disarm your hardware switch and wait for beep~ beep~ beep~. Push throttle to lowest position, and wait for beep~ beep~ beep~. Push throttle from lowest position to highest position, and push throttle to lowest position. Reboot pixhawk.
+6. ESC Calibration: Push throttle to highest position, power up pixhawk and wait for RGB LED. Reboot, disarm your hardware switch and wait for beep~ beep~ beep~. Push throttle to lowest position, and wait for beep~ beep~ beep~. Push throttle from lowest position to highest position, and push throttle to lowest position. Reboot your pixhawk.
 
 ### PID auto tuning
 * Tuning   : ***https://ardupilot.org/copter/docs/tuning.html***
@@ -71,6 +71,13 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 3. Config/Tune >> Full Parameter >> set `AUTOTUNE_AGGR` : 0.05 (default 0.1),  `AUTOTUNE_AXES`: 0 (I suggest tuning roll, pitch, yaw separately)
 4. fly in reality: take off in alt-hold flight mode, and push throttle to 50% ~ 59%, and activate your Radio Controller CH7 to HIGH, then PID Auto tuning will work. Wait UAV beep~ indicate that autotuning is done, and let your UAV land in Alt-Hold fight mode, and arm(You will see pid parameters saved). Finally, disabled your CH7 to LOW.
 
+### In AUTO fight mode
+1. Open mission planner and connect to your pixhawk, then choose Config/Tune panel>> Full parameter list >> search WPN :
+set  `speed(cm/s)` : if set RTL_speed to zero, RTL horizontal velosity will use this speed 
+ WPNav `Radius(cm)`: in AUTO mode, if this parameter set 100, that is, once your UAV enter waypoint radius 100 cm, pixhawk will stop and go to the next waypoint. 
+ WPNav `Speed Up(cm/s)` : Defines the speed in cm/s which the aircraft will attempt to maintain while climbing during a WP mission
+ WPNav `Speed Dn(cm/s)` : Defines the speed in cm/s which the aircraft will attempt to maintain while descending during a WP mission
+`land speed` : The descent speed for the final stage of landing in cm/s
 # Drone with RTK :
 ## 1. Via radio telemery (serial port)
 #### Base (GCS mission planner) :
@@ -79,7 +86,7 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 2. Connect your F9P to computer via COM port and baud rate is 115200
 3. Check the autoconfig, then set the surveyin accuracy in meter and time in second (you can use default setting: 2(m) and 60(s)) 
 
-####  Rover :
+#### Rover :
 0. Notice that your ardupilot firmware version should higher than 3.6.9, i use 3.6.11 hexacopter
 1. Use I2C provide power (that is, plug the GPS module's GPS pin +5V and GND and insert to I2C)
 2. Use your F9P pins insert to your pixhawk GPS pins

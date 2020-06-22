@@ -71,15 +71,23 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 3. Config/Tune >> Full Parameter >> set `AUTOTUNE_AGGR` : 0.05 (default 0.1),  `AUTOTUNE_AXES`: 0 (I suggest tuning roll, pitch, yaw separately)
 4. fly in reality: take off in alt-hold flight mode, and push throttle to 50% ~ 59%, and activate your Radio Controller CH7 to HIGH, then PID Auto tuning will work. Wait UAV beep~ indicate that autotuning is done, and let your UAV land in Alt-Hold fight mode, and arm(You will see pid parameters saved). Finally, disabled your CH7 to LOW.
 
-### In auto fight mode
+### UAV auto fight mode (RTL, LAND, LOITER, AUTO, GUIDED)
 #### Open mission planner and connect to your pixhawk, then choose Config/Tune panel>> Full parameter list >> search WPN :
-set  `speed(cm/s)` : if set RTL_speed to zero, RTL horizontal velosity will use this speed 
- WPNav `Radius(cm)`: in AUTO mode, if this parameter set 100, that is, once your UAV enter waypoint radius 100 cm, pixhawk will stop and go to the next waypoint. 
- WPNav `Speed Up(cm/s)` : Defines the speed in cm/s which the aircraft will attempt to maintain while climbing during a WP mission
- WPNav `Speed Dn(cm/s)` : Defines the speed in cm/s which the aircraft will attempt to maintain while descending during a WP mission
-`land speed` : The descent speed for the final stage of landing in cm/s
+1. `WPNAV_SPEED ` : if set RTL_speed to zero, RTL horizontal velosity will use this speed 
+2. `WPNAV_RADIUS `: in AUTO mode, if this parameter set 100, that is, once your UAV enter waypoint radius 100 cm, pixhawk will stop and go to the next waypoint. 
+3. `WPNAV_SPEED_UP ` : Defines the speed in cm/s which the aircraft will attempt to maintain while climbing during a WP mission
+4. `WPNAV_SPEED_DN ` : Defines the speed in cm/s which the aircraft will attempt to maintain while descending during a WP mission
+#### Open mission planner and connect to your pixhawk, then choose Config/Tune panel>> Full parameter list >> search SPEED :
+1. `LAND_SPEED` : The descent speed for the final stage of landing in cm/s
+2. `LAND_SPEED_HIGH` : The descent speed for the first stage of landing in cm/s. If this is zero then WPNAV_SPEED_DN is used
+3. `RTL_SPEED` : Defines the speed in cm/s which the aircraft will attempt to maintain horizontally while flying home. If this is set to zero, WPNAV_SPEED will be used instead.
+4. `LOIT_SPEED` : Defines the maximum speed in cm/s which the aircraft will travel horizontally while in loiter mode
+5. `PILOT_SPEED_DN` : The maximum vertical descending velocity the pilot may request in cm/s
+6 `PILOT_SPEED_UP` : The maximum vertical ascending velocity the pilot may request in cm/s
+7. `RTL_ALT` : The minimum alt above home the vehicle will climb to before returning.  If the vehicle is flying higher than this value it will return at its current altitude.
+8. 
 # Drone with RTK :
-## 1. Via radio telemery (serial port)
+### 1. Via radio telemery (serial port)
 #### Base (GCS mission planner) :
 0. ***https://ardupilot.org/copter/docs/common-here-plus-gps.html***
 1. Open Mission planner Initial Setup >> Optional Hardware >> RTK GPS Inject screen
@@ -94,7 +102,7 @@ set  `speed(cm/s)` : if set RTL_speed to zero, RTL horizontal velosity will use 
 4. Wait for rtk ready :)
 5. (option) paramter list setting: EK2_ALT_SOURCE:2, EK2_POSNE_M_NSE : 0.1[meter] or 0.01[meter](0.01 should use carefully)
 
-## 2. Via wifi or 4G LTE
+### 2. Via wifi or 4G LTE
 #### Base (tcp server) :
 0. Use Windows 10 as server, and you need a Static IP and
 1. `git clone https://github.com/tomojitakasu/RTKLIB_bin/tree/rtklib_2.4.3/bin`

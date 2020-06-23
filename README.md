@@ -73,19 +73,19 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 
 ### UAV auto fight mode (RTL, LAND, LOITER, AUTO, GUIDED)
 #### Open mission planner and connect to your pixhawk, then choose Config/Tune panel>> Full parameter list >> search WPN :
-* `WPNAV_SPEED ` : if set `RTL_speed` to zero, RTL horizontal velosity will use this speed 
+* `WPNAV_SPEED ` : if set `RTL_speed` to zero, RTL horizontal velosity will use this speed .
 * `WPNAV_RADIUS `: in AUTO mode, if this parameter set 100, that is, once your UAV enter waypoint radius 100 cm, pixhawk will stop and go to the next waypoint. 
-* `WPNAV_SPEED_UP ` : Defines the speed in cm/s which the aircraft will attempt to maintain while climbing during a WP mission
-* WPNAV_SPEED_DN  : Defines the speed in cm/s which the aircraft will attempt to maintain while descending during a WP mission
+* `WPNAV_SPEED_UP ` : Defines the speed in cm/s which the aircraft will attempt to maintain while climbing during a WP mission.
+* `WPNAV_SPEED_DN`  : Defines the speed in cm/s which the aircraft will attempt to maintain while descending during a WP mission.
 #### Open mission planner and connect to your pixhawk, then choose Config/Tune panel>> Full parameter list >> search SPEED :
-1. `LAND_SPEED` : The descent speed for the final stage of landing in cm/s
-2. `LAND_SPEED_HIGH` : The descent speed for the first stage of landing in cm/s. If this is zero then WPNAV_SPEED_DN is used
-3. `RTL_SPEED` : Defines the speed in cm/s which the aircraft will attempt to maintain horizontally while flying home. If this is set to zero, WPNAV_SPEED will be used instead.
-4. `LOIT_SPEED` : Defines the maximum speed in cm/s which the aircraft will travel horizontally while in loiter mode
-5. `PILOT_SPEED_DN` : The maximum vertical descending velocity the pilot may request in cm/s
-6 `PILOT_SPEED_UP` : The maximum vertical ascending velocity the pilot may request in cm/s
-7. `RTL_ALT` : The minimum alt above home the vehicle will climb to before returning.  If the vehicle is flying higher than this value it will return at its current altitude.
-8. 
+* `LAND_SPEED` : The descent speed for the final stage of landing in cm/s.
+* `LAND_SPEED_HIGH` : The descent speed for the first stage of landing in cm/s. If this is zero then WPNAV_SPEED_DN is used.
+* `RTL_SPEED` : Defines the speed in cm/s which the aircraft will attempt to maintain horizontally while flying home. If this is set to zero, WPNAV_SPEED will be used instead.
+* `LOIT_SPEED` : Defines the maximum speed in cm/s which the aircraft will travel horizontally while in loiter mode.
+* `PILOT_SPEED_DN` : The maximum vertical descending velocity the pilot may request in cm/s.
+* `PILOT_SPEED_UP` : The maximum vertical ascending velocity the pilot may request in cm/s.
+* `RTL_ALT` : The minimum alt above home the vehicle will climb to before returning.  If the vehicle is flying higher than this value it will return at its current altitude.
+*  
 # Drone with RTK :
 ### 1. Via radio telemery (serial port)
 #### Base (GCS mission planner) :

@@ -16,18 +16,22 @@
 
 **Notice that in copter/model_data folder:**
 
-`
+```
 model_data/
             trained_weights_final_009.h5
             yolo_anchors_009.txt
             voc_classes.txt 
-`
+```
 
 - [x] You should download ***trained_weights_final_009.h5*** below, and add to ***model_data*** folder
-` https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2`
+``` 
+https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
+```
  
 - [x] Download video ***20191010.mov*** below
-`https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM`
+```
+https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
+```
 
 - [x] connect your webcam, and run copter/yolo.py
 

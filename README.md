@@ -58,9 +58,9 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 ### First setup
 1. Upload firmware : use [mission planner](https://ardupilot.org/planner/docs/mission-planner-installation.html) upload firmware, i use hexacopter version 3.6.11.
 2. Connect your pixhawk with mission planner, and open Intial setup then choose your UAV frame.
-3. [Accelerometer Calibration](https://ardupilot.org/copter/docs/common-accelerometer-calibration.html?highlight=calibration)
-4. [Radio Control Calibration](https://ardupilot.org/copter/docs/common-radio-control-calibration.html?highlight=calibration)
-5. [Compass Calibration](https://ardupilot.org/copter/docs/common-compass-calibration-in-mission-planner.html?highlight=calibration) : if you use GPS module, you only need to use compass 1 (external compass). After calibration, reboot your pixhawk
+3. [Accelerometer Calibration](https://ardupilot.org/copter/docs/common-accelerometer-calibration.html?highlight=calibration).
+4. [Radio Control Calibration](https://ardupilot.org/copter/docs/common-radio-control-calibration.html?highlight=calibration).
+5. [Compass Calibration](https://ardupilot.org/copter/docs/common-compass-calibration-in-mission-planner.html?highlight=calibration) : if you use GPS module, you only need to use compass 1 (external compass). After calibration, reboot your pixhawk.
 6. ESC Calibration: Push throttle to highest position, power up pixhawk and wait for RGB LED. Reboot, disarm your hardware switch and wait for beep~ beep~ beep~. Push throttle to lowest position, and wait for beep~ beep~ beep~. Push throttle from lowest position to highest position, and push throttle to lowest position. Reboot your pixhawk.
 
 ### PID auto tuning
@@ -73,10 +73,10 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 
 ### UAV auto fight mode (RTL, LAND, LOITER, AUTO, GUIDED)
 #### Open mission planner and connect to your pixhawk, then choose Config/Tune panel>> Full parameter list >> search WPN :
-1. `WPNAV_SPEED ` : if set RTL_speed to zero, RTL horizontal velosity will use this speed 
-2. `WPNAV_RADIUS `: in AUTO mode, if this parameter set 100, that is, once your UAV enter waypoint radius 100 cm, pixhawk will stop and go to the next waypoint. 
-3. `WPNAV_SPEED_UP ` : Defines the speed in cm/s which the aircraft will attempt to maintain while climbing during a WP mission
-4. `WPNAV_SPEED_DN ` : Defines the speed in cm/s which the aircraft will attempt to maintain while descending during a WP mission
+* `WPNAV_SPEED ` : if set `RTL_speed` to zero, RTL horizontal velosity will use this speed 
+* `WPNAV_RADIUS `: in AUTO mode, if this parameter set 100, that is, once your UAV enter waypoint radius 100 cm, pixhawk will stop and go to the next waypoint. 
+* `WPNAV_SPEED_UP ` : Defines the speed in cm/s which the aircraft will attempt to maintain while climbing during a WP mission
+* WPNAV_SPEED_DN  : Defines the speed in cm/s which the aircraft will attempt to maintain while descending during a WP mission
 #### Open mission planner and connect to your pixhawk, then choose Config/Tune panel>> Full parameter list >> search SPEED :
 1. `LAND_SPEED` : The descent speed for the final stage of landing in cm/s
 2. `LAND_SPEED_HIGH` : The descent speed for the first stage of landing in cm/s. If this is zero then WPNAV_SPEED_DN is used

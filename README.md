@@ -94,7 +94,7 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 *  
 ## Drone with RTK :
 ### via radio telemery (serial port)
-#### Base (GCS mission planner) :
+####        Base (GCS mission planner) :
 * ***https://ardupilot.org/copter/docs/common-here-plus-gps.html***
 1. Open Mission planner Initial Setup >> Optional Hardware >> RTK GPS Inject screen
 2. Connect your F9P to computer via COM port and baud rate is 115200

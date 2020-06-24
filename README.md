@@ -1,6 +1,6 @@
 # Drone-GCS-and-AI
 ## DEMO
-- [X] GG
+
 * ***[Use yolov3 to detect coast's debries : plastic bottles , plastic bags , caps etc](https://drive.google.com/file/d/15HNY2gMDhPa_sieLgT28_APcT03e1TX1/view?usp=sharing)***
 
 * ***[RTK](https://drive.google.com/file/d/1jjvXl_TojcVaHIFGIpz3gNLZ7TZ8hiRM/view?usp=sharing)***
@@ -95,8 +95,8 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 ## Drone with RTK :
 ### via radio telemery (serial port)
 * Base (GCS mission planner) :
-0. ***https://ardupilot.org/copter/docs/common-here-plus-gps.html***
-1. Open Mission planner Initial Setup >> Optional Hardware >> RTK GPS Inject screen
+    0. ***https://ardupilot.org/copter/docs/common-here-plus-gps.html***
+    1. Open Mission planner Initial Setup >> Optional Hardware >> RTK GPS Inject screen
 2. Connect your F9P to computer via COM port and baud rate is 115200
 3. Check the autoconfig, then set the surveyin accuracy in meter and time in second (you can use default setting: 2(m) and 60(s)) 
 

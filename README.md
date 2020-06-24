@@ -100,7 +100,7 @@ Base (GCS mission planner) :
 2. Connect your F9P to computer via COM port and baud rate is 115200
 3. Check the autoconfig, then set the surveyin accuracy in meter and time in second (you can use default setting: 2(m) and 60(s)) 
 
-#### Rover :
+Rover :
 * Notice that your ardupilot firmware version should higher than 3.6.9, i use 3.6.11 hexacopter.
 1. Use I2C provide power (that is, plug the GPS module's GPS pin +5V and GND and insert to I2C).
 2. Use your F9P pins insert to your pixhawk GPS pins.
@@ -109,7 +109,7 @@ Base (GCS mission planner) :
 5. (option) paramter list setting: EK2_ALT_SOURCE:2, EK2_POSNE_M_NSE : 0.1[meter] or 0.01[meter](0.01 should use carefully).
 
 ### via wifi or 4G LTE
-#### Base (tcp server) :
+Base (tcp server) :
 - [x] Use Windows 10 as server, and you need a Static IP.
 1. `git clone https://github.com/tomojitakasu/RTKLIB_bin/tree/rtklib_2.4.3/bin`
 2. Click `strsvr.exe`, `Input Type` choose `Serial`, `opt` choose COM port where F9P is connecting and baud rate is 115200, `output Type` choose `TCP server` and give it a port, and click `start` bottom.
@@ -118,7 +118,7 @@ Base (GCS mission planner) :
 5. Set surveyin accuracy in meter and time in second (you can use default setting: 2(m) and 60(s)) 
 6. Press connect bottom and wait for BASE is ready.
 
-#### Rover :
+Rover :
 0. Notice that your ardupilot firmware version should higher than 3.6.9, i use 3.6.11 hexacopter.
 1. Use I2C provide power (that is, plug the GPS module's GPS pin +5V and GND and insert to I2C).
 2. Use your F9P pins insert to your pixhawk GPS pins.
@@ -127,7 +127,7 @@ Base (GCS mission planner) :
 5. (option) paramter list setting: EK2_ALT_SOURCE:2, EK2_POSNE_M_NSE : 0.1[meter] or 0.01[meter](0.01 should use carefully).
 
 ## License 
-- [x] Notice that our License is reserved
+* Notice that our License is reserved
 
 
 

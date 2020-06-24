@@ -91,17 +91,17 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 * `PILOT_SPEED_DN` : The maximum vertical descending velocity the pilot may request in cm/s.
 * `PILOT_SPEED_UP` : The maximum vertical ascending velocity the pilot may request in cm/s.
 * `RTL_ALT` : The minimum alt above home the vehicle will climb to before returning.  If the vehicle is flying higher than this value it will return at its current altitude.
-*  
+
 ## Drone with RTK :
 ### via radio telemery (serial port)
 * Base (GCS mission planner) :
-    0. ***https://ardupilot.org/copter/docs/common-here-plus-gps.html***
-    1. Open Mission planner Initial Setup >> Optional Hardware >> RTK GPS Inject screen
+0. ***https://ardupilot.org/copter/docs/common-here-plus-gps.html***
+1. Open Mission planner Initial Setup >> Optional Hardware >> RTK GPS Inject screen
 2. Connect your F9P to computer via COM port and baud rate is 115200
 3. Check the autoconfig, then set the surveyin accuracy in meter and time in second (you can use default setting: 2(m) and 60(s)) 
 
 * Rover :
-** Notice that your ardupilot firmware version should higher than 3.6.9, i use 3.6.11 hexacopter.
+0. **Notice that your ardupilot firmware version should higher than 3.6.9, i use 3.6.11 hexacopter.**
 1. Use I2C provide power (that is, plug the GPS module's GPS pin +5V and GND and insert to I2C).
 2. Use your F9P pins insert to your pixhawk GPS pins.
 3. Use mission planner connect to drone's via radio telemery.
@@ -109,8 +109,8 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 5. (option) paramter list setting: EK2_ALT_SOURCE:2, EK2_POSNE_M_NSE : 0.1[meter] or 0.01[meter](0.01 should use carefully).
 
 ### via wifi or 4G LTE
-Base (tcp server) :
-- [x] Use Windows 10 as server, and you need a Static IP.
+* Base (tcp server) :
+0. **Use Windows 10 as server, and you need a Static IP.**
 1. `git clone https://github.com/tomojitakasu/RTKLIB_bin/tree/rtklib_2.4.3/bin`
 2. Click `strsvr.exe`, `Input Type` choose `Serial`, `opt` choose COM port where F9P is connecting and baud rate is 115200, `output Type` choose `TCP server` and give it a port, and click `start` bottom.
 3. Open Mission planner Initial Setup >> Optional Hardware >> RTK GPS Inject screen.
@@ -118,8 +118,8 @@ Base (tcp server) :
 5. Set surveyin accuracy in meter and time in second (you can use default setting: 2(m) and 60(s)) 
 6. Press connect bottom and wait for BASE is ready.
 
-Rover :
-0. Notice that your ardupilot firmware version should higher than 3.6.9, i use 3.6.11 hexacopter.
+* Rover :
+0. **Notice that your ardupilot firmware version should higher than 3.6.9, i use 3.6.11 hexacopter.**
 1. Use I2C provide power (that is, plug the GPS module's GPS pin +5V and GND and insert to I2C).
 2. Use your F9P pins insert to your pixhawk GPS pins.
 3. Use mission planner connect to drone's via radio telemery.

@@ -16,7 +16,7 @@
 * ***[PID parameter AutoTuning](https://drive.google.com/open?id=12vV1WJXvEIu-ZyxeH2k5318cdNbjx9j2)***
 
 
-# YOLOv3
+## YOLOv3
 
 **Notice that in copter/model_data folder:**
 
@@ -39,7 +39,7 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 
 - [x] connect your webcam, and run copter/yolo.py
 
-# Airsim
+## Airsim
 * Created by Tzung-Hsien Huang, and adapted by LisoSteve
 * In AirSim simulator, use the fuzzy rules to control the drone.
 * Use depth to sense the objects.
@@ -60,7 +60,7 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_G.gif)
 
-# How to getting started with ardupilot and pixhawk : 
+## How to getting started with ardupilot and pixhawk : 
 ### First setup
 1. Upload firmware : use [mission planner](https://ardupilot.org/planner/docs/mission-planner-installation.html) upload firmware, i use hexacopter version 3.6.11.
 2. Connect your pixhawk with mission planner, and open Intial setup then choose your UAV frame.
@@ -92,7 +92,7 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 * `PILOT_SPEED_UP` : The maximum vertical ascending velocity the pilot may request in cm/s.
 * `RTL_ALT` : The minimum alt above home the vehicle will climb to before returning.  If the vehicle is flying higher than this value it will return at its current altitude.
 *  
-# Drone with RTK :
+## Drone with RTK :
 ### via radio telemery (serial port)
 #### Base (GCS mission planner) :
 * ***https://ardupilot.org/copter/docs/common-here-plus-gps.html***

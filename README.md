@@ -1,9 +1,9 @@
 # Drone-GCS-and-AI
 
-- [x] Use yolov3 to detect coast's debries : plastic bottles , plastic bags , caps etc
+* Use yolov3 to detect coast's debries : plastic bottles , plastic bags , caps etc
 * [RTK](https://drive.google.com/file/d/1jjvXl_TojcVaHIFGIpz3gNLZ7TZ8hiRM/view?usp=sharing)
-- [x] Obstacle avoidance
-- [x] django GCS
+* Obstacle avoidance
+* django GCS
 
 ***[See demo video 1](https://drive.google.com/open?id=1H6hfDKPacrxpqa3XGIi3flVTbuDY8Ano)***
 

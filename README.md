@@ -100,6 +100,9 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 * [Telemetry Radio](https://ardupilot.org/copter/docs/common-sik-telemetry-radio.html#common-sik-telemetry-radio)
 * [Setting Hover Throttle](https://ardupilot.org/copter/docs/ac_throttlemid.html#ac-throttlemid)
 * [Non-GPS Navigation](https://ardupilot.org/copter/docs/common-non-gps-navigation-landing-page.html#common-non-gps-navigation-landing-page)
+
+## How to be a Maker : 
+* [Ref](https://flyeval.com/)
 ## Drone with RTK :
 ### ***1. via radio telemery (serial port)***
 #### Base (GCS mission planner) 

@@ -102,7 +102,13 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 * [Non-GPS Navigation](https://ardupilot.org/copter/docs/common-non-gps-navigation-landing-page.html#common-non-gps-navigation-landing-page)
 
 ## How to be a Maker : 
-* [Ref](https://flyeval.com/)
+* [Flight Evaluation](https://flyeval.com/)
+#### ZD 850 hexacopter framen 
+* 1. ZD 850 hexacopter frame
+* 2. 14*4.7 propeller 
+* 3. LA4108B 390KV motor
+* 4. HobbyWing eagle 30A
+* 5. ACE TATTU Lipo 6S 22.2V
 ## Drone with RTK :
 ### ***1. via radio telemery (serial port)***
 #### Base (GCS mission planner) 

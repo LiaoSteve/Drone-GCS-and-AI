@@ -90,26 +90,21 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 * `LOIT_SPEED` : Defines the maximum speed in cm/s which the aircraft will travel horizontally while in loiter mode.
 * `PILOT_SPEED_DN` : The maximum vertical descending velocity the pilot may request in cm/s.
 * `PILOT_SPEED_UP` : The maximum vertical ascending velocity the pilot may request in cm/s.
-#### 3. other parameters :
+#### 3. Other parameters :
 * `RTL_ALT` : The minimum alt above home the vehicle will climb to before returning.  If the vehicle is flying higher than this value it will return at its current altitude.
 * `WP_YAW_BEHAVIOR` : Determines how the autopilot controls the yaw during missions and RTL
 * `MOT_SPIN_MIN` : Point at which the thrust starts expressed as a number from 0 to 1 in the entire output range.  Should be higher than MOT_SPIN_ARM.
-* 
-### 4. some issue :
+
+### Some Issue :
 * [Configuring a Telemetry Radio using Mission Planner](https://ardupilot.org/copter/docs/common-configuring-a-telemetry-radio-using-mission-planner.html#common-configuring-a-telemetry-radio-using-mission-planner)
 * [Telemetry Radio](https://ardupilot.org/copter/docs/common-sik-telemetry-radio.html#common-sik-telemetry-radio)
 * [Setting Hover Throttle](https://ardupilot.org/copter/docs/ac_throttlemid.html#ac-throttlemid)
 * [Non-GPS Navigation](https://ardupilot.org/copter/docs/common-non-gps-navigation-landing-page.html#common-non-gps-navigation-landing-page)
 
-## How to be a Maker : 
+## How to be a drone maker : 
 * [Flight Evaluation](https://flyeval.com/)
 * [My ZD-850 Hexacopter Design](https://drive.google.com/file/d/1B6qVjqUTX0_z9jWVn1LjFxyjzFRpKL28/view?usp=sharing)
-#### ZD 850 hexacopter framen 
-* 1. ZD 850 hexacopter frame
-* 2. 14*4.7 propeller 
-* 3. LA4108B 390KV motor
-* 4. HobbyWing eagle 30A
-* 5. ACE TATTU Lipo 6S 22.2V
+
 ## Drone with RTK :
 ### ***1. via radio telemery (serial port)***
 #### Base (GCS mission planner) 

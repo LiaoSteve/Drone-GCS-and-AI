@@ -103,6 +103,7 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 
 ## How to be a Maker : 
 * [Flight Evaluation](https://flyeval.com/)
+* [My ZD-850 Hexacopter Design](https://drive.google.com/file/d/1B6qVjqUTX0_z9jWVn1LjFxyjzFRpKL28/view?usp=sharing)
 #### ZD 850 hexacopter framen 
 * 1. ZD 850 hexacopter frame
 * 2. 14*4.7 propeller 

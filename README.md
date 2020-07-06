@@ -77,7 +77,7 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 3. Config/Tune >> Full Parameter >> set `AUTOTUNE_AGGR` : 0.05 (default 0.1),  `AUTOTUNE_AXES`: 0 (I suggest tuning roll, pitch, yaw separately)
 4. fly in reality: take off in alt-hold flight mode, and push throttle to 50% ~ 59%, and activate your Radio Controller CH7 to HIGH, then PID Auto tuning will work. Wait UAV beep~ indicate that autotuning is done, and let your UAV land in Alt-Hold fight mode, and arm(You will see pid parameters saved). Finally, disabled your CH7 to LOW.
 
-### UAV auto fight mode ([RTL](https://ardupilot.org/copter/docs/rtl-mode.html), [LAND](https://ardupilot.org/copter/docs/land-mode.html), [LOITER](https://ardupilot.org/copter/docs/loiter-mode.html), [AUTO](), [GUIDED](https://ardupilot.org/copter/docs/ac2_guidedmode.html), [ALT-HOLD](https://ardupilot.org/copter/docs/altholdmode.html#altholdmode-controls), [brake](https://ardupilot.org/copter/docs/brake-mode.html))
+### UAV auto fight mode ([RTL](https://ardupilot.org/copter/docs/rtl-mode.html), [LAND](https://ardupilot.org/copter/docs/land-mode.html), [LOITER](https://ardupilot.org/copter/docs/loiter-mode.html), [AUTO](), [GUIDED](https://ardupilot.org/copter/docs/ac2_guidedmode.html), [ALT-HOLD](https://ardupilot.org/copter/docs/altholdmode.html#altholdmode-controls), [Brake](https://ardupilot.org/copter/docs/brake-mode.html))
 #### 1. Open mission planner and connect to your pixhawk, then choose Config/Tune panel>> Full parameter list >> search WPN :
 * `WPNAV_SPEED ` : if set `RTL_speed` to zero, RTL horizontal velosity will use this speed .
 * `WPNAV_RADIUS `: in AUTO mode, if this parameter set 100, that is, once your UAV enter waypoint radius 100 cm, pixhawk will stop and go to the next waypoint. 

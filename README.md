@@ -103,7 +103,7 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 
 ## How to be a drone maker : 
 * [Flight Evaluation](https://flyeval.com/)
-* [My ZD-850 Hexacopter Design](https://drive.google.com/file/d/1B6qVjqUTX0_z9jWVn1LjFxyjzFRpKL28/view?usp=sharing)
+* [My ZD-850 Hexacopter Design](https://drive.google.com/file/d/1_bIgeLjMBvvtcwQ5pBcfFuzBuqDt8ENk/view?usp=sharing)
 
 ## Drone with RTK :
 ### ***1. via radio telemery (serial port)***

@@ -1,0 +1,26 @@
+<annotation>
+	<folder>girl2</folder>
+	<filename>46.69273478_2643833765641504_1598516721713985571_n.jpg</filename>
+	<path>C:\Users\Steve\Desktop\yolov4\dataset\girl2\46.69273478_2643833765641504_1598516721713985571_n.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>1440</width>
+		<height>1800</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>girl2</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>383</xmin>
+			<ymin>10</ymin>
+			<xmax>1113</xmax>
+			<ymax>864</ymax>
+		</bndbox>
+	</object>
+</annotation>

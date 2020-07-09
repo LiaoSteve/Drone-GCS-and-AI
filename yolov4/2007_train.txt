@@ -1,0 +1,11 @@
+C:\Users\Steve\Desktop\yolov4/VOCdevkit/VOC2007/JPEGImages/19.d59f-hpevhck6466685.jpg
+C:\Users\Steve\Desktop\yolov4/VOCdevkit/VOC2007/JPEGImages/29.Insta-Fit-Girls-Celine-Farach-Wallpapers-46.jpg
+C:\Users\Steve\Desktop\yolov4/VOCdevkit/VOC2007/JPEGImages/3.DasrHIOVQAAT0k-.jpg
+C:\Users\Steve\Desktop\yolov4/VOCdevkit/VOC2007/JPEGImages/33.celine-farach4.jpg
+C:\Users\Steve\Desktop\yolov4/VOCdevkit/VOC2007/JPEGImages/43.32722804_243561343062820_2408545718894592000_n.jpg
+C:\Users\Steve\Desktop\yolov4/VOCdevkit/VOC2007/JPEGImages/44.172522u15ccggfquq0yh44.jpg
+C:\Users\Steve\Desktop\yolov4/VOCdevkit/VOC2007/JPEGImages/46.69273478_2643833765641504_1598516721713985571_n.jpg
+C:\Users\Steve\Desktop\yolov4/VOCdevkit/VOC2007/JPEGImages/47.66499473_392547374798775_5688596838124197141_n.jpg
+C:\Users\Steve\Desktop\yolov4/VOCdevkit/VOC2007/JPEGImages/49.172525wuiu9197mhulyuhl.jpg
+C:\Users\Steve\Desktop\yolov4/VOCdevkit/VOC2007/JPEGImages/5.DbV5VD5WkAAvhfo.jpg
+C:\Users\Steve\Desktop\yolov4/VOCdevkit/VOC2007/JPEGImages/51.54512035_414110529410031_6445580049673090571_n.jpg

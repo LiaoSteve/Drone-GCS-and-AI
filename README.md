@@ -1,4 +1,5 @@
 # Drone-GCS-and-AI
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3937997.svg)](https://doi.org/10.5281/zenodo.3937997)
 ### My Demo video
 
 ***1. [Use yolov3 to detect coast's debries : plastic bottles , plastic bags , caps etc](https://drive.google.com/file/d/15HNY2gMDhPa_sieLgT28_APcT03e1TX1/view?usp=sharing)***
@@ -154,7 +155,7 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 *  OPENCV=1 to build with OpenCV 4.x/3.x/2.4.x - allows to detect on video files and video streams from network cameras or web-cams.
 *  LIBSO=1 to build a library darknet.so and binary runable file uselib that uses this library.
 *  Choose your GPU capability (ARCH)
-*  Notice that your cuda path (NVCC=/usr/local/cuda-10.0/bin/nvcc¡^
+*  Notice that your cuda path (NVCC=/usr/local/cuda-10.0/bin/nvccÂ¡^
 * Save and close the Makefile, and type `make` in terminal.
 #### Create my own dataset, and label
 * [Download in Windows](https://tzutalin.github.io/labelImg/) choose Windows_v1.8.0 and unzip it.
@@ -163,11 +164,11 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 *  
     ```  
     VOCdevkit
-    ¢|¢w¢w VOC2007
-        ¢u¢w¢w Annotations
-        ¢u¢w¢w ImageSets    
-        ¢x   ¢u¢w¢w Main    
-        ¢u¢w¢w JPEGImages    
+    Â¢|Â¢wÂ¢w VOC2007
+        Â¢uÂ¢wÂ¢w Annotations
+        Â¢uÂ¢wÂ¢w ImageSets    
+        Â¢x   Â¢uÂ¢wÂ¢w Main    
+        Â¢uÂ¢wÂ¢w JPEGImages    
     voc_label.py
     ```
 * Put your images to JPEGImages dir,and open your

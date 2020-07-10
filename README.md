@@ -139,6 +139,82 @@ https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
 4. wait for rtk fixed.
 5. (option) paramter list setting: EK2_ALT_SOURCE:2, EK2_POSNE_M_NSE : 0.1[meter] or 0.01[meter](0.01 should use carefully).
 
+### How to train my yolov4
+* Yolo v4 paper:    [https://arxiv.org/abs/2004.10934](https://arxiv.org/abs/2004.10934)
+
+* Yolo v4 source code:  [https://github.com/AlexeyAB/darknet](https://github.com/AlexeyAB/darknet)  
+#### Compile on Linux
+```
+  git clone https://github.com/AlexeyAB/darknet.git
+  cd darknet
+  gedit Makefile
+```
+* GPU=1 to build with CUDA to accelerate by using GPU (CUDA should be in /usr/local/cuda)
+* CUDNN=1 to build with cuDNN v5-v7 to accelerate training by using GPU (cuDNN should be in /usr/local/cudnn)
+*  OPENCV=1 to build with OpenCV 4.x/3.x/2.4.x - allows to detect on video files and video streams from network cameras or web-cams.
+*  LIBSO=1 to build a library darknet.so and binary runable file uselib that uses this library.
+*  Choose your GPU capability (ARCH)
+*  Notice that your cuda path (NVCC=/usr/local/cuda-10.0/bin/nvcc¡^
+* Save and close the Makefile, and type `make` in terminal.
+#### Create my own dataset, and label
+* [Download in Windows](https://tzutalin.github.io/labelImg/) choose Windows_v1.8.0 and unzip it.
+* Create folder :
+*  `git clone https://github.com/LiaoSteve/pascal-VOC.git`, and open it.   
+*  
+    ```  
+    VOCdevkit
+    ¢|¢w¢w VOC2007
+        ¢u¢w¢w Annotations
+        ¢u¢w¢w ImageSets    
+        ¢x   ¢u¢w¢w Main    
+        ¢u¢w¢w JPEGImages    
+    voc_label.py
+    ```
+* Put your images to JPEGImages dir,and open your
+labelimg, open data folder, edit predefined_classes.txt(type your class per line)
+* Click labelImg.exe, choose `Open Dir` to `JPEGImages` images, and `Change Save Dir` to `Annotations` dir.
+* Use `pascal VOC` label format, and start labeling your images.
+* Now if your label work done, put `VOCdevkit` dir and `voc_label.py` into `darknet/data` dir.
+* Open terminal and run create_imageSets.py, and check your ImageSets/Main dir, there are four .txt files:
+    ```  
+    cd VOCdevkit/VOC2007
+    python create_imageSets.py    
+    ```  
+* Open voc_label.py, and revise the code line 7 (`classes = ["class1","class2"]`) to your classes :
+    ```    
+    cd ../../
+    python voc_label.py
+    ```
+* Now in data dir, you will see `2007_train.txt`, `2007_val.txt`, and there are many .txt format labels in `VOCdevkit/VOC2007/labels` 
+* Put .txt format labels to images dir :
+  ```
+  cp -r ./VOCdevkit/VOC2007/labels/*.txt ./VOCdevkit/VOC2007/JPEGImages/
+  ```
+* Create obj.name file, and type your classes name (each line one class) :
+    ``` 
+    gedit obj.name
+    ```
+* Create obj.data file :
+    ``` 
+    gedit obj.data
+    ```
+* Paste text (revise `classes`) below to `obj.data`:
+    ```
+    classes= 2
+    train  = data/2007_train.txt
+    valid  = data/2007_val.txt
+    names = data/obj.names
+    backup = backup/
+    ```
+* Start training by using the command line: 
+    ```
+    ./darknet detector train data/obj.data cfg/my_yolov4.cfg yolov4.conv.137
+    ```
+Start training by using the command line: 
+    ```
+    ./darknet detector train data/obj.data cfg/my_yolov4.cfg yolov4.conv.137 -dont_show -mjpeg_port 8090 -map
+    ```
+
 ## License 
 * Notice that our License is reserved
 

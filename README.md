@@ -213,7 +213,8 @@ Start training by using the command line:
     ```
     ./darknet detector train data/obj.data cfg/my_yolov4.cfg yolov4.conv.137 -dont_show -mjpeg_port 8090 -map
     ```
-
+### How to create custom dataset from OpenImage Dataset
+* [https://github.com/theAIGuysCode/OIDv4_ToolKit](https://github.com/theAIGuysCode/OIDv4_ToolKit)
 ## License 
 * Notice that our License is reserved
 

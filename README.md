@@ -18,6 +18,7 @@
 
 
 ## YOLOv3
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3939059.svg)](https://doi.org/10.5281/zenodo.3939059)
 
 * [https://github.com/LiaoSteve/Trash-Dataset-and-object-detection/tree/master](https://github.com/LiaoSteve/Trash-Dataset-and-object-detection/tree/master)

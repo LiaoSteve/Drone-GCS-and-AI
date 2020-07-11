@@ -1,5 +1,5 @@
 # Drone-GCS-and-AI
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3937997.svg)](https://doi.org/10.5281/zenodo.3937997)
+
 ### My Demo video
 
 ***1. [Use yolov3 to detect coast's debries : plastic bottles , plastic bags , caps etc](https://drive.google.com/file/d/15HNY2gMDhPa_sieLgT28_APcT03e1TX1/view?usp=sharing)***
@@ -18,7 +18,8 @@
 
 
 ## YOLOv3
-
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3939059.svg)](https://doi.org/10.5281/zenodo.3939059)
+[https://github.com/LiaoSteve/Trash-Dataset-and-object-detection/tree/master](https://github.com/LiaoSteve/Trash-Dataset-and-object-detection/tree/master)
 **Notice that in copter/model_data folder:**
 
 ```

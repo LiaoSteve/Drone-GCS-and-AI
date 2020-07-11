@@ -35,11 +35,6 @@ model_data/
 ``` 
 https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
 ```
- 
-- [x] Download video ***20191010.mov*** below
-```
-https://drive.google.com/open?id=1a_9UqMma-1tFE4DrE3QfoBw81_i-6OJM
-```
 
 - [x] connect your webcam, and run copter/yolo.py
 

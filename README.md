@@ -1,7 +1,7 @@
 # Drone-GCS-and-AI
+*A research diary of a drone system that monitors the coastal pollution*
 
-### My Demo video
-
+### -------------------- My Demo video  ---------------
 ***1. [Use yolov3 to detect coast's debries : plastic bottles , plastic bags , caps etc](https://drive.google.com/file/d/15HNY2gMDhPa_sieLgT28_APcT03e1TX1/view?usp=sharing)***
 
 ***2. [RTK](https://drive.google.com/file/d/1jjvXl_TojcVaHIFGIpz3gNLZ7TZ8hiRM/view?usp=sharing)***
@@ -162,15 +162,15 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
 *  
     ```  
     VOCdevkit
-    ¢|¢w¢w VOC2007
-        ¢u¢w¢w Annotations
-        ¢u¢w¢w ImageSets    
-        ¢x   ¢u¢w¢w Main    
-        ¢u¢w¢w JPEGImages    
+    |----VOC2007
+        |----Annotations
+        |----ImageSets    
+        |    |---- Main            
+        |----JPEGImages    
     voc_label.py
+    generate_train.py
     ```
-* Put your images to JPEGImages dir,and open your
-labelimg, open data folder, edit predefined_classes.txt(type your class per line)
+* Put your images to JPEGImages dir,and open labelimg dir, open data folder, edit predefined_classes.txt (type your class per line)
 * Click labelImg.exe, choose `Open Dir` to `JPEGImages` images, and `Change Save Dir` to `Annotations` dir.
 * Use `pascal VOC` label format, and start labeling your images.
 * Now if your label work done, put `VOCdevkit` dir and `voc_label.py` into `darknet/data` dir.
@@ -184,16 +184,16 @@ labelimg, open data folder, edit predefined_classes.txt(type your class per line
     cd ../../
     python voc_label.py
     ```
-* Now in data dir, you will see `2007_train.txt`, `2007_val.txt`, and there are many .txt format labels in `VOCdevkit/VOC2007/labels` 
-* Put .txt format labels to images dir :
+* Now in data dir, you will see `2007_train.txt`, `2007_val.txt`, and there are many .txt YOLO format labels in `VOCdevkit/VOC2007/labels` 
+* Copy .txt YOLO format labels to images dir :
   ```
   cp -r ./VOCdevkit/VOC2007/labels/*.txt ./VOCdevkit/VOC2007/JPEGImages/
   ```
-* Create obj.name file, and type your classes name (each line one class) :
+* Create `obj.names` file, and type your classes name (each line one class) :
     ``` 
-    gedit obj.name
+    gedit obj.names
     ```
-* Create obj.data file :
+* Create `obj.data` file :
     ``` 
     gedit obj.data
     ```
@@ -205,14 +205,18 @@ labelimg, open data folder, edit predefined_classes.txt(type your class per line
     names = data/obj.names
     backup = backup/
     ```
+* Download pre-trained weights `yolov4.conv.137` from [AlexeyAB](https://drive.google.com/file/d/1JKF-bdIklxOOVy-2Cr5qdvjgGpmGfcbp/view) to darknet dir.
+* Edit cfg file. [see AlexAB darknet README.md](https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects)
 * Start training by using the command line: 
     ```
-    ./darknet detector train data/obj.data cfg/my_yolov4.cfg yolov4.conv.137
+    ./darknet detector train data/obj.data cfg/yolov4.cfg yolov4.conv.137
     ```
 Start training by using the command line: 
     ```
     ./darknet detector train data/obj.data cfg/my_yolov4.cfg yolov4.conv.137 -dont_show -mjpeg_port 8090 -map
     ```
+* [python wrapper `darknet_video.py` size problem](https://github.com/AlexeyAB/darknet/pull/5415/files):
+  
 ### How to create custom dataset from OpenImage Dataset
 * [https://github.com/theAIGuysCode/OIDv4_ToolKit](https://github.com/theAIGuysCode/OIDv4_ToolKit)
 ## License 

@@ -59,7 +59,7 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
 
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_G.gif)
 
-## How to getting started with ardupilot and pixhawk : 
+## Getting started with ardupilot and pixhawk : 
 ### First setup
 1. Upload firmware : use [mission planner](https://ardupilot.org/planner/docs/mission-planner-installation.html) upload firmware, and upload chibiOS, i use hexacopter version 3.6.11.
 2. Connect your pixhawk with mission planner, and open Intial setup then choose your UAV frame.

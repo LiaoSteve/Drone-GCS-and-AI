@@ -219,6 +219,8 @@ Start training by using the command line:
   
 ### How to create custom dataset from OpenImage Dataset
 * [https://github.com/theAIGuysCode/OIDv4_ToolKit](https://github.com/theAIGuysCode/OIDv4_ToolKit)
+### How to learn deep learning
+* [https://www.youtube.com/watch?v=G_fsA-OUqNw&list=PL1w8k37X_6L9YSIvLqO29S9H0aZ1ncglu&index=1](https://www.youtube.com/watch?v=G_fsA-OUqNw&list=PL1w8k37X_6L9YSIvLqO29S9H0aZ1ncglu&index=1)
 ## License 
 * Notice that our License is reserved
 

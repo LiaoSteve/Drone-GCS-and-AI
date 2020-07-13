@@ -142,7 +142,7 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
 * Yolo v4 paper:    [https://arxiv.org/abs/2004.10934](https://arxiv.org/abs/2004.10934)
 
 * Yolo v4 source code:  [https://github.com/AlexeyAB/darknet](https://github.com/AlexeyAB/darknet)  
-#### Compile on Linux
+#### 1. Compile on Linux
 ```
   git clone https://github.com/AlexeyAB/darknet.git
   cd darknet
@@ -155,7 +155,7 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
 *  Choose your GPU capability (ARCH)
 *  Notice that your cuda path (NVCC=/usr/local/cuda-10.0/bin/nvcc¡^
 * Save and close the Makefile, and type `make` in terminal.
-#### Create my own dataset, and label
+#### 2. Create my own dataset, and label
 * [Download in Windows](https://tzutalin.github.io/labelImg/) choose Windows_v1.8.0 and unzip it.
 * Create folder :
 *  `git clone https://github.com/LiaoSteve/pascal-VOC.git`, and open it.   
@@ -205,17 +205,25 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
     names = data/obj.names
     backup = backup/
     ```
-* Download pre-trained weights `yolov4.conv.137` from [AlexeyAB](https://drive.google.com/file/d/1JKF-bdIklxOOVy-2Cr5qdvjgGpmGfcbp/view) to darknet dir.
-* Edit cfg file. [see AlexAB darknet README.md](https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects)
-* Start training by using the command line: 
-    ```
-    ./darknet detector train data/obj.data cfg/yolov4.cfg yolov4.conv.137
-    ```
-Start training by using the command line: 
-    ```
-    ./darknet detector train data/obj.data cfg/my_yolov4.cfg yolov4.conv.137 -dont_show -mjpeg_port 8090 -map
-    ```
-* [python wrapper `darknet_video.py` size problem](https://github.com/AlexeyAB/darknet/pull/5415/files):
+#### 3. Download pre-trained weights `yolov4.conv.137` from [AlexeyAB](https://drive.google.com/file/d/1JKF-bdIklxOOVy-2Cr5qdvjgGpmGfcbp/view) to darknet dir.
+
+#### 4. Edit cfg file. [see AlexAB darknet README.md](https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects)
+
+#### 5. Start training by using the command line: 
+```
+./darknet detector train data/obj.data cfg/yolov4.cfg yolov4.conv.137
+```
+* Or try this :
+```
+./darknet detector train data/obj.data cfg/my_yolov4.cfg yolov4.conv.137 -dont_show -mjpeg_port 8090 -map
+```
+#### 6. After training 
+* Test image : 
+```
+./darknet detector test data/obj.data cfg/yolov4.cfg backup/yolov4.weight
+```
+* python wrapper `darknet_video.py` size problem : 
+  [https://github.com/AlexeyAB/darknet/pull/5415/files](https://github.com/AlexeyAB/darknet/pull/5415/files):
   
 ### How to create custom dataset from OpenImage Dataset
 * [https://github.com/theAIGuysCode/OIDv4_ToolKit](https://github.com/theAIGuysCode/OIDv4_ToolKit)

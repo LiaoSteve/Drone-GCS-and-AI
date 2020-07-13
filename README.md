@@ -207,7 +207,7 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
     ```
 #### 3. Download pre-trained weights `yolov4.conv.137` from [AlexeyAB](https://drive.google.com/file/d/1JKF-bdIklxOOVy-2Cr5qdvjgGpmGfcbp/view) to darknet dir.
 
-#### 4. Edit cfg file. [see AlexAB darknet README.md](https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects)
+#### 4. Edit cfg file. [See AlexeyAB darknet README.md](https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects)
 
 #### 5. Start training by using the command line: 
 ```

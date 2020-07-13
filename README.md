@@ -153,7 +153,7 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
 *  OPENCV=1 to build with OpenCV 4.x/3.x/2.4.x - allows to detect on video files and video streams from network cameras or web-cams.
 *  LIBSO=1 to build a library darknet.so and binary runable file uselib that uses this library.
 *  Choose your GPU capability (ARCH)
-*  Notice that your cuda path (NVCC=/usr/local/cuda-10.0/bin/nvcc¡^
+*  Notice that your cuda path (NVCC=/usr/local/cuda-10.0/bin/nvcc)
 * Save and close the Makefile, and type `make` in terminal.
 #### 2. Create my own dataset, and label
 * [Download in Windows](https://tzutalin.github.io/labelImg/) choose Windows_v1.8.0 and unzip it.

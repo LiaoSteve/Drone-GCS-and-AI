@@ -185,7 +185,7 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
     python voc_label.py
     ```
 * Now in data dir, you will see `2007_train.txt`, `2007_val.txt`, and there are many .txt YOLO format labels in `VOCdevkit/VOC2007/labels` 
-* Copy .txt YOLO format labels to images dir :
+* (Optional) Copy .txt YOLO format labels to images dir :
   ```
   cp -r ./VOCdevkit/VOC2007/labels/*.txt ./VOCdevkit/VOC2007/JPEGImages/
   ```
@@ -207,13 +207,14 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
     ```
 #### 3. Download pre-trained weights `yolov4.conv.137` from [AlexeyAB](https://drive.google.com/file/d/1JKF-bdIklxOOVy-2Cr5qdvjgGpmGfcbp/view) to darknet dir.
 
-#### 4. Edit cfg file. [See AlexeyAB darknet README.md](https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects)
+#### 4. Edit cfg file. 
+* [AlexeyAB darknet README.md](https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects)
 
 #### 5. Start training by using the command line: 
 ```
-./darknet detector train data/obj.data cfg/yolov4.cfg yolov4.conv.137
+./darknet detector train data/obj.data cfg/yolov4.cfg yolov4.conv.137 | tee -a train.log
 ```
-* Or try this :
+* Or remote version with no GUI :
 ```
 ./darknet detector train data/obj.data cfg/my_yolov4.cfg yolov4.conv.137 -dont_show -mjpeg_port 8090 -map
 ```
@@ -222,8 +223,20 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
 ```
 ./darknet detector test data/obj.data cfg/yolov4.cfg backup/yolov4.weight
 ```
-* python wrapper `darknet_video.py` size problem : 
+* Test map : 
+```
+./darknet detector map data/obj.data cfg/yolov4.cfg backup/yolov4.weight
+```
+* Test recall :
+```
+./darknet detector recall data/obj.data cfg/yolov4.cfg backup/yolov3.weight
+```
+#### 7. Python wrapper :
+* [madhawav/YOLO3-4-Py](https://github.com/madhawav/YOLO3-4-Py)
+* `darknet_video.py` size problem : 
   [https://github.com/AlexeyAB/darknet/pull/5415/files](https://github.com/AlexeyAB/darknet/pull/5415/files):
+#### 8. How to improve object detection : 
+* [https://github.com/AlexeyAB/darknet#How-to-improve-object-detection](https://github.com/AlexeyAB/darknet#How-to-improve-object-detection)
   
 ### How to create custom dataset from OpenImage Dataset
 * [https://github.com/theAIGuysCode/OIDv4_ToolKit](https://github.com/theAIGuysCode/OIDv4_ToolKit)

@@ -198,6 +198,7 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
     gedit obj.data
     ```
 * Paste text (revise `classes`) below to `obj.data`:
+  
     ```
     classes= 2
     train  = data/2007_train.txt
@@ -223,7 +224,7 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
 ```
 ./darknet detector test data/obj.data cfg/yolov4.cfg backup/yolov4.weight
 ```
-* Test map : 
+* Test mAP : 
 ```
 ./darknet detector map data/obj.data cfg/yolov4.cfg backup/yolov4.weight
 ```
@@ -240,6 +241,24 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
   
 ### How to create custom dataset from OpenImage Dataset
 * [https://github.com/theAIGuysCode/OIDv4_ToolKit](https://github.com/theAIGuysCode/OIDv4_ToolKit)
+* Download images and labels :
+  ```
+  pip install -r requirement.txt
+  python main.py downloader --classes Apple --type_csv train --limit 100  
+  ```
+* Revise `classes.txt`, and run python `convert_annotations.py`
+  ```
+  python convert_annotations.py
+  ```
+* Copy images to VOC2007/JPEG dir, and copy labels to Annotations dir
+* Run `create_imageSets.py`, and run `generate_train.py`  
+  
+  ```
+  python create_imageSets.py  
+  cd ../../
+  python generate_train.py
+
+  ```
 ### How to learn deep learning
 * [https://www.youtube.com/watch?v=G_fsA-OUqNw&list=PL1w8k37X_6L9YSIvLqO29S9H0aZ1ncglu&index=1](https://www.youtube.com/watch?v=G_fsA-OUqNw&list=PL1w8k37X_6L9YSIvLqO29S9H0aZ1ncglu&index=1)
 ## License 

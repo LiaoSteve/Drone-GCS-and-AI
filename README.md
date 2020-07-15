@@ -250,12 +250,10 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
   ```
   python convert_annotations.py
   ```
-* Copy images to VOC2007/JPEG dir, and copy labels to Annotations dir
-* Run `create_imageSets.py`, and run `generate_train.py`  
+* Copy images to `VOC2007/JPEG` dir, and copy labels (yolo format .txt) to `labels` dir
+* Run `generate_train.py` :
   
-  ```
-  python create_imageSets.py  
-  cd ../../
+  ```  
   python generate_train.py
 
   ```
@@ -264,7 +262,7 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
 ## License 
 * Notice that our License is reserved
 
-## Cite
+## Citation
 ```
 @article{yolov3,
   title={YOLOv3: An Incremental Improvement},

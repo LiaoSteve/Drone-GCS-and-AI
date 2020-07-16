@@ -42,7 +42,10 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
 * Created by Tzung-Hsien Huang, and adapted by LisoSteve
 * In AirSim simulator, use the fuzzy rules to control the drone.
 * Use depth to sense the objects.
-
+#### Citation
+```
+T. H. Huang, "Path Planning and Visual Obstacle Avoidance Based on Fuzzy Theory for UAV Apllication," 2020 
+```
 * Test A [ (See demo video)](https://drive.google.com/open?id=1oGbn28wQA_o-EyqqzDqoxLLuQZKde3WK):
 
 ![image](https://github.com/LiaoSteve/Drone-GCS-and-AI/blob/django_app/airsim/ForAirSim/Data_gif_A.gif)
@@ -138,7 +141,7 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
 4. wait for rtk fixed.
 5. (option) paramter list setting: EK2_ALT_SOURCE:2, EK2_POSNE_M_NSE : 0.1[meter] or 0.01[meter](0.01 should use carefully).
 
-### How to train my yolov4
+## How to train darknet yolov4  
 * Yolo v4 paper:    [https://arxiv.org/abs/2004.10934](https://arxiv.org/abs/2004.10934)
 
 * Yolo v4 source code:  [https://github.com/AlexeyAB/darknet](https://github.com/AlexeyAB/darknet)  
@@ -251,11 +254,12 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
   python convert_annotations.py
   ```
 * Copy images to `VOC2007/JPEG` dir, and copy labels (yolo format .txt) to `labels` dir
-* Run `generate_train.py` :
+* Run `generate_train.py`and train yolov4 :
   
   ```  
   python generate_train.py
-
+  
+  ./darknet detector train data/obj.data cfg/yolov4.cfg yolov4.conv.137 -map | tee -a train.log
   ```
 ### How to learn deep learning
 * [https://www.youtube.com/watch?v=G_fsA-OUqNw&list=PL1w8k37X_6L9YSIvLqO29S9H0aZ1ncglu&index=1](https://www.youtube.com/watch?v=G_fsA-OUqNw&list=PL1w8k37X_6L9YSIvLqO29S9H0aZ1ncglu&index=1)

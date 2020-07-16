@@ -213,7 +213,7 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
 
 #### 5. Start training by using the command line: 
 ```
-./darknet detector train data/obj.data cfg/yolov4.cfg yolov4.conv.137 | tee -a train.log
+./darknet detector train data/obj.data cfg/yolov4.cfg yolov4.conv.137 -map | tee -a train.log
 ```
 * Or remote version with no GUI :
 ```

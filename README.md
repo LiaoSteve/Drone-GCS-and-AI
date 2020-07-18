@@ -114,6 +114,7 @@ T. H. Huang, "Path Planning and Visual Obstacle Avoidance Based on Fuzzy Theory 
 1. Open Mission planner Initial Setup >> Optional Hardware >> RTK GPS Inject screen
 2. Connect your F9P to computer via COM port and baud rate is 115200
 3. Check the autoconfig, then set the surveyin accuracy in meter and time in second (you can use default setting: 2(m) and 60(s)) 
+4. TIME Mode of base station requires: 5 GPS satellite signals +2 GLONASS satellite signals in the strength of 40 or more; or 5 GPS satellite signals +3 Beidou satellite signal in the strength of 40 or more.
 
 #### Rover 
 0. Notice that your ardupilot firmware version should higher than 3.6.9, i use 3.6.11 hexacopter.
@@ -121,7 +122,7 @@ T. H. Huang, "Path Planning and Visual Obstacle Avoidance Based on Fuzzy Theory 
 2. Use your F9P pins insert to your pixhawk GPS pins.
 3. Use mission planner connect to drone's via radio telemery.
 4. Wait for rtk fixed.
-5. (option) paramter list setting: EK2_ALT_SOURCE:2, EK2_POSNE_M_NSE : 0.1[meter] or 0.01[meter](0.01 should use carefully).
+5. (option) paramter list setting:   `EK2_ALT_SOURCE:2`, `EK2_POSNE_M_NSE : 0.1[meter] or 0.01[meter] (0.01 should use carefully)`
 
 ### 2. ***via wifi or 4G LTE***
 #### Base (tcp server) 
@@ -139,7 +140,7 @@ T. H. Huang, "Path Planning and Visual Obstacle Avoidance Based on Fuzzy Theory 
 2. Use your F9P pins insert to your pixhawk GPS pins.
 3. Use mission planner connect to drone's via radio telemery.
 4. wait for rtk fixed.
-5. (option) paramter list setting: EK2_ALT_SOURCE:2, EK2_POSNE_M_NSE : 0.1[meter] or 0.01[meter](0.01 should use carefully).
+5. (option) paramter list setting: `EK2_ALT_SOURCE:2`, `EK2_POSNE_M_NSE : 0.1[meter] or 0.01[meter] (0.01 should use carefully)`
 
 ## How to train darknet yolov4  
 * Yolo v4 paper:    [https://arxiv.org/abs/2004.10934](https://arxiv.org/abs/2004.10934)

@@ -255,7 +255,7 @@ T. H. Huang, "Path Planning and Visual Obstacle Avoidance Based on Fuzzy Theory 
   python convert_annotations.py
   ```
 * Copy images to `VOC2007/JPEG` dir, and copy labels (yolo format .txt) to `labels` dir
-* Run `generate_train.py`and train yolov4 :
+* Copy `generate_train.py` to `darknet/data/` dir, run and train yolov4 :
   
   ```  
   python generate_train.py

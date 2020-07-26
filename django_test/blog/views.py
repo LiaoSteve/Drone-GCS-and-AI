@@ -13,20 +13,29 @@ import socket
 import cv2
 import pickle
 import numpy as np
-import struct ## new
+import struct 
 import zlib
 import logging
+import random
+import datetime
+import numba
 
 logging.basicConfig(level=logging.DEBUG)
 
-# Create your views here.
+'''------------- Templates ----------------'''
+# Drone Server
 def home(request):
     return render(request,'index_gcs.html')
-
+# Infomation
 def about(request):
     return render(request,'about.html')
+# chart stream data
+def chart(request):
+    return render(request,'chart_data.html')    
 
 
+'''------------- Get stream data -----------'''
+# Server-Sent Events
 def eventsource(request):
     # -- Socket UDP --
     def event_stream():               
@@ -98,6 +107,19 @@ def web_cam(request):
                 
     return StreamingHttpResponse(images_stream(),
                      content_type='multipart/x-mixed-replace; boundary=frame') 
+
+def chart_data_eventsource(request):    
+    def generate_random_data():
+        while True:
+            json_data = json.dumps(
+                {'time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'value': random.random() * 100})
+            yield f"data:{json_data}\n\n"
+            time.sleep(1)
+
+    return StreamingHttpResponse(generate_random_data(), content_type='text/event-stream')
+
+
+
 
 ''' def web_cam(request):  
     # -- Socket UDP fail--          

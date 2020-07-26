@@ -28,8 +28,7 @@ source.addEventListener('message', function(e){
     trash_marker.bindTooltip("lon:"+obj.longitude
       +"<br>lat:"+obj.latitude+"<br>trash:"+obj.trash_num+"<br>cap:"+obj.cap_num+"<br>plastic_bag:"+obj.plastic_bag_num+"<br>time:"+obj.timestamp).openTooltip();
     mapMarkers1.push(trash_marker);    
-    //trash_marker.bindTooltip("lon:"+obj.longitude).openTooltip();
-    
+    //trash_marker.bindTooltip("lon:"+obj.longitude).openTooltip();    
   }
 
   if(obj.channel == '00002') {
@@ -38,14 +37,13 @@ source.addEventListener('message', function(e){
       mymap.removeLayer(mapMarkers2[i]);
     }
     marker = L.marker([obj.latitude, obj.longitude]).addTo(mymap);
-    //marker.bindPopup("lon:"+obj.longitude+"<br>lat:"+obj.latitude).openPopup();
-    
+    //marker.bindPopup("lon:"+obj.longitude+"<br>lat:"+obj.latitude).openPopup();    
     mapMarkers2.push(marker);    
   }
+
   if(obj.channel == '00003') {
     //mark the path on map
-    //num_wp = obj.num_wp
-    
+    //num_wp = obj.num_wp    
     circle = L.circleMarker([obj.latitude, obj.longitude], {
       color: 'red',
       fillColor: '#f03',
@@ -63,6 +61,7 @@ source.addEventListener('message', function(e){
       }
     }  */
   }
+
   if(obj.channel == '00004') {
     //mark the HOME   
     home = L.circleMarker([obj.latitude, obj.longitude], {
@@ -73,12 +72,13 @@ source.addEventListener('message', function(e){
        
     home.bindTooltip("HOME").openTooltip();
   }
+
   if(obj.channel == '00009') {                  
     document.getElementById("drone_status").innerHTML =
-          "<b> [    Lat , Lon   ] : " + obj.latitude      + "  , "      +obj.longitude+"<b>"
+          "<b> [    Lat , Lon   ] : " + obj.latitude      + "  , "      + obj.longitude+"<b>"
         + "<br>[      Alt       ] : " + obj.altitude      + " <b>(m)"
         + "<br>[   Ground speed ] : " + obj.groundspeed   + "<b>(m/sec)"
-        + "<br>[   Heading      ] : " + obj.heading       +"<b>(deg)"
+        + "<br>[   Heading      ] : " + obj.heading       + "<b>(deg)"
         + "<br>[      Mode      ] : " + obj.mode 
         + "<br>[ Velocity_North ] : " + obj.velocity_N    + "<b>(m/sec)"
         + "<br>[ Velocity_East  ] : " + obj.velocity_E    + "<b>(m/sec)"

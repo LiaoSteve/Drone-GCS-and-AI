@@ -75,9 +75,10 @@ T. H. Huang, "Path Planning and Visual Obstacle Avoidance Based on Fuzzy Theory 
 * Tuning   : ***https://ardupilot.org/copter/docs/tuning.html***
 * Autotune : ***https://ardupilot.org/copter/docs/autotune.html***
 1. Open mission planner and connect your pixhawk via serial port.
-2. Choose Config/Tune panel>> Extended Tuning >> Alttitude Hold >> `RC7 opt` >> `Auto tune`, and `RC10 opt` >> `Motor Interlock`
+2. Choose Config/Tune panel>> Extended Tuning >> Alttitude Hold >> `RC7 opt` >> `Auto tune`, and `RC10 opt` >> `Motor Interlock`, and save the changes.
 3. Config/Tune >> Full Parameter >> set `AUTOTUNE_AGGR` : 0.05 (default 0.1),  `AUTOTUNE_AXES`: 0 (I suggest tuning roll, pitch, yaw separately)
-4. fly in reality: take off in alt-hold flight mode, and push throttle to 50% ~ 59%, and activate your Radio Controller CH7 to HIGH, then PID Auto tuning will work. Wait UAV beep~ indicate that autotuning is done, and let your UAV land in Alt-Hold fight mode, and arm(You will see pid parameters saved). Finally, disabled your CH7 to LOW.
+4. fly in reality: take off in `ALT-HOLD` or `LOITER`(
+recommend) flight mode, and push throttle to 50% ~ 59%, and activate your Radio Controller CH7 to HIGH, then PID Auto tuning will work. Wait UAV beep~ indicate that autotuning is done, and let your UAV land in Alt-Hold fight mode, and arm (You will see pid parameters saved). Finally, disabled your CH7 to LOW.
 
 ### UAV auto fight mode ([RTL](https://ardupilot.org/copter/docs/rtl-mode.html), [LAND](https://ardupilot.org/copter/docs/land-mode.html), [LOITER](https://ardupilot.org/copter/docs/loiter-mode.html), [AUTO](), [GUIDED](https://ardupilot.org/copter/docs/ac2_guidedmode.html), [ALT-HOLD](https://ardupilot.org/copter/docs/altholdmode.html#altholdmode-controls), [Brake](https://ardupilot.org/copter/docs/brake-mode.html))
 #### 1. Open mission planner and connect to your pixhawk, then choose Config/Tune panel>> Full parameter list >> search WPN :
@@ -210,7 +211,7 @@ T. H. Huang, "Path Planning and Visual Obstacle Avoidance Based on Fuzzy Theory 
     names = data/obj.names
     backup = backup/
     ```
-#### 3. Download pre-trained weights `yolov4.conv.137` from [AlexeyAB](https://drive.google.com/file/d/1JKF-bdIklxOOVy-2Cr5qdvjgGpmGfcbp/view) to darknet dir.
+#### 3. Download pre-trained weights [yolov4.conv.137](https://drive.google.com/file/d/1JKF-bdIklxOOVy-2Cr5qdvjgGpmGfcbp/view), and put it in `darknet` dir.
 
 #### 4. Edit cfg file. 
 * [AlexeyAB darknet README.md](https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects)

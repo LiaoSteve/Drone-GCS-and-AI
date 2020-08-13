@@ -16,12 +16,11 @@ def threadWork(client,adr):
                 try:
                     data = json.loads(msg) 
                     if data['channel'] == '00001':
-                        print(f'timestamp: {data["timestamp"]}')
+                        print('name: {}'.format(data['name']))
                     if data['channel'] == '00002':
-                        print(f'timestamp: {data["timestamp"]}')  
-                except Exception as e:
-                    pass
-                    #print(e)
+                        print('name: {}'.format(data['name']))  
+                except Exception as e:                    
+                    print(e)
                 
     except Exception as e:
         print("----------------------------------------------")

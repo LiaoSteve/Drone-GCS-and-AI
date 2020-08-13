@@ -2,10 +2,20 @@
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 30,
-    id: 'mapbox.streets',
+    id: 'mapbox.streets', //'mapbox.satellite'
     accessToken: 'pk.eyJ1Ijoic3RldmVsaWFvMTY4OCIsImEiOiJjazE3OGYyeDkxY3hsM250amdvdjBqMGFvIn0.Lv9UAvyh3NYLGGz1WGy3Ag' //ENTER YOUR ACCESS TOKEN HERE
 }).addTo(mymap);
 
+//--------------- Show onclick position in map -------------------
+var popup = L.popup();
+function onMapClick(e) {
+    popup
+        .setLatLng(e.latlng)
+        .setContent("You clicked the map at " + e.latlng.toString())
+        .openOn(mymap);
+}
+mymap.on('click', onMapClick);
+//-------------------------------------------------------------
 mapMarkers1 = [];
 mapMarkers2 = [];
 mapMarkers3 = [];

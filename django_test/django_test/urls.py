@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.http import StreamingHttpResponse
 from camera import VideoCamera, gen
-print('1. open django_test/url.py')
+
 urlpatterns = [    
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),       

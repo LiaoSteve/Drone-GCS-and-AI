@@ -22,19 +22,25 @@ import numba
 
 logging.basicConfig(level=logging.DEBUG)
 
-'''------------- Templates ----------------'''
+'''================ Templates ===================-'''
 # Drone Server
 def home(request):
     return render(request,'index_gcs.html')
 # Infomation
 def about(request):
     return render(request,'about.html')
-# chart stream data
+# Chart stream data
 def chart(request):
-    return render(request,'chart_data.html')    
+    return render(request,'chart_data.html')   
+# Test mapbox 
+def mapbox(request):
+    return render(request, 'mapbox.html')
+# Drone ontrol system
+def drone_control(request):
+    return render(request, 'drone_control_system.html')
 
 
-'''------------- Get stream data -----------'''
+'''=============== Get stream data ============='''
 # Server-Sent Events
 def eventsource(request):
     # -- Socket UDP --

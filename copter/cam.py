@@ -54,7 +54,7 @@ class Cam():
             
 
 if __name__ == '__main__':    
-    my_cam = Cam('../../2019-11-19.mp4')    
+    my_cam = Cam(0)    
     my_cam.cam_start()       
     time.sleep(1)   
     while 1:                

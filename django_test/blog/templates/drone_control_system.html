@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WebSocket demo</title>
+        <style type="text/css">
+            body {
+                font-family: "Courier New", sans-serif;
+                text-align: center;
+            }
+            .buttons {
+                font-size: 4em;
+                display: flex;
+                justify-content: center;
+            }
+            .button, .value {
+                line-height: 1;
+                padding: 2rem;
+                margin: 2rem;
+                border: medium solid;
+                min-height: 1em;
+                min-width: 1em;
+            }
+            .button {
+                cursor: pointer;
+                user-select: none;
+            }
+            .minus {
+                color: red;
+            }
+            .plus {
+                color: green;
+            }
+            .RTL {
+                color: blue;
+            }
+            .LAND {
+                color: blue;
+            }
+            .TAKEOFF {
+                color: blue;
+            }
+            .value {
+                min-width: 2em;
+            }
+            .state {
+                font-size: 2em;
+            }
+        </style>
+    </head>
+    <body>    
+        <input type="button" value="我是按鈕" style="width:120px;height:40px;font-size:20px;">           
+        <div class="buttons">
+            <div class="minus button">-</div>
+            <div class="value">?</div>
+            <div class="plus button">+</div>
+        </div>
+        <div class="buttons">
+            <div class="TAKEOFF button">TAKEOFF</div>
+            <div class="LAND button">LAND</div>
+            <div class="RTL button">RTL</div>
+        </div>
+        <div class="state">
+            <span class="users">?</span> online
+        </div>
+        <hr/>
+        <div id="message" style = "width:900px; height:350px;"></div>
+        <hr/>
+        <script>                  
+            var minus = document.querySelector('.minus'),
+                plus = document.querySelector('.plus'),
+                value = document.querySelector('.value'),
+                users = document.querySelector('.users'),
+                land = document.querySelector('.LAND'),
+                rtl = document.querySelector('.RTL'),
+                takeoff = document.querySelector('.TAKEOFF'),
+                websocket = new WebSocket("ws:/140.121.130.133:9997/");
+            // send json data to websocket server
+            minus.onclick = function (event) {
+                websocket.send(JSON.stringify({action: 'minus'}));
+            }
+            plus.onclick = function (event) {
+                websocket.send(JSON.stringify({action: 'plus'}));
+            }
+            // mode button onclick            
+            rtl.onclick = function (event) {
+                if(confirm("RTL")){
+                    setMessageInnerHTML("RTL");
+                    websocket.send(JSON.stringify({action: 'RTL'}));}               
+            }
+            land.onclick = function (event) {   
+                if(confirm("LAND")){
+                    setMessageInnerHTML("LAND");
+                    websocket.send(JSON.stringify({action: 'LAND'}));}                           
+            }
+            takeoff.onclick = function (event) {
+                if(confirm("arm and takeoff to " + value.textContent + " m ?")){
+                    setMessageInnerHTML("arm and takeoff to " + value.textContent + " m ");
+                    websocket.send(JSON.stringify({action: 'TAKEOFF'}));}                
+            }
+            // receive json data from websocket server
+            websocket.onmessage = function (event) {
+                data = JSON.parse(event.data);
+                switch (data.type) {
+                    case 'value':
+                        value.textContent = data.value ;
+                        break;
+                    case 'users':
+                        users.textContent = (
+                            data.count.toString() + " user" +
+                            (data.count == 1 ? "" : "s"));
+                        break;
+                    case 'fight_mode':
+                        break
+                    default:
+                        console.error(
+                            "unsupported event", data);
+                }
+            };
+            function setMessageInnerHTML(innerHTML) {
+                document.getElementById('message').innerHTML += innerHTML + '<br/>';
+            }   
+        </script>
+    </body>
+</html>

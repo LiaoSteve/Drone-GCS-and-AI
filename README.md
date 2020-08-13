@@ -265,6 +265,28 @@ recommend) flight mode, and push throttle to 50% ~ 59%, and activate your Radio 
   ```
 ### How to learn deep learning
 * [https://www.youtube.com/watch?v=G_fsA-OUqNw&list=PL1w8k37X_6L9YSIvLqO29S9H0aZ1ncglu&index=1](https://www.youtube.com/watch?v=G_fsA-OUqNw&list=PL1w8k37X_6L9YSIvLqO29S9H0aZ1ncglu&index=1)
+
+## Jetson AGX Xavier
+- Fan mode
+```
+# choose one mode
+sudo /usr/sbin/nvpmodel -d cool
+sudo /usr/sbin/nvpmodel -d quiet
+
+# pwm 255
+sudo jetson_clocks 
+
+sudo jetson_clocks --store
+sudo jetson_clocks 
+sudo jetson_clocks --restore
+```
+- VScode install [JetsonHacks](https://www.jetsonhacks.com/2019/10/01/jetson-nano-visual-studio-code-python/) 
+```
+git clone https://github.com/JetsonHacksNano/installVSCode.git
+cd installVSCode
+./installVSCode.sh
+code-oss
+```
 ## License 
 * Notice that our License is reserved
 

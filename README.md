@@ -229,6 +229,10 @@ recommend) flight mode, and push throttle to 50% ~ 59%, and activate your Radio 
 ```
 ./darknet detector test data/obj.data cfg/yolov4.cfg backup/yolov4.weight
 ```
+- Test video and save :
+```
+./darknet detector test data/obj.data cfg/yolov4.cfg backup/yolov4.weight video.mp4 -out_filename result.avi
+```
 * Test mAP : 
 ```
 ./darknet detector map data/obj.data cfg/yolov4.cfg backup/yolov4.weight
@@ -279,6 +283,11 @@ sudo jetson_clocks
 sudo jetson_clocks --store
 sudo jetson_clocks 
 sudo jetson_clocks --restore
+```
+- Jetson system-monitor :
+```
+sudo pip3 install jetson_stats
+jtop
 ```
 - VScode install [JetsonHacks](https://www.jetsonhacks.com/2019/10/01/jetson-nano-visual-studio-code-python/) 
 ```

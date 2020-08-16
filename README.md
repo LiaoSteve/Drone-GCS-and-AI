@@ -215,6 +215,7 @@ recommend) flight mode, and push throttle to 50% ~ 59%, and activate your Radio 
 
 #### 4. Edit cfg file. 
 * [AlexeyAB darknet README.md](https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects)
+- .cfg : filters=(classes + 5)x3
 
 #### 5. Start training by using the command line: 
 ```
@@ -229,9 +230,13 @@ recommend) flight mode, and push throttle to 50% ~ 59%, and activate your Radio 
 ```
 ./darknet detector test data/obj.data cfg/yolov4.cfg backup/yolov4.weight
 ```
-- Test video and save :
+* Test video and save :
 ```
-./darknet detector test data/obj.data cfg/yolov4.cfg backup/yolov4.weight video.mp4 -out_filename result.avi
+./darknet detector demo data/obj.data cfg/yolov4.cfg backup/yolov4.weight video.mp4 -out_filename result.avi
+```
+* Test webcam :
+```
+./darknet detector demo data/obj.data cfg/yolov4.cfg backup/yolov4.weight -c 0
 ```
 * Test mAP : 
 ```

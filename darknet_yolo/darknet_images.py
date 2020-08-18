@@ -19,17 +19,14 @@ def convertBack(x, y, w, h, *size_out):
 
 
 def cvDrawBoxes(detections, img):
-    fontScale = 0.5
+    global altNames
+    #t  = time.time()    
     num_classes = len(altNames)
     hsv_tuples = [(1.0 * x / num_classes, 1., 1.) for x in range(num_classes)]
     colors = list(map(lambda x: colorsys.hsv_to_rgb(*x), hsv_tuples))
-    colors = list(map(lambda x: (int(x[0] * 255), int(x[1] * 255), int(x[2] * 255)), colors))
-    bbox_thick = int(0.6 * (img.shape[0] + img.shape[1]) / 600)
-    bbox_color = colors[2]
-    random.seed(0)
-    random.shuffle(colors)
-    random.seed(None)
-
+    colors = list(map(lambda x: (int(x[0] * 255), int(x[1] * 255), int(x[2] * 255)), colors))       
+    random.seed(68)    
+    
     for detection in detections:
         x, y, w, h = detection[2][0],\
             detection[2][1],\
@@ -39,19 +36,23 @@ def cvDrawBoxes(detections, img):
             float(x), float(y), float(w), float(h), img.shape)
         pt1 = (xmin, ymin)
         pt2 = (xmax, ymax)    
-
-        bbox_mess = detection[0].decode() + str(round(detection[1],2))
-        
-        t_size = cv2.getTextSize(bbox_mess, 0, fontScale, thickness=bbox_thick//2)[0]  
-        
+        bbox_color = colors[altNames.index(detection[0].decode())]
+        cv2.putText(img,
+                    detection[0].decode() +
+                    " (" + str(int(detection[1] * 100)) + "%)",
+                    (pt1[0], pt1[1] - 5), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8,
+                    [0, 0, 0], 6)
+        cv2.putText(img,
+                    detection[0].decode() +
+                    " (" + str(int(detection[1] * 100)) + "%)",
+                    (pt1[0], pt1[1] - 5), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8,
+                    [0, 255, 255], 1)    
         cv2.rectangle(img, pt1, pt2, bbox_color, 2) 
-        cv2.rectangle(img, pt1, (pt1[0] + t_size[0], pt1[1] - t_size[1] - 3), bbox_color, -1) # fill      
-        cv2.putText(img, bbox_mess, (pt1[0], pt1[1]-2), cv2.FONT_HERSHEY_SIMPLEX,
-                        fontScale, (0, 0, 0), bbox_thick//2, lineType=cv2.LINE_AA)
+    #print(f'time: {time.time()-t}')               
     return img
 
 def YOLO():
-    global metaMain, netMain, altNames
+    global metaMain, netMain, altNames         
     configPath = "./cfg/my_yolov4.cfg"
     weightPath = "./backup/my_yolov4_best.weights"
     metaPath = "./data/obj.data"
@@ -82,10 +83,13 @@ def YOLO():
     darknet_image = darknet.make_image(darknet.network_width(netMain),
                                     darknet.network_height(netMain),3)                                    
     cur_path = os.getcwd()
-    dataset_dir = './data/VOCdevkit/VOC2007/JPEGImages/'
-    save_dir = './predict_batch_image/trash_crawler1/'
+    dataset_dir = './data/VOCdevkit/VOC2007/JPEGImages/crawler3/'
+    save_dir = './predict_batch_image/trash_crawler3/'
     os.makedirs(save_dir, exist_ok=1)
-    images = os.listdir(dataset_dir)
+    images = list()
+    for filename in os.listdir(dataset_dir):
+        if filename.endswith('jpg'):
+            images.append(filename)
     for image in images:        
         frame = cv2.imread(dataset_dir + image)          
         temp = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)

@@ -28,13 +28,13 @@ def cvDrawBoxes(detections, img):
         cv2.rectangle(img, pt1, pt2, (0, 255, 255), 1)      
         cv2.putText(img,
                     detection[0].decode() +
-                    " [" + str(round(detection[1] * 100, 2)) + "]",
-                    (pt1[0], pt1[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                    [0, 0, 0], 4)
+                    " (" + str(int(detection[1] * 100)) + "%)",
+                    (pt1[0], pt1[1] - 5), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.5,
+                    [0, 0, 0], 6)
         cv2.putText(img,
                     detection[0].decode() +
-                    " [" + str(round(detection[1] * 100, 2)) + "]",
-                    (pt1[0], pt1[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                    " (" + str(int(detection[1] * 100)) + "%)",
+                    (pt1[0], pt1[1] - 5), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.5,
                     [0, 255, 255], 1)            
     return img
 
@@ -66,8 +66,8 @@ def YOLO():
                 pass
     except Exception:
         pass
-    cap = cv2.VideoCapture(0)
-    #cap = cv2.VideoCapture("girls1.mp4")
+    #cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture("girls1.mp4")
     cap.set(3, 640)
     cap.set(4, 480)
     out = cv2.VideoWriter(
@@ -94,9 +94,9 @@ def YOLO():
 
         image = cvDrawBoxes(detections, frame_read)        
         
-        print(f'FPS:{1/(time.time()-prev_time)}')
+        print(f'FPS: {1/(time.time()-prev_time)}')
         cv2.imshow('Demo', image)
-        if cv2.waitKey(3) & 0xff == 27:
+        if cv2.waitKey(1) & 0xff == 27:
             cap.release()
             out.release()
             cv2.destroyAllWindows()

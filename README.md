@@ -194,7 +194,7 @@ recommend) flight mode, and push throttle to 50% ~ 59%, and activate your Radio 
   ```
   cp -r ./VOCdevkit/VOC2007/labels/*.txt ./VOCdevkit/VOC2007/JPEGImages/
   ```
-* Create `obj.names` file, and type your classes name (each line one class) :
+* Create `obj.names` file in `darknet/data` dir, and type your classes name (each line one class) :
     ``` 
     gedit obj.names
     ```
@@ -218,6 +218,7 @@ recommend) flight mode, and push throttle to 50% ~ 59%, and activate your Radio 
 - .cfg : filters=(classes + 5)x3
 
 #### 5. Start training by using the command line: 
+* In `darknet` dir :
 ```
 ./darknet detector train data/obj.data cfg/yolov4.cfg yolov4.conv.137 -map | tee -a train.log
 ```

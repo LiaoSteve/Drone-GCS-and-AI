@@ -248,11 +248,9 @@ recommend) flight mode, and push throttle to 50% ~ 59%, and activate your Radio 
 ./darknet detector recall data/obj.data cfg/yolov4.cfg backup/yolov3.weight
 ```
 #### 7. Python wrapper :
-* [madhawav/YOLO3-4-Py](https://github.com/madhawav/YOLO3-4-Py)
-* `darknet_video.py` size problem : 
-  [https://github.com/AlexeyAB/darknet/pull/5415/files](https://github.com/AlexeyAB/darknet/pull/5415/files):
+* https://github.com/LiaoSteve/Drone-GCS-and-AI/tree/django_app/darknet_yolo
 #### 8. How to improve object detection : 
-* [https://github.com/AlexeyAB/darknet#How-to-improve-object-detection](https://github.com/AlexeyAB/darknet#How-to-improve-object-detection)
+* https://github.com/AlexeyAB/darknet#How-to-improve-object-detection
   
 ### How to create custom dataset from OpenImage Dataset
 * [https://github.com/theAIGuysCode/OIDv4_ToolKit](https://github.com/theAIGuysCode/OIDv4_ToolKit)
@@ -295,7 +293,7 @@ sudo jetson_clocks --restore
 sudo pip3 install jetson_stats
 jtop
 ```
-- VScode install [JetsonHacks](https://www.jetsonhacks.com/2019/10/01/jetson-nano-visual-studio-code-python/) 
+- VScode install from [JetsonHacks](https://www.jetsonhacks.com/2019/10/01/jetson-nano-visual-studio-code-python/) 
 ```
 git clone https://github.com/JetsonHacksNano/installVSCode.git
 cd installVSCode

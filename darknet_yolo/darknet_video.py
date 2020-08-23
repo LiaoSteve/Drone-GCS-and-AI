@@ -23,7 +23,7 @@ def parser():
                         help="inference video name. Not saved if empty")   
     parser.add_argument("--dont_show", default=False,
                         help="windown inference display. For headless systems")                        
-    parser.add_argument("--ext_output", default=True,
+    parser.add_argument("--ext_output", default=False,
                         help="display bbox coordinates of detected objects")      
     
     return parser.parse_args()

@@ -80,10 +80,10 @@ def bbox2points(bbox, darknet_size, out_size):
     Return original frame bbox.
     """     
     x, y, w, h = bbox    
-    xmin = round((x - w / 2) * out_size[0] / darknet_size)
-    xmax = round((x + w / 2) * out_size[0] / darknet_size)
-    ymin = round((y - h / 2) * out_size[1] / darknet_size)
-    ymax = round((y + h / 2) * out_size[1] / darknet_size)
+    xmin = round((x - w / 2) * out_size[1] / darknet_size)
+    xmax = round((x + w / 2) * out_size[1] / darknet_size)
+    ymin = round((y - h / 2) * out_size[0] / darknet_size)
+    ymax = round((y + h / 2) * out_size[0] / darknet_size)
     return int(xmin), int(ymin), int(xmax), int(ymax)
 
 
@@ -132,7 +132,7 @@ def print_detections(detections, coordinates=False):
 
 def draw_boxes(detections, image, colors, darknet_size):    
     for label, confidence, bbox in detections:
-        left, top, right, bottom = bbox2points(bbox, darknet_size, image.shape)        
+        left, top, right, bottom = bbox2points(bbox, darknet_size, image.shape)              
         cv2.rectangle(image, (left, top), (right, bottom), colors[label], 1)
         cv2.putText(image, "{} {}%".format(label, float(confidence)),
                     (left, top - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,

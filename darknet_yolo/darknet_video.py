@@ -50,7 +50,7 @@ def check_arguments_errors(args):
 
 def set_saved_video(input_video, output_video, size, fps):
     fourcc = cv2.VideoWriter_fourcc(*"MJPG")    
-    video = cv2.VideoWriter(output_video, fourcc, fps, size)
+    video = cv2.VideoWriter(output_video, fourcc, fps, (640,480))
     return video
 
 
@@ -74,6 +74,7 @@ if __name__ == '__main__':
     cap.set(4, 480)
     cap_width = cap.get(3)
     cap_hight = cap.get(4)    
+    print('GG',cap_width)
     cap_fps = int(cap.get(5))
     video = set_saved_video(cap, args.out_filename, (cap_width, cap_hight), cap_fps)
 
@@ -97,7 +98,7 @@ if __name__ == '__main__':
             video.write(image)
         if not args.dont_show:
             cv2.imshow('Inference', image)
-        if cv2.waitKey(fps) == 27:
+        if cv2.waitKey(5) == 27:
             cap.release()
             video.release()
             cv2.destroyAllWindows() 

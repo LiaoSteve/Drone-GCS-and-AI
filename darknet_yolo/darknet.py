@@ -92,7 +92,7 @@ def class_colors(names):
     Create a dict with one random BGR color for each
     class name
     """
-    random.seed(3) 
+    random.seed(666) 
     return {name: (
         random.randint(0, 255),
         random.randint(0, 255),
@@ -134,10 +134,52 @@ def draw_boxes(detections, image, colors, darknet_size):
     for label, confidence, bbox in detections:
         left, top, right, bottom = bbox2points(bbox, darknet_size, image.shape)        
         cv2.rectangle(image, (left, top), (right, bottom), colors[label], 1)
-        cv2.putText(image, "{} {}%".format(label, int(confidence*100)),
+        cv2.putText(image, "{} {}%".format(label, float(confidence)),
                     (left, top - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                    colors[label], 2)
+                    (0,0,0), 6)
+        cv2.putText(image, "{} {}%".format(label, float(confidence)),
+                    (left, top - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                    colors[label], 1)
     return image
+
+
+def decode_detection(detections):
+    decoded = []
+    for label, confidence, bbox in detections:
+        confidence = str(round(confidence * 100, 2))
+        decoded.append((str(label), confidence, bbox))
+    return decoded
+
+
+def remove_negatives(detections, class_names, num):
+    """
+    Remove all classes with 0% confidence within the detection
+    """
+    predictions = []
+    for j in range(num):
+        for idx, name in enumerate(class_names):
+            if detections[j].prob[idx] > 0:
+                bbox = detections[j].bbox
+                bbox = (bbox.x, bbox.y, bbox.w, bbox.h)
+                predictions.append((name, detections[j].prob[idx], (bbox)))
+    return predictions
+
+
+def detect_image(network, class_names, image, thresh=.5, hier_thresh=.5, nms=.45):
+    """
+        Returns a list with highest confidence class and their bbox
+    """
+    pnum = pointer(c_int(0))
+    predict_image(network, image)
+    detections = get_network_boxes(network, image.w, image.h,
+                                   thresh, hier_thresh, None, 0, pnum, 0)
+    num = pnum[0]
+    if nms:
+        do_nms_sort(detections, num, len(class_names), nms)
+    predictions = remove_negatives(detections, class_names, num)
+    predictions = decode_detection(predictions)
+    free_detections(detections, num)
+    return sorted(predictions, key=lambda x: x[1])
 
 
 #  lib = CDLL("/home/pjreddie/documents/darknet/libdarknet.so", RTLD_GLOBAL)

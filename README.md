@@ -143,10 +143,15 @@ recommend) flight mode, and push throttle to 50% ~ 59%, and activate your Radio 
 4. wait for rtk fixed.
 5. (option) paramter list setting: `EK2_ALT_SOURCE:2`, `EK2_POSNE_M_NSE : 0.1[meter] or 0.01[meter] (0.01 should use carefully)`
 
-## How to train darknet yolov4  
+## How to train Darknet YOLOv4
 * Yolo v4 paper:    [https://arxiv.org/abs/2004.10934](https://arxiv.org/abs/2004.10934)
 
 * Yolo v4 source code:  [https://github.com/AlexeyAB/darknet](https://github.com/AlexeyAB/darknet)  
+#### 0. Install cuda and cudnn
+* [Install CUDA 10.0 and cuDNN v7.4.2 on Ubuntu 16.04](https://gist.github.com/matheustguimaraes/43e0b65aa534db4df2918f835b9b361d)
+* [多版本CUDA与cuDNN管理](https://dinghow.site/2019/05/19/cuda-cudnn-version/)
+
+
 #### 1. Compile on Linux
 ```
   git clone https://github.com/AlexeyAB/darknet.git

@@ -134,10 +134,10 @@ def draw_boxes(detections, image, colors, darknet_size):
     for label, confidence, bbox in detections:
         left, top, right, bottom = bbox2points(bbox, darknet_size, image.shape)              
         cv2.rectangle(image, (left, top), (right, bottom), colors[label], 1)
-        cv2.putText(image, "{} {}%".format(label, float(confidence)),
+        cv2.putText(image, f'{label} {float(confidence)}%',
                     (left, top - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                     (0,0,0), 6)
-        cv2.putText(image, "{} {}%".format(label, float(confidence)),
+        cv2.putText(image, f'{label} {float(confidence)}%',
                     (left, top - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                     colors[label], 1)
     return image

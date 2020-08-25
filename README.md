@@ -279,8 +279,29 @@ recommend) flight mode, and push throttle to 50% ~ 59%, and activate your Radio 
 ### How to learn deep learning
 * [https://www.youtube.com/watch?v=G_fsA-OUqNw&list=PL1w8k37X_6L9YSIvLqO29S9H0aZ1ncglu&index=1](https://www.youtube.com/watch?v=G_fsA-OUqNw&list=PL1w8k37X_6L9YSIvLqO29S9H0aZ1ncglu&index=1)
 
-## Jetson AGX Xavier
-- Fan mode
+## Jetson AGX Xavier and NX
+### Build darknet
+```
+gedit ~/.bashrc
+export CUDA_HOME=/usr/local/cuda
+export PATH=$PATH:$CUDA_HOME/bin
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64
+```
+* darknet source code
+```
+git clone https://github.com/AlexeyAB/darknet.git
+cd darknet
+gedit Makefile
+```
+* GPU=1 
+* CUDNN=1 
+*  OPENCV=1 
+*  LIBSO=1 
+*  ARCH= -gencode arch=compute_72,code=[sm_72,compute_72]
+* Save and close the Makefile, and type `make` in terminal.
+* Download pre-trained weights [yolov4.conv.137](https://drive.google.com/file/d/1JKF-bdIklxOOVy-2Cr5qdvjgGpmGfcbp/view), and put it in `darknet` dir.
+* Run darknet_video.py to test (connect your webcam)
+### Fan mode
 ```
 # choose one mode
 sudo /usr/sbin/nvpmodel -d cool
@@ -293,12 +314,12 @@ sudo jetson_clocks --store
 sudo jetson_clocks 
 sudo jetson_clocks --restore
 ```
-- Jetson system-monitor :
+### Jetson system-monitor :
 ```
 sudo pip3 install jetson_stats
 jtop
 ```
-- VScode install from [JetsonHacks](https://www.jetsonhacks.com/2019/10/01/jetson-nano-visual-studio-code-python/) 
+### VScode install from [JetsonHacks](https://www.jetsonhacks.com/2019/10/01/jetson-nano-visual-studio-code-python/) 
 ```
 git clone https://github.com/JetsonHacksNano/installVSCode.git
 cd installVSCode

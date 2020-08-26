@@ -10,7 +10,7 @@ def parser():
     parser.add_argument("--dataset_dir", type=str, default="./data/VOCdevkit/VOC2007/JPEGImages/",
                         help="path to your image set ")  
 
-    parser.add_argument("--save_dir", type=str, default="./predict_batch_image/trash_crawler1/",
+    parser.add_argument("--save_dir", type=str, default="./predict_image/trash_crawler1_and_2/",
                         help="path to save detection images")
 
     parser.add_argument("--weights", default="./backup/yolov4_best.weights",
@@ -59,9 +59,11 @@ if __name__ == '__main__':
     images = list()
 
     for filename in os.listdir(args.dataset_dir):
-        if filename.endswith('jpg'):
+        if filename.endswith('jpg') or filename.endswith('png')\
+            or filename.endswith('jpeg'):
             images.append(filename)
-
+        else:        
+            raise RuntimeError(f'notice that {filename} image format are not accepted(.jpg, .png, .jpeg)')
     for image in images:        
         frame = cv2.imread(args.dataset_dir + image)          
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -72,4 +74,4 @@ if __name__ == '__main__':
         frame = darknet.draw_boxes(detections, frame, class_colors, darknet_width)
         cv2.imwrite(args.save_dir + 'out_' + image, frame)
         print(f'- [x] save image {image} to {args.save_dir}')
-    print(f'- [x] Save {len(images)} images done')
+    print(f'- [OK] Save {len(images)} images done')

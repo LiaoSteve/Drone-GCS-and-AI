@@ -314,6 +314,10 @@ sudo jetson_clocks --store
 sudo jetson_clocks 
 sudo jetson_clocks --restore
 ```
+### Install pip3
+```
+sudo apt-get install python3-pip
+```
 ### Jetson system-monitor :
 ```
 sudo pip3 install jetson_stats
@@ -325,6 +329,11 @@ git clone https://github.com/JetsonHacksNano/installVSCode.git
 cd installVSCode
 ./installVSCode.sh
 code-oss
+```
+### dronekit
+```
+sudo pip3 install dronekit
+sudo chmod 666 /dev/ttyACM0/
 ```
 ## License 
 * Notice that our License is reserved

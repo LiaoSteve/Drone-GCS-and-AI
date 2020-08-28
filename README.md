@@ -286,6 +286,7 @@ gedit ~/.bashrc
 export CUDA_HOME=/usr/local/cuda
 export PATH=$PATH:$CUDA_HOME/bin
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64
+source ~/.bashrc
 ```
 * darknet source code
 ```
@@ -321,7 +322,7 @@ sudo apt-get install python3-pip
 ### Jetson system-monitor :
 ```
 sudo pip3 install jetson_stats
-jtop
+sudo jtop
 ```
 ### VScode install from [JetsonHacks](https://www.jetsonhacks.com/2019/10/01/jetson-nano-visual-studio-code-python/) 
 ```
@@ -333,7 +334,7 @@ code-oss
 ### dronekit
 ```
 sudo pip3 install dronekit
-sudo chmod 666 /dev/ttyACM0/
+sudo chmod 666 /dev/ttyACM0 # if pixhawk connected
 ```
 ## License 
 * Notice that our License is reserved

@@ -281,6 +281,7 @@ recommend) flight mode, and push throttle to 50% ~ 59%, and activate your Radio 
 
 ## Jetson AGX Xavier and NX
 ### Build darknet
+1. nvcc
 ```
 gedit ~/.bashrc
 export CUDA_HOME=/usr/local/cuda
@@ -288,7 +289,7 @@ export PATH=$PATH:$CUDA_HOME/bin
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64
 source ~/.bashrc
 ```
-* darknet source code
+2. git clone darknet source code and revise parameters
 ```
 git clone https://github.com/AlexeyAB/darknet.git
 cd darknet
@@ -300,12 +301,12 @@ gedit Makefile
 *  LIBSO=1 
 *  ARCH= -gencode arch=compute_72,code=[sm_72,compute_72]
 * Save and close the Makefile, and type `make` in terminal.
-* Download pre-trained weights [yolov4.conv.137](https://drive.google.com/file/d/1JKF-bdIklxOOVy-2Cr5qdvjgGpmGfcbp/view), and put it in `darknet` dir.
+* Download pre-trained weights [yolov4.conv.137](https://drive.google.com/file/d/1JKF-bdIklxOOVy-2Cr5qdvjgGpmGfcbp/view), [yolov4.weights](https://drive.google.com/file/d/1cewMfusmPjYWbrnuJRuKhPMwRe_b9PaT/view), and put it in `darknet` dir.
 * Run darknet_video.py to test (connect your webcam)
 ### Fan mode
 ```
 # choose one mode
-sudo /usr/sbin/nvpmodel -d cool
+sudo /usr/sbin/nvpmodel -d cool # use this
 sudo /usr/sbin/nvpmodel -d quiet
 
 # pwm 255
@@ -339,7 +340,8 @@ sudo chmod 666 /dev/ttyACM0 # if pixhawk connected
 ## License 
 * Notice that our License is reserved
 
-## Citation
+## Refference
+1. YOLOv3
 ```
 @article{yolov3,
   title={YOLOv3: An Incremental Improvement},
@@ -348,7 +350,15 @@ sudo chmod 666 /dev/ttyACM0 # if pixhawk connected
   year={2018}
 }
 ```
-
+2. YOLOv4
+```
+@article{yolov4,
+  title={YOLOv4: Optimal Speed and Accuracy of Object Detection},
+  author={Alexey Bochkovskiy, Chien-Yao Wang, Hong-Yuan Mark Liao},
+  journal = {arXiv},
+  year={2020}
+}
+```
 
 
 

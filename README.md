@@ -334,9 +334,13 @@ code-oss
 ```
 ### dronekit
 ```
-sudo pip3 install dronekit
-sudo chmod 666 /dev/ttyACM0 # if pixhawk connected
+pip3 install pyserial
+sudo pip3 install dronekit 
+# permission on serial port
+sudo adduser <your user name> dialout
+sudo reboot
 ```
+
 ## License 
 * Notice that our License is reserved
 

@@ -151,7 +151,7 @@ recommend) flight mode, and push throttle to 50% ~ 59%, and activate your Radio 
 ## Jetson AGX Xavier and NX
 ### Build darknet
 1. nvcc
-```
+```bash
 gedit ~/.bashrc
 export CUDA_HOME=/usr/local/cuda
 export PATH=$PATH:$CUDA_HOME/bin
@@ -159,7 +159,7 @@ export LD_LIBRARY_PATH=/usr/local/cuda/lib64
 source ~/.bashrc
 ```
 2. git clone darknet source code and revise parameters
-```
+```bash
 git clone https://github.com/AlexeyAB/darknet.git
 cd darknet
 gedit Makefile
@@ -173,7 +173,7 @@ gedit Makefile
 * Download pre-trained weights [yolov4.conv.137](https://drive.google.com/file/d/1JKF-bdIklxOOVy-2Cr5qdvjgGpmGfcbp/view), [yolov4.weights](https://drive.google.com/file/d/1cewMfusmPjYWbrnuJRuKhPMwRe_b9PaT/view), and put it in `darknet` dir.
 * Run darknet_video.py to test (connect your webcam)
 ### Fan mode
-```
+```bash
 # choose one mode
 sudo /usr/sbin/nvpmodel -d cool # use this
 sudo /usr/sbin/nvpmodel -d quiet
@@ -186,23 +186,24 @@ sudo jetson_clocks
 sudo jetson_clocks --restore
 ```
 ### Install pip3
-```
+```bash
 sudo apt-get install python3-pip
 ```
 ### Jetson system-monitor :
-```
+```bash
 sudo pip3 install jetson_stats
 sudo jtop
 ```
+
 ### VScode install from [JetsonHacks](https://www.jetsonhacks.com/2019/10/01/jetson-nano-visual-studio-code-python/) 
-```
+```bash
 git clone https://github.com/JetsonHacksNano/installVSCode.git
 cd installVSCode
 ./installVSCode.sh
 code-oss
 ```
-### dronekit
-```
+### Dronekit-python 
+```bash
 pip3 install pyserial
 sudo pip3 install dronekit 
 # permission on serial port
@@ -210,12 +211,30 @@ sudo adduser <your user name> dialout
 sudo reboot
 ```
 
+### SSH service
+```python
+# install ssh, and it will start automatically 
+sudo apt-get install ssh
+# check whether the ssh start
+netstat -a | grep ssh
+# start ssh manually
+sudo service ssh start
+# close the ssh
+sudo service ssh stop
+# restart the ssh
+sudo service ssh restart
+# connect to ssh
+ssh username@hostname # ssh steve@192.168.8.100
+# log out ssh
+logout 
+```
+
 ## License 
 * Notice that our License is reserved
 
 ## Refference
 1. YOLOv3
-```
+```bash
 @article{yolov3,
   title={YOLOv3: An Incremental Improvement},
   author={Redmon, Joseph and Farhadi, Ali},
@@ -224,7 +243,7 @@ sudo reboot
 }
 ```
 2. YOLOv4
-```
+```bash
 @article{yolov4,
   title={YOLOv4: Optimal Speed and Accuracy of Object Detection},
   author={Alexey Bochkovskiy, Chien-Yao Wang, Hong-Yuan Mark Liao},

@@ -211,7 +211,7 @@ sudo adduser <your user name> dialout
 sudo reboot
 ```
 
-### SSH service
+### SSH service (use putty or MobaXterm to connect)
 ```python
 # install ssh, and it will start automatically 
 sudo apt-get install ssh

@@ -148,7 +148,7 @@ recommend) flight mode, and push throttle to 50% ~ 59%, and activate your Radio 
 4. wait for rtk fixed.
 5. (option) paramter list setting: `EK2_ALT_SOURCE:2`, `EK2_POSNE_M_NSE : 0.1[meter] or 0.01[meter] (0.01 should use carefully)`
 
-## Jetson AGX Xavier and NX
+## Jetson xavier nx
 ### Build darknet
 1. nvcc
 ```bash
@@ -206,29 +206,58 @@ code-oss
 ```bash
 pip3 install pyserial
 sudo pip3 install dronekit 
+
 # permission on serial port
 sudo adduser <your user name> dialout
 sudo reboot
 ```
 
-### SSH service (use putty or MobaXterm to connect)
+### ssh service (use Putty, MobaXterm or Cmder to connect to server in windows)
 ```python
 # install ssh, and it will start automatically 
 sudo apt-get install ssh
+
 # check whether the ssh start
 netstat -a | grep ssh
+
 # start ssh manually
 sudo service ssh start
+
 # close the ssh
 sudo service ssh stop
+
 # restart the ssh
 sudo service ssh restart
+
 # connect to ssh
 ssh username@hostname # ssh steve@192.168.8.100
+
 # log out ssh
 logout 
 ```
+### screen
+```bash
+# go into ssh ubuntu server and install screen  
+sudo apt-get install screen
 
+# create screen 
+screen
+
+# execute your command
+python timer.py
+
+# detach screen
+ctrl+a and c
+
+# list all screens
+screen -ls
+
+# re-attach screen
+screen -r [pid]
+
+# kill screen`
+ctrl+a and k # or type `exit`
+```
 ## License 
 * Notice that our License is reserved
 

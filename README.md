@@ -247,7 +247,7 @@ screen
 python timer.py
 
 # detach screen
-ctrl+a and c
+ctrl+a and d
 
 # list all screens
 screen -ls

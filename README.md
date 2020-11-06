@@ -113,6 +113,10 @@ recommend) flight mode, and push throttle to 50% ~ 59%, and activate your Radio 
 * pixhawk 2.4.8 : https://ardupilot.org/copter/docs/common-pixhawk-overview.html
 * pixhawk mini : http://www.holybro.com/manual/Pixhawk4Mini_Pinouts.pdf
 * CUAV RTK : http://doc.cuav.net/gps/c-rtk/en/c-rtk-9p/hardware-connection.html
+* GPS Blending (aka Dual GPS) : https://ardupilot.org/copter/docs/common-gps-blending.html
+  
+  * pixhawk4 UART (serial port 4) 
+* Telemetry / Serial Port Setup : https://ardupilot.org/copter/docs/common-telemetry-port-setup.html
 
 ### ***1. via radio telemery (serial port)***
 #### Base (GCS mission planner) 
@@ -148,116 +152,6 @@ recommend) flight mode, and push throttle to 50% ~ 59%, and activate your Radio 
 4. wait for rtk fixed.
 5. (option) paramter list setting: `EK2_ALT_SOURCE:2`, `EK2_POSNE_M_NSE : 0.1[meter] or 0.01[meter] (0.01 should use carefully)`
 
-## Jetson xavier nx
-### Build darknet
-1. nvcc
-```bash
-gedit ~/.bashrc
-export CUDA_HOME=/usr/local/cuda
-export PATH=$PATH:$CUDA_HOME/bin
-export LD_LIBRARY_PATH=/usr/local/cuda/lib64
-source ~/.bashrc
-```
-2. git clone darknet source code and revise parameters
-```bash
-git clone https://github.com/AlexeyAB/darknet.git
-cd darknet
-gedit Makefile
-```
-* GPU=1 
-* CUDNN=1 
-*  OPENCV=1 
-*  LIBSO=1 
-*  ARCH= -gencode arch=compute_72,code=[sm_72,compute_72]
-* Save and close the Makefile, and type `make` in terminal.
-* Download pre-trained weights [yolov4.conv.137](https://drive.google.com/file/d/1JKF-bdIklxOOVy-2Cr5qdvjgGpmGfcbp/view), [yolov4.weights](https://drive.google.com/file/d/1cewMfusmPjYWbrnuJRuKhPMwRe_b9PaT/view), and put it in `darknet` dir.
-* Run darknet_video.py to test (connect your webcam)
-### Fan mode
-```bash
-# choose one mode
-sudo /usr/sbin/nvpmodel -d cool # use this
-sudo /usr/sbin/nvpmodel -d quiet
-
-# pwm 255
-sudo jetson_clocks 
-
-sudo jetson_clocks --store
-sudo jetson_clocks 
-sudo jetson_clocks --restore
-```
-### Install pip3
-```bash
-sudo apt-get install python3-pip
-```
-### Jetson system-monitor :
-```bash
-sudo pip3 install jetson_stats
-sudo jtop
-```
-
-### VScode install from [JetsonHacks](https://www.jetsonhacks.com/2019/10/01/jetson-nano-visual-studio-code-python/) 
-```bash
-git clone https://github.com/JetsonHacksNano/installVSCode.git
-cd installVSCode
-./installVSCode.sh
-code-oss
-```
-### Dronekit-python 
-```bash
-pip3 install pyserial
-sudo pip3 install dronekit 
-
-# permission on serial port
-sudo adduser <your user name> dialout
-sudo reboot
-```
-
-### ssh service (use Putty, MobaXterm or Cmder to connect to server in windows)
-```python
-# install ssh, and it will start automatically 
-sudo apt-get install ssh
-
-# check whether the ssh start
-netstat -a | grep ssh
-
-# start ssh manually
-sudo service ssh start
-
-# close the ssh
-sudo service ssh stop
-
-# restart the ssh
-sudo service ssh restart
-
-# connect to ssh
-ssh username@hostname # ssh steve@192.168.8.100
-
-# log out ssh
-logout 
-```
-### screen
-```bash
-# go into ssh ubuntu server and install screen  
-sudo apt-get install screen
-
-# create screen 
-screen
-
-# execute your command
-python timer.py
-
-# detach screen
-ctrl+a and d
-
-# list all screens
-screen -ls
-
-# re-attach screen
-screen -r [pid]
-
-# kill screen`
-ctrl+a and k # or type `exit`
-```
 ## License 
 * Notice that our License is reserved
 

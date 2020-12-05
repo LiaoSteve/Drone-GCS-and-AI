@@ -3,18 +3,14 @@ from gcs import*
 from realsense_cam import*
 from yolo import*
 from cam import*
-'''
--------------------------------------------------------------------------------------------------------------------------------------------------------
-@ Author        : LiaoSteve
-@ D-LINK driver : https://askubuntu.com/questions/1018375/how-do-i-install-driver-for-rtl88x2bu/1067500#1067500?newreg=3850b778a5474b4f8ae3a4028a9a3d9d
--------------------------------------------------------------------------------------------------------------------------------------------------------
-'''
+import os
+
 class DroneSystem(GCS, Cam, CamSocket, RealSense, YOLO):
     def __init__(self, 
                  wp_path='data/X_ground.json', connection_string= 'tcp:127.0.0.1:5762', baud = 115200, wait_ready = True, timeout = 180, heartbeat_timeout = 180,
-                 gcs_ip = '140.121.130.133', gcs_port = 9999,
+                 gcs_ip = os.environ.get('KAFKA_BROKER'), gcs_port = 9999,
                  URL = 0,
-                 cam_ip = '140.121.130.133', cam_port = 9998, socket_timeout = 0.01):
+                 cam_ip = os.environ.get('KAFKA_BROKER'), cam_port = 9998, socket_timeout = 0.01):
         # -- object detected and identified 
         YOLO.__init__(self) 
         # -- ground control station
@@ -43,7 +39,7 @@ class DroneSystem(GCS, Cam, CamSocket, RealSense, YOLO):
         self.cap_num     = 0
         self.plastic_bag_num = 0
 
-        self.ds_log = logging.getLogger(' dronesystem')
+        self.ds_log = logging.getLogger('dronesystem')
         self.ds_log.setLevel(logging.INFO)
         self.yolo_thread_isstop = False
         if not self.yolo_thread_isstop: self.yolo_thread_start()
@@ -102,7 +98,7 @@ if __name__ =='__main__':
     
     X_ground = {'lat':25.149657404957285 ,'lon':121.77688926458357}       
     #connection_string = /dev/ttyACM0
-    DS = DroneSystem(connection_string='tcp:140.121.130.133:5762')    
+    DS = DroneSystem(connection_string=os.environ.get('KAFKA_BROKER')+':5762')    
     time.sleep(7)
     s = input('Ready to takeoff ? [y/n]')
     if s is not 'y':

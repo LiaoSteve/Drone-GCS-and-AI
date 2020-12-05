@@ -1,9 +1,11 @@
 ﻿var mymap = L.map('mapid').setView([25.149822504614438 ,121.77673101425172], 20);
-L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 30,
-    id: 'mapbox.streets', //'mapbox.satellite'
-    accessToken: 'pk.eyJ1Ijoic3RldmVsaWFvMTY4OCIsImEiOiJjazE3OGYyeDkxY3hsM250amdvdjBqMGFvIn0.Lv9UAvyh3NYLGGz1WGy3Ag' //ENTER YOUR ACCESS TOKEN HERE
+    //id: 'mapbox/light-v9',
+    id: 'mapbox/streets-v10', //8 9 10   
+    //id: 'mapbox/satellite-v9', // 8 9    
+    accessToken: 'pk.eyJ1Ijoic3RldmVsaWFvMTY4OCIsImEiOiJjazE3OGYyeDkxY3hsM250amdvdjBqMGFvIn0.Lv9UAvyh3NYLGGz1WGy3Ag' 
 }).addTo(mymap);
 
 //--------------- Show onclick position in map -------------------

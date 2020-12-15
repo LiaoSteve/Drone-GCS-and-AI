@@ -3,7 +3,7 @@ import threading, time
 import logging
 '''
 -----------------------------------
-@ Auther : LiaoSteve            
+@ Author : LiaoSteve            
 -----------------------------------'''
 class Cam():
         def __init__(self, URL, original_size = False):

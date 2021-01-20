@@ -70,7 +70,7 @@ T. H. Huang, "Path Planning and Visual Obstacle Avoidance Based on Fuzzy Theory 
 4. [Radio Control Calibration](https://ardupilot.org/copter/docs/common-radio-control-calibration.html?highlight=calibration).
 5. [Compass Calibration](https://ardupilot.org/copter/docs/common-compass-calibration-in-mission-planner.html?highlight=calibration) : if you use GPS module, you only need to use compass 1 (external compass). After calibration, reboot your pixhawk.
 6. ESC Calibration: Push throttle to highest position, power up pixhawk and wait for RGB LED. Reboot, disarm your hardware switch and wait for beep~ beep~ beep~. Push throttle to lowest position, and wait for beep~ beep~ beep~. Push throttle from lowest position to highest position, and push throttle to lowest position. Reboot your pixhawk.
-
+7. Holybro PM02 battery Monitor setup: optional Hardware -> Batter Monitor. (1) Make `monito` into `Voltage and Currnet`. (2) Make `Sensor` into  `Other`. (3) Make `APM Ver` into `The Cube or Pixhawk`. (4) Input `18.1` into Voltage divider(Calced). (5) Input `36` into `Amperes per volt`. (6) Disconnect and recoonnect the  Pixhawk to finish the setting up.
 ### PID auto tuning
 * Tuning   : ***https://ardupilot.org/copter/docs/tuning.html***
 * Autotune : ***https://ardupilot.org/copter/docs/autotune.html***

@@ -1,5 +1,6 @@
 # Drone-GCS-and-AI
 *A research diary of a drone system that monitors the coastal pollution*
+*** [UAV Trash monitoring system final demo](https://drive.google.com/file/d/1xk4xx5ZWnpi63q3B6kNNqns4IWCtJhzQ/view?usp=sharing)
 
 ### -------------------- My Demo video  ---------------
 ***1. [Use yolov3 to detect coast's debries : plastic bottles , plastic bags , caps etc](https://drive.google.com/file/d/15HNY2gMDhPa_sieLgT28_APcT03e1TX1/view?usp=sharing)***

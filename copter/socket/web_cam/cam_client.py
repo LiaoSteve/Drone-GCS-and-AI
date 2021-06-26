@@ -6,8 +6,6 @@ import time
 import pickle
 import zlib
 
-#client_socket.connect(('140.121.130.97',6666)) # GTX 850M notebook
-#client_socket.connect(('140.121.130.97',9102)) # gpu computer vs external network
 encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 5]
 while True:    
     try:         

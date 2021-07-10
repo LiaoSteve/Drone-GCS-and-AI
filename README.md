@@ -48,7 +48,8 @@ https://drive.google.com/open?id=1QVF2AbILUvDLGh02Uwbuzf-lKC-3xqI2
 * Use depth to sense the objects.
 #### Citation
 ```
-T. H. Huang, "Path Planning and Visual Obstacle Avoidance Based on Fuzzy Theory for UAV Apllication," 2020 
+T. H. Huang, "Path Planning and Visual Obstacle Avoidance Based on Fuzzy Theory for UAV Apllication," Master Thesis, Department of
+Communications, Navigation and Control Engineering, NTOU, ROC, 2020 
 ```
 * Test A [ (See demo video)](https://drive.google.com/open?id=1oGbn28wQA_o-EyqqzDqoxLLuQZKde3WK):
 
